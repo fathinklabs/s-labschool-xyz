@@ -14,15 +14,33 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true) ?: $_POST;
+
 $currentUser = current_user();
+if (!$currentUser) {
+    $authHeader = get_auth_header();
+    $apiKey = null;
+    if (preg_match('/Bearer\s+(labs_[a-zA-Z0-9_]+)/', $authHeader, $matches)) {
+        $apiKey = $matches[1];
+    } elseif (!empty($data['api_key'])) {
+        $apiKey = trim($data['api_key']);
+    } elseif (!empty($_GET['api_key'])) {
+        $apiKey = trim($_GET['api_key']);
+    }
+
+    if ($apiKey) {
+        $stmt = $pdo->prepare("SELECT id, email, full_name, domain, role FROM users WHERE api_key = ? AND is_active = 1");
+        $stmt->execute([$apiKey]);
+        $currentUser = $stmt->fetch();
+    }
+}
+
 if (!$currentUser) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Autentikasi diperlukan.']);
     exit;
 }
-
-$raw = file_get_contents('php://input');
-$data = json_decode($raw, true) ?: $_POST;
 
 $micrositeId = (int)($data['id'] ?? 0);
 $slug = sanitize_slug($data['slug'] ?? '');

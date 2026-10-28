@@ -15,13 +15,25 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 1. Tentukan Identitas Pembuat Link (User Login atau API Key)
+// 1. Ambil Input (JSON body atau form POST)
+$rawInput = file_get_contents('php://input');
+$data = json_decode($rawInput, true) ?: $_POST;
+
+// 2. Tentukan Identitas Pembuat Link (User Login atau API Key)
 $currentUser = current_user();
 if (!$currentUser) {
-    // Cek header Authorization Bearer
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (preg_match('/Bearer\s+(labs_[a-zA-Z0-9]+)/', $authHeader, $matches)) {
+    // Cek header Authorization Bearer atau parameter api_key
+    $authHeader = get_auth_header();
+    $apiKey = null;
+    if (preg_match('/Bearer\s+(labs_[a-zA-Z0-9_]+)/', $authHeader, $matches)) {
         $apiKey = $matches[1];
+    } elseif (!empty($data['api_key'])) {
+        $apiKey = trim($data['api_key']);
+    } elseif (!empty($_GET['api_key'])) {
+        $apiKey = trim($_GET['api_key']);
+    }
+
+    if ($apiKey) {
         $stmt = $pdo->prepare("SELECT id, email, full_name, domain, role FROM users WHERE api_key = ? AND is_active = 1");
         $stmt->execute([$apiKey]);
         $currentUser = $stmt->fetch();
@@ -36,10 +48,6 @@ if (!$currentUser) {
     ]);
     exit;
 }
-
-// 2. Ambil Input (JSON body atau form POST)
-$rawInput = file_get_contents('php://input');
-$data = json_decode($rawInput, true) ?: $_POST;
 
 $originalUrl = trim($data['original_url'] ?? '');
 $title = trim($data['title'] ?? '');

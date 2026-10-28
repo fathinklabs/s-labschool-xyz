@@ -14,6 +14,24 @@ function base_url(string $path = ''): string {
 }
 
 /**
+ * Dapatkan Header Authorization Bearer secara andal
+ */
+function get_auth_header(): string {
+    if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+        return $_SERVER['HTTP_AUTHORIZATION'];
+    }
+    if (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+        return $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+    }
+    if (function_exists('getallheaders')) {
+        $headers = getallheaders();
+        if (!empty($headers['Authorization'])) return $headers['Authorization'];
+        if (!empty($headers['authorization'])) return $headers['authorization'];
+    }
+    return '';
+}
+
+/**
  * Sanitasi string slug kustom
  */
 function sanitize_slug(string $slug): string {

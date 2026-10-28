@@ -5,8 +5,18 @@
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../config/helpers.php';
 
 $currentUser = current_user();
+if (!$currentUser) {
+    $apiKey = trim($_GET['api_key'] ?? '');
+    if ($apiKey) {
+        $stmtKey = $pdo->prepare("SELECT id, email, full_name, domain, role FROM users WHERE api_key = ? AND is_active = 1");
+        $stmtKey->execute([$apiKey]);
+        $currentUser = $stmtKey->fetch();
+    }
+}
+
 if (!$currentUser) {
     http_response_code(401);
     die('Akses ditolak. Silakan login terlebih dahulu.');
