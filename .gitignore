@@ -1,0 +1,14 @@
+# Dependencies & Environment
+.env
+config.local.php
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Uploads & Temp
+uploads/temp/
+*.tmp
