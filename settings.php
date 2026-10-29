@@ -19,7 +19,7 @@ $flashSuccess = '';
 $flashError = '';
 
 // Handle Update Profile
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profile') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profile') {
     $fullName = trim($_POST['full_name'] ?? '');
     $newPass = $_POST['new_password'] ?? '';
     if (!empty($fullName)) {
