@@ -171,3 +171,140 @@ function time_ago(string $datetime): string {
     if ($diff < 2592000) return floor($diff / 86400) . ' hari lalu';
     return date('d M Y', $time);
 }
+
+/**
+ * Mencatat log aktivitas pengguna ke tabel activity_logs
+ */
+function log_activity(int $userId, string $action, string $description): void {
+    global $pdo;
+    try {
+        $ip = get_client_ip();
+        $ua = substr($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown', 0, 250);
+        $stmt = $pdo->prepare("
+            INSERT INTO activity_logs (user_id, action, description, ip_address, user_agent, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([$userId, $action, $description, $ip, $ua]);
+    } catch (Exception $e) {
+        error_log("Gagal mencatat log aktivitas: " . $e->getMessage());
+    }
+}
+
+/**
+ * Memeriksa apakah seorang user berhak mengelola (edit/hapus/toggle) tautan tertentu:
+ * 1. Superadmin selalu berhak.
+ * 2. Pemilik tautan (user_id sama) selalu berhak.
+ * 3. Kolaborator yang aktif di organisasi pemilik dan tergabung dalam grup yang memiliki irisan tag dengan tautan tersebut.
+ *    (User yang diinvite belum bisa mengelola tautan pemilik sebelum diassign ke dalam group yang sesuai).
+ */
+function user_can_manage_link(array $user, array $link): bool {
+    global $pdo;
+    
+    // Superadmin bypass
+    if (($user['role'] ?? '') === 'superadmin') {
+        return true;
+    }
+    
+    // Pemilik tautan langsung
+    $linkOwnerId = (int)($link['user_id'] ?? 0);
+    $userId = (int)($user['id'] ?? 0);
+    if ($linkOwnerId > 0 && $linkOwnerId === $userId) {
+        return true;
+    }
+    
+    // Cek apakah user adalah kolaborator aktif di organisasi pemilik tautan
+    $collabStmt = $pdo->prepare("
+        SELECT id, role, status FROM organization_collaborators
+        WHERE owner_id = ? AND collaborator_id = ? AND status = 'active'
+    ");
+    $collabStmt->execute([$linkOwnerId, $userId]);
+    $collab = $collabStmt->fetch();
+    if (!$collab) {
+        return false;
+    }
+    
+    // Kolaborator berstatus viewer hanya bisa melihat, tidak bisa mengelola/mengedit
+    if (($collab['role'] ?? '') === 'viewer') {
+        return false;
+    }
+    
+    // Cek grup kolaborator di organisasi ini
+    // Kolaborator harus diassign ke minimal satu grup di organisasi pemilik
+    $groupStmt = $pdo->prepare("
+        SELECT g.tags
+        FROM user_group_members ugm
+        JOIN user_groups g ON ugm.group_id = g.id
+        WHERE g.owner_id = ? AND ugm.user_id = ?
+    ");
+    $groupStmt->execute([$linkOwnerId, $userId]);
+    $groups = $groupStmt->fetchAll();
+    
+    if (empty($groups)) {
+        // User yang diinvite belum bisa mengelola links dari user yang menginvite sebelum diassign ke dalam group
+        return false;
+    }
+    
+    // Kumpulkan seluruh tags yang diizinkan dari grup-grup tersebut
+    $allowedTags = [];
+    foreach ($groups as $g) {
+        if (!empty($g['tags'])) {
+            $parts = explode(',', strtolower($g['tags']));
+            foreach ($parts as $p) {
+                $trimmed = trim($p);
+                if ($trimmed !== '' && !in_array($trimmed, $allowedTags, true)) {
+                    $allowedTags[] = $trimmed;
+                }
+            }
+        }
+    }
+    
+    if (empty($allowedTags)) {
+        return false;
+    }
+    
+    // Cek apakah tautan memiliki minimal satu tag yang cocok
+    $linkTags = !empty($link['tags']) ? explode(',', strtolower($link['tags'])) : [];
+    foreach ($linkTags as $lt) {
+        if (in_array(trim($lt), $allowedTags, true)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Memeriksa apakah seorang user berhak mengelola microsite/page tertentu
+ */
+function user_can_manage_microsite(array $user, array $microsite): bool {
+    global $pdo;
+    
+    if (($user['role'] ?? '') === 'superadmin') {
+        return true;
+    }
+    
+    $siteOwnerId = (int)($microsite['user_id'] ?? 0);
+    $userId = (int)($user['id'] ?? 0);
+    if ($siteOwnerId > 0 && $siteOwnerId === $userId) {
+        return true;
+    }
+    
+    $collabStmt = $pdo->prepare("
+        SELECT id, role, status FROM organization_collaborators
+        WHERE owner_id = ? AND collaborator_id = ? AND status = 'active'
+    ");
+    $collabStmt->execute([$siteOwnerId, $userId]);
+    $collab = $collabStmt->fetch();
+    if (!$collab || ($collab['role'] ?? '') === 'viewer') {
+        return false;
+    }
+    
+    // Harus terdaftar di minimal satu grup pemilik
+    $groupStmt = $pdo->prepare("
+        SELECT COUNT(*) FROM user_group_members ugm
+        JOIN user_groups g ON ugm.group_id = g.id
+        WHERE g.owner_id = ? AND ugm.user_id = ?
+    ");
+    $groupStmt->execute([$siteOwnerId, $userId]);
+    return ((int)$groupStmt->fetchColumn()) > 0;
+}

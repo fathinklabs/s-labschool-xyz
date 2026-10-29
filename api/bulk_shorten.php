@@ -153,6 +153,31 @@ foreach ($urls as $item) {
     }
 }
 
+// Catat ke bulk_upload_logs dan activity_logs jika ada tautan yang berhasil
+if ($successCount > 0) {
+    try {
+        $sampleUrls = array_slice(array_map(function($r) {
+            return ($r['status'] === 'success') ? ($r['short_url'] ?? '') : null;
+        }, $results), 0, 5);
+        $sampleText = implode(', ', array_filter($sampleUrls));
+        
+        $batchName = 'Batch ' . date('d M Y H:i:s');
+        $bStmt = $pdo->prepare("
+            INSERT INTO bulk_upload_logs (user_id, batch_name, total_links, tags, sample_links, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())
+        ");
+        $bStmt->execute([$currentUser['id'], $batchName, $successCount, $globalTags, $sampleText]);
+
+        log_activity(
+            (int)$currentUser['id'],
+            'bulk_upload',
+            "Melakukan pemendekan tautan massal sebanyak {$successCount} tautan (Tag: " . ($globalTags ?: 'None') . ")"
+        );
+    } catch (Exception $e) {
+        error_log("Gagal mencatat log bulk upload: " . $e->getMessage());
+    }
+}
+
 echo json_encode([
     'status'        => 'success',
     'total'         => count($results),

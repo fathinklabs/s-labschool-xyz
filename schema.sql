@@ -119,3 +119,62 @@ CREATE TABLE IF NOT EXISTS `microsite_blocks` (
     FOREIGN KEY (`microsite_id`) REFERENCES `microsites`(`id`) ON DELETE CASCADE,
     INDEX `idx_microsite_order` (`microsite_id`, `display_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 6. Tabel Kolaborasi Organisasi / Workspace Pengguna
+CREATE TABLE IF NOT EXISTS `organization_collaborators` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `owner_id` BIGINT NOT NULL,                  -- User pemilik organisasi/lingkup
+    `collaborator_id` BIGINT NOT NULL,           -- User yang diundang
+    `role` ENUM('editor', 'viewer') DEFAULT 'editor',
+    `status` ENUM('active', 'pending') DEFAULT 'active',
+    `invited_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`collaborator_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    UNIQUE KEY `unique_collab` (`owner_id`, `collaborator_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Tabel Grup Kerja & Pembatasan Scope Tag (Maksimal 10 Grup per User)
+CREATE TABLE IF NOT EXISTS `user_groups` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `owner_id` BIGINT NOT NULL,
+    `name` VARCHAR(100) NOT NULL,
+    `description` VARCHAR(255) NULL,
+    `tags` VARCHAR(255) NULL,                     -- Tag yang diasosiasikan dengan grup ini
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `user_group_members` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `group_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `added_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`group_id`) REFERENCES `user_groups`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    UNIQUE KEY `unique_group_member` (`group_id`, `user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Tabel Riwayat Bulk Upload Tautan
+CREATE TABLE IF NOT EXISTS `bulk_upload_logs` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `batch_name` VARCHAR(150) NOT NULL,
+    `total_links` INT UNSIGNED DEFAULT 0,
+    `tags` VARCHAR(255) NULL,
+    `sample_links` TEXT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. Tabel Log Aktivitas Pengguna (User Activity Logs)
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `action` VARCHAR(50) NOT NULL,
+    `description` TEXT NOT NULL,
+    `ip_address` VARCHAR(45) NULL,
+    `user_agent` VARCHAR(255) NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    INDEX `idx_user_activity` (`user_id`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

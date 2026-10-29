@@ -64,9 +64,9 @@ if (!$link) {
     exit;
 }
 
-if ($link['user_id'] != $currentUser['id'] && $currentUser['role'] !== 'superadmin') {
+if (!user_can_manage_link($currentUser, $link)) {
     http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Anda tidak memiliki hak untuk mengedit tautan ini.']);
+    echo json_encode(['status' => 'error', 'message' => 'Anda tidak memiliki hak untuk mengedit tautan ini atau belum ditugaskan ke grup yang sesuai.']);
     exit;
 }
 
@@ -140,6 +140,8 @@ try {
         $qrFrame, $qrCtaText,
         $linkId
     ]);
+
+    log_activity((int)$currentUser['id'], 'update_link', "Memperbarui tautan ID: {$linkId} ({$title})");
 
     echo json_encode([
         'status'  => 'success',

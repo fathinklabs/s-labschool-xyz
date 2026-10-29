@@ -13,9 +13,57 @@ require_login();
 $user = current_user();
 
 // 1. Ambil daftar Short URLs milik user
-$urlStmt = $pdo->prepare("SELECT * FROM short_urls WHERE user_id = ? ORDER BY created_at DESC");
+$urlStmt = $pdo->prepare("SELECT s.*, 'Pribadi' AS workspace_scope, NULL AS owner_name FROM short_urls s WHERE s.user_id = ? ORDER BY s.created_at DESC");
 $urlStmt->execute([$user['id']]);
 $urls = $urlStmt->fetchAll();
+
+// 1b. Ambil Short URLs dari organisasi kolaborasi di mana user di-assign ke group tertentu
+$collabGroupsStmt = $pdo->prepare("
+    SELECT g.id AS group_id, g.owner_id, g.name AS group_name, g.tags AS group_tags, u.full_name AS owner_name
+    FROM user_group_members ugm
+    JOIN user_groups g ON ugm.group_id = g.id
+    JOIN organization_collaborators oc ON oc.owner_id = g.owner_id AND oc.collaborator_id = ?
+    JOIN users u ON g.owner_id = u.id
+    WHERE oc.status = 'active'
+");
+$collabGroupsStmt->execute([$user['id']]);
+$collabGroups = $collabGroupsStmt->fetchAll();
+
+if (!empty($collabGroups)) {
+    $ownerTagsMap = [];
+    foreach ($collabGroups as $cg) {
+        $oid = $cg['owner_id'];
+        if (!isset($ownerTagsMap[$oid])) {
+            $ownerTagsMap[$oid] = [
+                'owner_name' => $cg['owner_name'],
+                'all_tags'   => []
+            ];
+        }
+        $rawTags = array_map('trim', explode(',', strtolower($cg['group_tags'] ?? '')));
+        foreach ($rawTags as $rt) {
+            if ($rt !== '' && !in_array($rt, $ownerTagsMap[$oid]['all_tags'], true)) {
+                $ownerTagsMap[$oid]['all_tags'][] = $rt;
+            }
+        }
+    }
+
+    foreach ($ownerTagsMap as $oid => $info) {
+        if (empty($info['all_tags'])) continue;
+        $ownerUrlsStmt = $pdo->prepare("SELECT * FROM short_urls WHERE user_id = ? ORDER BY created_at DESC");
+        $ownerUrlsStmt->execute([$oid]);
+        $ownerUrls = $ownerUrlsStmt->fetchAll();
+        foreach ($ownerUrls as $ou) {
+            $linkTags = array_map('trim', explode(',', strtolower($ou['tags'] ?? '')));
+            $intersect = array_intersect($linkTags, $info['all_tags']);
+            if (!empty($intersect)) {
+                $ou['workspace_scope'] = 'Organisasi: ' . $info['owner_name'];
+                $ou['owner_name'] = $info['owner_name'];
+                $ou['is_collaborated'] = true;
+                $urls[] = $ou;
+            }
+        }
+    }
+}
 
 // 2. Ambil daftar Microsites milik user
 $bioStmt = $pdo->prepare("SELECT * FROM microsites WHERE user_id = ? ORDER BY created_at DESC");
@@ -359,7 +407,14 @@ foreach ($urls as $u) {
                                     <input type="checkbox" onclick="event.stopPropagation();" class="mt-1 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                                     <div class="space-y-1.5 flex-1 min-w-0">
                                         <!-- Title -->
-                                        <h3 class="text-sm font-extrabold text-slate-900 truncate hover:text-blue-600 transition"><?= htmlspecialchars($u['title']) ?></h3>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h3 class="text-sm font-extrabold text-slate-900 truncate hover:text-blue-600 transition"><?= htmlspecialchars($u['title']) ?></h3>
+                                            <?php if (!empty($u['is_collaborated'])): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                                                    <span class="symbols text-[12px]">group</span> <?= htmlspecialchars($u['workspace_scope']) ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
 
                                         <!-- Short URL with copy button -->
                                         <div class="flex items-center gap-2">
