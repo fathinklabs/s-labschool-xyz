@@ -11,6 +11,8 @@ $code = trim($_GET['code'] ?? '');
 $format = strtolower(trim($_GET['format'] ?? 'png'));
 $fgColor = trim($_GET['fg'] ?? '#1E40AF');
 $bgColor = trim($_GET['bg'] ?? '#FFFFFF');
+$frame = trim($_GET['frame'] ?? 'none');
+$ctaText = trim($_GET['cta'] ?? 'PINDAI SAYA');
 $download = !empty($_GET['download']);
 $size = min(max((int)($_GET['size'] ?? 400), 120), 1200);
 
@@ -19,8 +21,8 @@ if (empty($code)) {
     die('Code parameter is required.');
 }
 
-// Cek di database untuk preferensi warna tersimpan jika ada
-$stmt = $pdo->prepare("SELECT short_code, custom_slug, qr_fg_color, qr_bg_color FROM short_urls WHERE short_code = ? OR custom_slug = ? LIMIT 1");
+// Cek di database untuk preferensi warna & frame tersimpan jika ada
+$stmt = $pdo->prepare("SELECT short_code, custom_slug, qr_fg_color, qr_bg_color, qr_frame, qr_cta_text FROM short_urls WHERE short_code = ? OR custom_slug = ? LIMIT 1");
 $stmt->execute([$code, $code]);
 $urlRow = $stmt->fetch();
 if ($urlRow) {
@@ -29,6 +31,12 @@ if ($urlRow) {
     }
     if (empty($_GET['bg']) && !empty($urlRow['qr_bg_color'])) {
         $bgColor = $urlRow['qr_bg_color'];
+    }
+    if (empty($_GET['frame']) && !empty($urlRow['qr_frame'])) {
+        $frame = $urlRow['qr_frame'];
+    }
+    if (empty($_GET['cta']) && !empty($urlRow['qr_cta_text'])) {
+        $ctaText = $urlRow['qr_cta_text'];
     }
 }
 
@@ -120,6 +128,49 @@ if ($matrix && !empty($matrix['bcode'])) {
             imagecopyresampled($img, $logo, $logoX, $logoY, 0, 0, $targetLogoSize, $targetLogoSize, $logoW, $logoH);
             imagedestroy($logo);
         }
+    }
+
+    // Fitur Bitly Smart QR Frames: Menambahkan frame dan CTA badge jika diaktifkan
+    if ($frame === 'badge-bottom' || $frame === 'card') {
+        $framePadding = 24;
+        $badgeHeight = 44;
+        $framedW = $imgSize + ($framePadding * 2);
+        $framedH = $imgSize + ($framePadding * 2) + $badgeHeight;
+        
+        $framedImg = imagecreatetruecolor($framedW, $framedH);
+        $canvasBg = imagecolorallocate($framedImg, 255, 255, 255);
+        $borderCol = imagecolorallocate($framedImg, 226, 232, 240); // slate-200
+        $badgeBg = imagecolorallocate($framedImg, $fgR, $fgG, $fgB);
+        $badgeTxt = imagecolorallocate($framedImg, 255, 255, 255);
+        
+        imagefill($framedImg, 0, 0, $canvasBg);
+        
+        // Border card luar
+        imagerectangle($framedImg, 0, 0, $framedW - 1, $framedH - 1, $borderCol);
+        imagerectangle($framedImg, 1, 1, $framedW - 2, $framedH - 2, $borderCol);
+        
+        // Salin QR code ke tengah atas
+        imagecopy($framedImg, $img, $framePadding, $framePadding, 0, 0, $imgSize, $imgSize);
+        imagedestroy($img);
+        
+        // Tombol / Badge CTA di bawah
+        $bX1 = $framePadding;
+        $bY1 = $imgSize + $framePadding + 8;
+        $bX2 = $framedW - $framePadding;
+        $bY2 = $framedH - $framePadding;
+        imagefilledrectangle($framedImg, $bX1, $bY1, $bX2, $bY2, $badgeBg);
+        
+        // Render Teks CTA
+        $font = 5; // Built-in font size 5 GD
+        $charW = imagefontwidth($font);
+        $charH = imagefontheight($font);
+        $label = mb_strtoupper($ctaText, 'UTF-8');
+        $textLen = strlen($label);
+        $textX = $bX1 + (($bX2 - $bX1) - ($textLen * $charW)) / 2;
+        $textY = $bY1 + (($bY2 - $bY1) - $charH) / 2;
+        imagestring($framedImg, $font, (int)max($bX1 + 4, $textX), (int)$textY, $label, $badgeTxt);
+        
+        $img = $framedImg;
     }
 
     header('Content-Type: image/png');

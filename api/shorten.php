@@ -58,8 +58,13 @@ $startsAt = !empty($data['starts_at']) ? trim($data['starts_at']) : null;
 $utmSource = trim($data['utm_source'] ?? '');
 $utmMedium = trim($data['utm_medium'] ?? '');
 $utmCampaign = trim($data['utm_campaign'] ?? '');
+$tags = trim($data['tags'] ?? '');
+$iosUrl = trim($data['ios_url'] ?? '');
+$androidUrl = trim($data['android_url'] ?? '');
 $qrFgColor = trim($data['qr_fg_color'] ?? '#1E40AF');
 $qrBgColor = trim($data['qr_bg_color'] ?? '#FFFFFF');
+$qrFrame = trim($data['qr_frame'] ?? 'none');
+$qrCtaText = trim($data['qr_cta_text'] ?? 'PINDAI SAYA');
 
 // Validasi URL Asli
 if (empty($originalUrl)) {
@@ -154,13 +159,13 @@ try {
         INSERT INTO short_urls (
             user_id, short_code, original_url, title, custom_slug,
             password_hash, expires_at, starts_at, utm_source, utm_medium, utm_campaign,
-            qr_fg_color, qr_bg_color
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            tags, ios_url, android_url, qr_fg_color, qr_bg_color, qr_frame, qr_cta_text
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute([
         $currentUser['id'], $shortCode, $originalUrl, $title, $slug,
         $passwordHash, $expiresAtSql, $startsAtSql, $utmSource, $utmMedium, $utmCampaign,
-        $qrFgColor, $qrBgColor
+        $tags, $iosUrl, $androidUrl, $qrFgColor, $qrBgColor, $qrFrame, $qrCtaText
     ]);
     $newId = (int)$pdo->lastInsertId();
 
@@ -179,8 +184,13 @@ try {
             'title'         => $title,
             'has_password'  => !empty($passwordHash),
             'expires_at'    => $expiresAtSql,
+            'tags'          => $tags,
+            'ios_url'       => $iosUrl,
+            'android_url'   => $androidUrl,
             'qr_fg_color'   => $qrFgColor,
             'qr_bg_color'   => $qrBgColor,
+            'qr_frame'      => $qrFrame,
+            'qr_cta_text'   => $qrCtaText,
             'qr_url'        => base_url("api/qr.php?code=" . urlencode($effectiveSlug))
         ]
     ]);

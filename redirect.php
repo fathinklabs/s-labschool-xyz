@@ -36,7 +36,7 @@ if ($bioRow) {
 // 2. Cek apakah cocok dengan Short URL
 $stmtUrl = $pdo->prepare("
     SELECT id, short_code, custom_slug, original_url, title, password_hash,
-           expires_at, starts_at, is_active, clicks_count
+           expires_at, starts_at, is_active, clicks_count, ios_url, android_url
     FROM short_urls
     WHERE short_code = ? OR custom_slug = ?
     LIMIT 1
@@ -92,8 +92,18 @@ if (!empty($urlRow['password_hash'])) {
 // Catat log klik analitik (IP, Geolokasi CF, User Agent, Referrer)
 record_click((int)$urlRow['id']);
 
+// Cek Device-based Routing (Fitur Bitly Deep Linking)
+$targetUrl = $urlRow['original_url'];
+$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+if (!empty($urlRow['ios_url']) && preg_match('/(iPhone|iPad|iPod)/i', $userAgent)) {
+    $targetUrl = $urlRow['ios_url'];
+} elseif (!empty($urlRow['android_url']) && preg_match('/Android/i', $userAgent)) {
+    $targetUrl = $urlRow['android_url'];
+}
+
 // Eksekusi Redirect Langsung HTTP 302
-header("Location: {$urlRow['original_url']}", true, 302);
+header("Location: {$targetUrl}", true, 302);
 header("Cache-Control: no-cache, no-store, must-revalidate");
 exit;
 

@@ -37,9 +37,14 @@ CREATE TABLE IF NOT EXISTS `short_urls` (
     `utm_source` VARCHAR(100) NULL,              -- Pro: UTM Builder
     `utm_medium` VARCHAR(100) NULL,
     `utm_campaign` VARCHAR(100) NULL,
+    `tags` VARCHAR(255) NULL,                    -- Bitly Feature: Tagging & Campaign aggregation
+    `ios_url` TEXT NULL,                         -- Bitly Feature: Device-based deep linking for iOS
+    `android_url` TEXT NULL,                     -- Bitly Feature: Device-based deep linking for Android
     `qr_fg_color` VARCHAR(20) DEFAULT '#1E40AF', -- Pro: Custom QR Foreground
     `qr_bg_color` VARCHAR(20) DEFAULT '#FFFFFF', -- Pro: Custom QR Background
     `qr_logo` VARCHAR(50) DEFAULT 'labschool',   -- Pro: Center logo
+    `qr_frame` VARCHAR(50) DEFAULT 'none',       -- Bitly Feature: Smart QR Frame ('none', 'badge-bottom', 'badge-top', 'card')
+    `qr_cta_text` VARCHAR(100) DEFAULT 'PINDAI SAYA', -- Bitly Feature: QR Frame Call to Action Text
     `clicks_count` INT UNSIGNED DEFAULT 0,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

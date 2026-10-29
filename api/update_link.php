@@ -16,6 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $currentUser = current_user();
 if (!$currentUser) {
+    // Cek header Authorization Bearer atau parameter api_key
+    $authHeader = get_auth_header();
+    $apiKey = null;
+    if (preg_match('/Bearer\s+(labs_[a-zA-Z0-9_]+)/', $authHeader, $matches)) {
+        $apiKey = $matches[1];
+    }
+    if ($apiKey) {
+        $stmt = $pdo->prepare("SELECT id, email, full_name, domain, role FROM users WHERE api_key = ? AND is_active = 1");
+        $stmt->execute([$apiKey]);
+        $currentUser = $stmt->fetch();
+    }
+}
+
+if (!$currentUser) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Autentikasi diperlukan.']);
     exit;
@@ -33,6 +47,11 @@ $removePassword = !empty($data['remove_password']);
 $expiresAt = !empty($data['expires_at']) ? trim($data['expires_at']) : null;
 $qrFgColor = trim($data['qr_fg_color'] ?? '#1E40AF');
 $qrBgColor = trim($data['qr_bg_color'] ?? '#FFFFFF');
+$tags = isset($data['tags']) ? trim($data['tags']) : null;
+$iosUrl = isset($data['ios_url']) ? trim($data['ios_url']) : null;
+$androidUrl = isset($data['android_url']) ? trim($data['android_url']) : null;
+$qrFrame = isset($data['qr_frame']) ? trim($data['qr_frame']) : 'none';
+$qrCtaText = isset($data['qr_cta_text']) ? trim($data['qr_cta_text']) : 'PINDAI SAYA';
 
 // Verifikasi kepemilikan tautan
 $stmt = $pdo->prepare("SELECT * FROM short_urls WHERE id = ?");
@@ -101,15 +120,24 @@ try {
             custom_slug = ?,
             password_hash = ?,
             expires_at = ?,
+            tags = ?,
+            ios_url = ?,
+            android_url = ?,
             qr_fg_color = ?,
             qr_bg_color = ?,
+            qr_frame = ?,
+            qr_cta_text = ?,
             updated_at = NOW()
         WHERE id = ?
     ");
     $up->execute([
         $originalUrl, $title, $newSlug,
         $newPasswordHash, $expiresAtSql,
+        $tags ?? $link['tags'],
+        $iosUrl !== null ? $iosUrl : $link['ios_url'],
+        $androidUrl !== null ? $androidUrl : $link['android_url'],
         $qrFgColor, $qrBgColor,
+        $qrFrame, $qrCtaText,
         $linkId
     ]);
 

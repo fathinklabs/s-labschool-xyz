@@ -58,6 +58,44 @@ $refStmt = $pdo->prepare("SELECT referrer, COUNT(*) as total FROM click_logs WHE
 $refStmt->execute([$linkId]);
 $refRows = $refStmt->fetchAll();
 
+// 4. Fitur Bitly: Peak Hours Activity Heatmap (24 Jam x 7 Hari)
+$heatmapStmt = $pdo->prepare("
+    SELECT HOUR(clicked_at) as chour, DAYOFWEEK(clicked_at) as cday, COUNT(*) as total
+    FROM click_logs
+    WHERE url_id = ?
+    GROUP BY HOUR(clicked_at), DAYOFWEEK(clicked_at)
+");
+$heatmapStmt->execute([$linkId]);
+$heatmapRaw = $heatmapStmt->fetchAll();
+
+// Matrix 7 hari x 24 jam (Default 0)
+// Day 1=Minggu, 2=Senin, 3=Selasa, 4=Rabu, 5=Kamis, 6=Jumat, 7=Sabtu
+$heatmapData = [];
+$maxClicksPerHour = 1;
+for ($d = 1; $d <= 7; $d++) {
+    for ($h = 0; $h < 24; $h++) {
+        $heatmapData[$d][$h] = 0;
+    }
+}
+foreach ($heatmapRaw as $hr) {
+    $d = (int)$hr['cday'];
+    $h = (int)$hr['chour'];
+    $tot = (int)$hr['total'];
+    $heatmapData[$d][$h] = $tot;
+    if ($tot > $maxClicksPerHour) {
+        $maxClicksPerHour = $tot;
+    }
+}
+$dayNames = [
+    2 => 'Sen',
+    3 => 'Sel',
+    4 => 'Rab',
+    5 => 'Kam',
+    6 => 'Jum',
+    7 => 'Sab',
+    1 => 'Min'
+];
+
 // 4. Log Terakhir (20 Klik Terbaru)
 $recentStmt = $pdo->prepare("SELECT clicked_at, ip_address, country, city, device_type, browser, os, referrer FROM click_logs WHERE url_id = ? ORDER BY clicked_at DESC LIMIT 20");
 $recentStmt->execute([$linkId]);
@@ -147,6 +185,70 @@ $recentRows = $recentStmt->fetchAll();
             </h3>
             <div class="h-64 w-full">
                 <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Fitur Bitly: Peak Hours & Days Engagement Heatmap -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        <span>Aktivitas Jam Sibuk Pengunjung (Peak Hours Heatmap)</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Pola interaksi audiens berdasarkan jam dalam hari (WIB) dan hari dalam sepekan ala Bitly Enterprise.</p>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 text-[11px] font-bold text-slate-400">
+                    <span>Sedikit</span>
+                    <div class="flex items-center gap-1">
+                        <span class="w-3 h-3 rounded bg-slate-100"></span>
+                        <span class="w-3 h-3 rounded bg-blue-100"></span>
+                        <span class="w-3 h-3 rounded bg-blue-300"></span>
+                        <span class="w-3 h-3 rounded bg-blue-500"></span>
+                        <span class="w-3 h-3 rounded bg-blue-700"></span>
+                    </div>
+                    <span>Tinggi</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto pb-2">
+                <div class="min-w-[680px]">
+                    <!-- Jam Header (00..23) -->
+                    <div class="grid grid-cols-[40px_repeat(24,1fr)] gap-1 mb-1 text-[10px] font-bold text-slate-400 text-center">
+                        <div></div>
+                        <?php for ($h = 0; $h < 24; $h++): ?>
+                            <div><?= str_pad($h, 2, '0', STR_PAD_LEFT) ?></div>
+                        <?php endfor; ?>
+                    </div>
+
+                    <!-- Baris Hari -->
+                    <?php foreach ($dayNames as $dayNum => $dayLabel): ?>
+                        <div class="grid grid-cols-[40px_repeat(24,1fr)] gap-1 items-center mb-1">
+                            <span class="text-xs font-bold text-slate-500 text-right pr-2"><?= $dayLabel ?></span>
+                            <?php for ($h = 0; $h < 24; $h++): ?>
+                                <?php 
+                                    $val = $heatmapData[$dayNum][$h] ?? 0;
+                                    $intensity = $maxClicksPerHour > 0 ? ($val / $maxClicksPerHour) : 0;
+                                    if ($val === 0) {
+                                        $bgClass = 'bg-slate-100 hover:bg-slate-200';
+                                    } elseif ($intensity < 0.25) {
+                                        $bgClass = 'bg-blue-100 hover:bg-blue-200';
+                                    } elseif ($intensity < 0.55) {
+                                        $bgClass = 'bg-blue-300 hover:bg-blue-400';
+                                    } elseif ($intensity < 0.85) {
+                                        $bgClass = 'bg-blue-500 hover:bg-blue-600 text-white';
+                                    } else {
+                                        $bgClass = 'bg-blue-700 hover:bg-blue-800 text-white';
+                                    }
+                                ?>
+                                <div class="h-6 rounded <?= $bgClass ?> flex items-center justify-center text-[9px] font-extrabold transition cursor-pointer"
+                                     title="<?= $dayLabel ?>, Pukul <?= str_pad($h, 2, '0', STR_PAD_LEFT) ?>:00 WIB: <?= $val ?> klik">
+                                    <?= $val > 0 ? $val : '' ?>
+                                </div>
+                            <?php endfor; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
 
