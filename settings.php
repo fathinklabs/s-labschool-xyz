@@ -9,7 +9,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/auth.php';
 require_once __DIR__ . '/config/helpers.php';
 
-require_auth();
+require_login();
 $user = current_user();
 
 $tab = $_GET['tab'] ?? 'account-details';

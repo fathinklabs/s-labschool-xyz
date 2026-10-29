@@ -76,6 +76,13 @@ function require_login(string $redirect_to = '/login.php'): void {
 }
 
 /**
+ * Alias require_auth() untuk kompatibilitas
+ */
+function require_auth(string $redirect_to = '/login.php'): void {
+    require_login($redirect_to);
+}
+
+/**
  * Wajibkan peran Superadmin untuk mengakses halaman
  */
 function require_admin(string $redirect_to = '/dashboard.php'): void {
