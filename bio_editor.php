@@ -1,7 +1,7 @@
 <?php
 /**
  * Visual Microsite Editor: s.labschool.xyz
- * Paritas s.id Pro Bio Link Builder
+ * Modern Genially Template & Theme Builder
  */
 
 require_once __DIR__ . '/config/database.php';
@@ -30,6 +30,8 @@ if ($siteId > 0) {
 }
 
 $socials = !empty($site['social_links']) ? json_decode($site['social_links'], true) : [];
+$activeTemplate = $site['template_style'] ?? 'genially-showcase';
+$activeTheme = $site['theme'] ?? 'labs-navy';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,13 +42,17 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
     <link rel="icon" href="/assets/img/logo-smp-labschool.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['"Nunito Sans"', 'sans-serif'] },
+                    fontFamily: { 
+                        sans: ['"Plus Jakarta Sans"', '"Nunito Sans"', 'sans-serif'],
+                        symbols: ['"Material Symbols Rounded"', 'sans-serif']
+                    },
                     colors: {
                         labs: { blue: '#2563EB', dark: '#1E40AF', amber: '#F59E0B' }
                     }
@@ -54,6 +60,12 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
             }
         };
     </script>
+    <style>
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
@@ -62,21 +74,21 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="/dashboard.php" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition" title="Kembali ke Dashboard">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span class="material-symbols-rounded text-xl">arrow_back</span>
                 </a>
                 <div class="flex items-center gap-2">
                     <img src="/assets/img/logo-smp-labschool.png" alt="Logo Labschool" class="h-9 w-auto">
                     <div>
                         <h1 class="text-sm font-extrabold text-slate-900 leading-tight"><?= $siteId ? 'Edit Halaman Microsite' : 'Buat Halaman Microsite Baru' ?></h1>
-                        <p class="text-xs text-slate-500">Official Bio Link SMP Labschool Jakarta</p>
+                        <p class="text-xs text-slate-500">Genially-Style Interactive Experience &bull; SMP Labschool Jakarta</p>
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <button type="button" onclick="saveMicrosite()" id="btnSave" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 transition flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                    <span>Simpan Perubahan</span>
+                <button type="button" onclick="saveMicrosite()" id="btnSave" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                    <span class="material-symbols-rounded text-base">save</span>
+                    <span>Simpan & Terbitkan</span>
                 </button>
             </div>
         </div>
@@ -85,11 +97,14 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
     <div class="max-w-7xl mx-auto px-4 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
         <!-- Kolom Form Editor (7 Kolom) -->
         <div class="lg:col-span-7 space-y-6">
+            
             <!-- 1. Identitas Halaman -->
             <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                 <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <span class="p-1.5 rounded-lg bg-blue-50 text-blue-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
-                    <span>1. Profil & URL Halaman</span>
+                    <span class="p-1.5 rounded-xl bg-blue-50 text-blue-600">
+                        <span class="material-symbols-rounded text-lg">person</span>
+                    </span>
+                    <span>1. Profil & Alamat URL Halaman</span>
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -109,65 +124,142 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi / Bio</label>
-                    <textarea id="siteBio" rows="2" placeholder="Tuliskan bio atau deskripsi profil..."
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi / Bio Profil</label>
+                    <textarea id="siteBio" rows="2" placeholder="Tuliskan deskripsi profil atau agenda kegiatan..."
                         class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"><?= htmlspecialchars($site['bio'] ?? '') ?></textarea>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">URL Avatar / Logo Profil (Opsional)</label>
-                    <input type="url" id="siteAvatar" value="<?= htmlspecialchars($site['avatar_url'] ?? '') ?>" placeholder="https://... (kosongkan untuk menggunakan logo Labschool default)"
+                    <input type="url" id="siteAvatar" value="<?= htmlspecialchars($site['avatar_url'] ?? '') ?>" placeholder="https://... (kosongkan untuk menggunakan logo Labschool resmi)"
                         class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none">
                 </div>
             </div>
 
-            <!-- 2. Pengaturan Tema (s.id Pro) -->
+            <!-- 2. Pilihan Template Modern Genially -->
             <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                 <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <span class="p-1.5 rounded-lg bg-amber-50 text-amber-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg></span>
-                    <span>2. Tema Tampilan (Labschool Styles)</span>
+                    <span class="p-1.5 rounded-xl bg-purple-50 text-purple-600">
+                        <span class="material-symbols-rounded text-lg">dashboard_customize</span>
+                    </span>
+                    <span>2. Template Layout Interaktif (Genially Style)</span>
                 </h2>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="themeSelector">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="templateSelector">
+                    <!-- Template 1: Genially Showcase -->
                     <label class="cursor-pointer">
-                        <input type="radio" name="theme" value="labs-navy" <?= ($site['theme'] ?? 'labs-navy') === 'labs-navy' ? 'checked' : '' ?> class="sr-only peer">
-                        <div class="p-3 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:ring-2 peer-checked:ring-blue-100 bg-slate-900 text-white text-center transition">
-                            <div class="w-6 h-6 rounded-full bg-blue-600 mx-auto mb-1"></div>
-                            <span class="text-xs font-bold block">Labs Navy</span>
+                        <input type="radio" name="template_style" value="genially-showcase" <?= $activeTemplate === 'genially-showcase' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-3.5 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:bg-blue-50/50 hover:bg-slate-50 transition text-left space-y-1.5">
+                            <span class="material-symbols-rounded text-blue-600 text-2xl">auto_awesome</span>
+                            <div class="text-xs font-black text-slate-900">Genially Showcase</div>
+                            <p class="text-[10px] text-slate-500 leading-tight">Hero aura, tombol link interaktif dengan chevron & efek shimmer.</p>
                         </div>
                     </label>
 
+                    <!-- Template 2: Genially Roadmap -->
                     <label class="cursor-pointer">
-                        <input type="radio" name="theme" value="labs-gold" <?= ($site['theme'] ?? '') === 'labs-gold' ? 'checked' : '' ?> class="sr-only peer">
-                        <div class="p-3 rounded-2xl border-2 peer-checked:border-amber-500 peer-checked:ring-2 peer-checked:ring-amber-100 bg-slate-950 text-amber-400 text-center transition">
-                            <div class="w-6 h-6 rounded-full bg-amber-500 mx-auto mb-1"></div>
-                            <span class="text-xs font-bold block">Labs Gold</span>
+                        <input type="radio" name="template_style" value="genially-roadmap" <?= $activeTemplate === 'genially-roadmap' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-3.5 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:bg-blue-50/50 hover:bg-slate-50 transition text-left space-y-1.5">
+                            <span class="material-symbols-rounded text-purple-600 text-2xl">route</span>
+                            <div class="text-xs font-black text-slate-900">Genially Roadmap</div>
+                            <p class="text-[10px] text-slate-500 leading-tight">Garis linier dengan lingkaran bernomor untuk alur PPDB atau modul.</p>
                         </div>
                     </label>
 
+                    <!-- Template 3: Genially 2-Col Cards -->
                     <label class="cursor-pointer">
-                        <input type="radio" name="theme" value="emerald" <?= ($site['theme'] ?? '') === 'emerald' ? 'checked' : '' ?> class="sr-only peer">
-                        <div class="p-3 rounded-2xl border-2 peer-checked:border-emerald-600 peer-checked:ring-2 peer-checked:ring-emerald-100 bg-slate-900 text-emerald-400 text-center transition">
-                            <div class="w-6 h-6 rounded-full bg-emerald-600 mx-auto mb-1"></div>
-                            <span class="text-xs font-bold block">Emerald</span>
-                        </div>
-                    </label>
-
-                    <label class="cursor-pointer">
-                        <input type="radio" name="theme" value="slate" <?= ($site['theme'] ?? '') === 'slate' ? 'checked' : '' ?> class="sr-only peer">
-                        <div class="p-3 rounded-2xl border-2 peer-checked:border-slate-800 peer-checked:ring-2 peer-checked:ring-slate-200 bg-slate-100 text-slate-800 text-center transition">
-                            <div class="w-6 h-6 rounded-full bg-slate-800 mx-auto mb-1"></div>
-                            <span class="text-xs font-bold block">Clean Slate</span>
+                        <input type="radio" name="template_style" value="genially-cards" <?= $activeTemplate === 'genially-cards' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-3.5 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:bg-blue-50/50 hover:bg-slate-50 transition text-left space-y-1.5">
+                            <span class="material-symbols-rounded text-emerald-600 text-2xl">grid_view</span>
+                            <div class="text-xs font-black text-slate-900">Genially Cards Grid</div>
+                            <p class="text-[10px] text-slate-500 leading-tight">Layout kartu modern berdampingan (2 kolom) dengan tilt hover.</p>
                         </div>
                     </label>
                 </div>
             </div>
 
-            <!-- 3. Media Sosial -->
+            <!-- 3. Genially Interactive Event Countdown (Opsional) -->
             <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                 <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <span class="p-1.5 rounded-lg bg-pink-50 text-pink-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
-                    <span>3. Ikon Media Sosial</span>
+                    <span class="p-1.5 rounded-xl bg-amber-50 text-amber-600">
+                        <span class="material-symbols-rounded text-lg">timer</span>
+                    </span>
+                    <span>3. Hitung Mundur Acara (Interactive Event Countdown)</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Judul Countdown (Opsional)</label>
+                        <input type="text" id="cdTitle" value="<?= htmlspecialchars($site['countdown_title'] ?? '') ?>" placeholder="Contoh: Menuju PPDB Labschool 2026"
+                            class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Waktu Target Acara (WIB)</label>
+                        <input type="datetime-local" id="cdDate" value="<?= !empty($site['countdown_date']) ? date('Y-m-d\TH:i', strtotime($site['countdown_date'])) : '' ?>"
+                            class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Pengaturan Tema Visual -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <span class="p-1.5 rounded-xl bg-blue-50 text-blue-600">
+                        <span class="material-symbols-rounded text-lg">palette</span>
+                    </span>
+                    <span>4. Tema Tampilan Visual</span>
+                </h2>
+
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="themeSelector">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="labs-navy" <?= $activeTheme === 'labs-navy' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:ring-2 peer-checked:ring-blue-100 bg-slate-900 text-white text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-blue-600 mx-auto mb-1"></div>
+                            <span class="text-[11px] font-bold block">Labs Navy</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="genially-cosmic" <?= $activeTheme === 'genially-cosmic' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-cyan-400 peer-checked:ring-2 peer-checked:ring-cyan-100 bg-[#0B0F19] text-cyan-300 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mb-1"></div>
+                            <span class="text-[11px] font-bold block">Cosmic Neon</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="labs-gold" <?= $activeTheme === 'labs-gold' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-amber-500 peer-checked:ring-2 peer-checked:ring-amber-100 bg-slate-950 text-amber-400 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-amber-500 mx-auto mb-1"></div>
+                            <span class="text-[11px] font-bold block">Labs Gold</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="emerald" <?= $activeTheme === 'emerald' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-emerald-600 peer-checked:ring-2 peer-checked:ring-emerald-100 bg-slate-900 text-emerald-400 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-emerald-600 mx-auto mb-1"></div>
+                            <span class="text-[11px] font-bold block">Emerald</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="slate" <?= $activeTheme === 'slate' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-slate-800 peer-checked:ring-2 peer-checked:ring-slate-200 bg-slate-100 text-slate-800 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-slate-800 mx-auto mb-1"></div>
+                            <span class="text-[11px] font-bold block">Clean Slate</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 5. Media Sosial -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <span class="p-1.5 rounded-xl bg-pink-50 text-pink-600">
+                        <span class="material-symbols-rounded text-lg">share</span>
+                    </span>
+                    <span>5. Ikon Media Sosial</span>
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -190,22 +282,27 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
                 </div>
             </div>
 
-            <!-- 4. Blok Komponen (Link, Video, Text, vCard) -->
+            <!-- 6. Blok Komponen (Link, Video, Text, vCard) -->
             <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                        <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></span>
-                        <span>4. Daftar Blok Komponen</span>
+                        <span class="p-1.5 rounded-xl bg-emerald-50 text-emerald-600">
+                            <span class="material-symbols-rounded text-lg">view_stream</span>
+                        </span>
+                        <span>6. Daftar Blok Komponen</span>
                     </h2>
                     <div class="flex gap-2">
-                        <button type="button" onclick="addBlock('link')" class="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold transition">
-                            + Tombol Link
+                        <button type="button" onclick="addBlock('link')" class="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold transition flex items-center gap-1">
+                            <span class="material-symbols-rounded text-sm">add</span>
+                            <span>Tombol Link</span>
                         </button>
-                        <button type="button" onclick="addBlock('youtube')" class="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold transition">
-                            + YouTube
+                        <button type="button" onclick="addBlock('youtube')" class="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold transition flex items-center gap-1">
+                            <span class="material-symbols-rounded text-sm">play_circle</span>
+                            <span>YouTube</span>
                         </button>
-                        <button type="button" onclick="addBlock('text')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition">
-                            + Pengumuman
+                        <button type="button" onclick="addBlock('text')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition flex items-center gap-1">
+                            <span class="material-symbols-rounded text-sm">campaign</span>
+                            <span>Pengumuman</span>
                         </button>
                     </div>
                 </div>
@@ -222,9 +319,9 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
                 <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-4">Simulasi Pratinjau Seluler</h3>
                 
                 <!-- Mockup Smartphone Frame -->
-                <div class="w-[320px] h-[580px] mx-auto rounded-[40px] border-[10px] border-slate-800 bg-slate-900 shadow-2xl overflow-hidden relative">
+                <div class="w-[320px] h-[580px] mx-auto rounded-[40px] border-[10px] border-slate-900 bg-slate-950 shadow-2xl overflow-hidden relative">
                     <div class="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-4 bg-slate-800 rounded-full z-20"></div>
-                    <iframe id="previewIframe" src="<?= $siteId ? '/p/' . htmlspecialchars($site['slug']) : 'about:blank' ?>" class="w-full h-full border-0 bg-slate-900"></iframe>
+                    <iframe id="previewIframe" src="<?= $siteId ? '/p/' . htmlspecialchars($site['slug']) : 'about:blank' ?>" class="w-full h-full border-0 bg-slate-950"></iframe>
                 </div>
                 <p class="text-xs text-slate-400 mt-4">Pratinjau otomatis diperbarui saat Anda menekan tombol Simpan.</p>
             </div>
@@ -340,6 +437,9 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
                 title: document.getElementById('siteTitle').value,
                 bio: document.getElementById('siteBio').value,
                 avatar_url: document.getElementById('siteAvatar').value,
+                template_style: document.querySelector('input[name="template_style"]:checked')?.value || 'genially-showcase',
+                countdown_title: document.getElementById('cdTitle').value,
+                countdown_date: document.getElementById('cdDate').value,
                 theme: document.querySelector('input[name="theme"]:checked')?.value || 'labs-navy',
                 social_links: {
                     whatsapp: document.getElementById('socWa').value,
@@ -371,7 +471,7 @@ $socials = !empty($site['social_links']) ? json_decode($site['social_links'], tr
                 alert('Terjadi kesalahan jaringan.');
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Simpan Perubahan';
+                btn.innerText = 'Simpan & Terbitkan';
             }
         }
 

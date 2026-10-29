@@ -48,6 +48,9 @@ $title = trim($data['title'] ?? '');
 $bio = trim($data['bio'] ?? '');
 $avatarUrl = trim($data['avatar_url'] ?? '');
 $theme = trim($data['theme'] ?? 'labs-navy');
+$templateStyle = trim($data['template_style'] ?? 'genially-showcase');
+$countdownDate = !empty($data['countdown_date']) ? date('Y-m-d H:i:s', strtotime($data['countdown_date'])) : null;
+$countdownTitle = trim($data['countdown_title'] ?? '');
 $customBgType = trim($data['custom_bg_type'] ?? 'theme');
 $customBgValue = trim($data['custom_bg_value'] ?? '');
 $buttonStyle = trim($data['button_style'] ?? 'rounded-xl');
@@ -118,6 +121,7 @@ try {
         $up = $pdo->prepare("
             UPDATE microsites SET
                 slug = ?, title = ?, bio = ?, avatar_url = ?, theme = ?,
+                template_style = ?, countdown_date = ?, countdown_title = ?,
                 custom_bg_type = ?, custom_bg_value = ?, button_style = ?,
                 seo_title = ?, seo_description = ?, custom_footer = ?,
                 social_links = ?, updated_at = NOW()
@@ -125,6 +129,7 @@ try {
         ");
         $up->execute([
             $slug, $title, $bio, $avatarUrl, $theme,
+            $templateStyle, $countdownDate, $countdownTitle,
             $customBgType, $customBgValue, $buttonStyle,
             $seoTitle, $seoDescription, $customFooter,
             $socialLinks, $micrositeId
@@ -133,12 +138,14 @@ try {
         $ins = $pdo->prepare("
             INSERT INTO microsites (
                 user_id, slug, title, bio, avatar_url, theme,
+                template_style, countdown_date, countdown_title,
                 custom_bg_type, custom_bg_value, button_style,
                 seo_title, seo_description, custom_footer, social_links
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $ins->execute([
             $currentUser['id'], $slug, $title, $bio, $avatarUrl, $theme,
+            $templateStyle, $countdownDate, $countdownTitle,
             $customBgType, $customBgValue, $buttonStyle,
             $seoTitle, $seoDescription, $customFooter, $socialLinks
         ]);

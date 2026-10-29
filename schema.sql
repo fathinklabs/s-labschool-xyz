@@ -81,6 +81,9 @@ CREATE TABLE IF NOT EXISTS `microsites` (
     `bio` TEXT NULL,
     `avatar_url` VARCHAR(255) NULL,
     `theme` VARCHAR(50) DEFAULT 'labs-navy',     -- Pro: Themes
+    `template_style` VARCHAR(50) DEFAULT 'genially-showcase', -- Genially modern template presets ('standard', 'genially-showcase', 'genially-roadmap', 'genially-cards')
+    `countdown_date` DATETIME NULL,              -- Genially Event Countdown
+    `countdown_title` VARCHAR(150) NULL,
     `custom_bg_type` ENUM('theme', 'color', 'gradient', 'image') DEFAULT 'theme',
     `custom_bg_value` VARCHAR(255) NULL,
     `button_style` VARCHAR(50) DEFAULT 'rounded-xl',
