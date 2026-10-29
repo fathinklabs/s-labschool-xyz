@@ -375,45 +375,213 @@ foreach ($urls as $u) {
                 <?php endif; ?>
             </div>
 
-            <!-- SECTION 2: QR Codes & Frames View -->
+            <!-- SECTION 2: QR Codes & Frames View (Bitly Layout Parity) -->
             <div id="sectionQr" class="hidden space-y-4">
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between">
+                
+                <!-- Bitly Header & Action Toolbar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                            <span class="material-symbols-rounded text-2xl">qr_code</span>
+                        </div>
                         <div>
-                            <h2 class="text-base font-extrabold text-slate-900">Bitly Smart QR Codes & Frames</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Hasilkan kode QR interaktif beresolusi tinggi dengan bingkai Call to Action (CTA) resmi SMP Labschool Jakarta.</p>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-lg font-black text-slate-900 leading-tight">Kode QR</h2>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600"><?= $totalLinks ?> Kode</span>
+                            </div>
+                            <p class="text-xs text-slate-500">Kelola, kustomisasi bingkai (frame), dan unduh kode QR interaktif SMP Labschool Jakarta.</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                        <!-- Frame Preview 1: Standar -->
-                        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 text-center space-y-3">
-                            <div class="text-xs font-bold text-slate-700 uppercase tracking-wider">Format Standar</div>
-                            <div class="w-36 h-36 mx-auto bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center">
-                                <img src="/api/qr.php?code=default&size=160" alt="QR Preview" class="w-full h-full object-contain">
-                            </div>
-                            <p class="text-[11px] text-slate-500">QR murni dengan logo resmi Labschool di tengah.</p>
-                        </div>
-
-                        <!-- Frame Preview 2: Badge Bawah -->
-                        <div class="p-5 rounded-2xl border border-blue-200 bg-blue-50/50 text-center space-y-3">
-                            <div class="text-xs font-bold text-blue-900 uppercase tracking-wider">Smart Frame: PINDAI SAYA</div>
-                            <div class="w-40 h-48 mx-auto bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center">
-                                <img src="/api/qr.php?code=default&frame=badge-bottom&cta=PINDAI+SAYA&size=180" alt="QR Frame" class="w-full h-full object-contain">
-                            </div>
-                            <p class="text-[11px] text-blue-700">Dilengkapi tombol ajakan pindai untuk banner cetak / poster.</p>
-                        </div>
-
-                        <!-- Frame Preview 3: Custom CTA -->
-                        <div class="p-5 rounded-2xl border border-amber-200 bg-amber-50/50 text-center space-y-3">
-                            <div class="text-xs font-bold text-amber-900 uppercase tracking-wider">Smart Frame: INFO PPDB</div>
-                            <div class="w-40 h-48 mx-auto bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center">
-                                <img src="/api/qr.php?code=default&frame=badge-bottom&cta=INFO+PPDB+2026&size=180" alt="QR Frame" class="w-full h-full object-contain">
-                            </div>
-                            <p class="text-[11px] text-amber-800">Kustomisasi teks banner sesuai kebutuhan kegiatan.</p>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openCreateModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5 shrink-0">
+                            <span class="material-symbols-rounded text-base">add</span>
+                            <span>Buat kode</span>
+                        </button>
                     </div>
                 </div>
+
+                <!-- Live Search & Filter Bar -->
+                <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full sm:max-w-md">
+                        <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                        <input type="text" id="qrSearchInput" oninput="filterQrCards()" placeholder="Cari kode QR, judul, atau link tujuan..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none text-xs transition">
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto text-xs font-bold pb-1 sm:pb-0">
+                        <button type="button" onclick="setQrFilter('all', this)" class="qr-filter-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shrink-0 shadow-sm">
+                            Semua (<?= $totalLinks ?>)
+                        </button>
+                        <button type="button" onclick="setQrFilter('frame', this)" class="qr-filter-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0">
+                            Dengan Frame CTA
+                        </button>
+                        <button type="button" onclick="setQrFilter('standard', this)" class="qr-filter-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0">
+                            Format Standar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feed Daftar Kode QR Ala Bitly (Card Container List) -->
+                <?php if (empty($urls)): ?>
+                    <div class="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <span class="material-symbols-rounded text-3xl">qr_code_2</span>
+                        </div>
+                        <h3 class="text-base font-extrabold text-slate-800">Belum ada kode QR</h3>
+                        <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">Setiap tautan pendek yang dibuat otomatis dilengkapi kode QR dinamis beresolusi tinggi.</p>
+                        <button type="button" onclick="openCreateModal()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/20">
+                            + Buat Kode QR Pertama
+                        </button>
+                    </div>
+                <?php else: ?>
+                    <div class="space-y-3" id="qrCardsContainer">
+                        <?php foreach ($urls as $u): ?>
+                            <?php
+                                $uSlug = $u['custom_slug'] ?: $u['short_code'];
+                                $uShort = base_url($uSlug);
+                                $tagsArr = array_filter(array_map('trim', explode(',', $u['tags'] ?? '')));
+                                $frameType = $u['qr_frame'] ?? 'none';
+                                $ctaText = $u['qr_cta_text'] ?? 'PINDAI SAYA';
+                                $qrPreviewUrl = "/api/qr.php?code=" . urlencode($uSlug) . "&frame=" . urlencode($frameType) . "&cta=" . urlencode($ctaText) . "&size=160";
+                            ?>
+                            <div class="qr-card-item bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-5"
+                                 id="qr-card-<?= $u['id'] ?>"
+                                 data-id="<?= $u['id'] ?>"
+                                 data-slug="<?= htmlspecialchars($uSlug) ?>"
+                                 data-title="<?= htmlspecialchars($u['title']) ?>"
+                                 data-orig="<?= htmlspecialchars($u['original_url']) ?>"
+                                 data-tags="<?= htmlspecialchars($u['tags'] ?? '') ?>"
+                                 data-frame="<?= htmlspecialchars($frameType) ?>">
+                                
+                                <!-- Kolom Kiri: Checkbox & Gambar QR Code (Bitly image-container) -->
+                                <div class="flex items-center gap-3 shrink-0">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-50 border border-slate-200 p-1.5 flex items-center justify-center shrink-0 relative group shadow-xs cursor-pointer"
+                                         onclick="openDrawerWithQr(<?= $u['id'] ?>)" title="Klik untuk pratinjau besar & frame">
+                                        <img src="<?= $qrPreviewUrl ?>" alt="Kode QR untuk <?= htmlspecialchars($uSlug) ?>" class="w-full h-full object-contain rounded-lg">
+                                        <!-- Hover Overlay Quick Action -->
+                                        <div class="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <span class="p-1.5 rounded-lg bg-white/90 text-slate-800 shadow">
+                                                <span class="material-symbols-rounded text-sm">zoom_in</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Kolom Tengah: Konten Detail (Bitly card-content) -->
+                                <div class="flex-1 min-w-0 space-y-1.5">
+                                    <!-- Badge Kategori Tipe (Website / Portal Sekolah) -->
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700">
+                                            <span class="material-symbols-rounded text-xs text-blue-600">public</span>
+                                            <span>Website</span>
+                                        </span>
+
+                                        <?php if ($frameType !== 'none'): ?>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                                <span class="material-symbols-rounded text-xs">crop_portrait</span>
+                                                <span>Frame: <?= htmlspecialchars($ctaText) ?></span>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($u['password_hash'])): ?>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800">
+                                                <span class="material-symbols-rounded text-xs">lock</span>
+                                                PIN
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Judul Kode QR (Klik membuka Drawer) -->
+                                    <h3 class="text-sm sm:text-base font-extrabold text-slate-900 hover:text-blue-600 transition cursor-pointer truncate"
+                                        onclick="openDrawer(<?= $u['id'] ?>)">
+                                        <?= htmlspecialchars($u['title']) ?>
+                                    </h3>
+
+                                    <!-- URL Tujuan Asli (Bitly subdirectory_arrow_right) -->
+                                    <div class="flex items-center gap-1.5 text-xs text-slate-500 truncate">
+                                        <span class="material-symbols-rounded text-sm text-slate-400 shrink-0">subdirectory_arrow_right</span>
+                                        <a href="<?= htmlspecialchars($u['original_url']) ?>" target="_blank" class="hover:underline text-slate-600 truncate max-w-md">
+                                            <?= htmlspecialchars($u['original_url']) ?>
+                                        </a>
+                                    </div>
+
+                                    <!-- Metadata Bawah: Scan Count, Tanggal, Short URL & Tags (Bitly bottom-info) -->
+                                    <div class="flex items-center gap-4 flex-wrap pt-1 text-[11px] text-slate-500 font-medium">
+                                        <!-- Scans Count -->
+                                        <a href="/analytics.php?id=<?= $u['id'] ?>" class="flex items-center gap-1 font-bold text-slate-700 hover:text-blue-600 transition" title="Lihat Analitik Scan">
+                                            <span class="material-symbols-rounded text-sm text-blue-600">bar_chart</span>
+                                            <span><strong class="font-extrabold"><?= number_format($u['clicks_count']) ?></strong> scan</span>
+                                        </a>
+
+                                        <span class="text-slate-300">&bull;</span>
+
+                                        <!-- Tanggal Dibuat -->
+                                        <div class="flex items-center gap-1 text-slate-400">
+                                            <span class="material-symbols-rounded text-xs">calendar_today</span>
+                                            <span><?= date('d M Y', strtotime($u['created_at'])) ?></span>
+                                        </div>
+
+                                        <span class="text-slate-300">&bull;</span>
+
+                                        <!-- Tautan Pendek -->
+                                        <div class="flex items-center gap-1.5">
+                                            <a href="<?= $uShort ?>" target="_blank" class="font-bold text-blue-600 hover:underline">
+                                                s.labschool.xyz/<?= htmlspecialchars($uSlug) ?>
+                                            </a>
+                                            <button type="button" onclick="copyLink('<?= $uShort ?>', this)" class="p-1 rounded text-slate-400 hover:text-slate-700 transition" title="Salin Link">
+                                                <span class="material-symbols-rounded text-xs">content_copy</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Tags -->
+                                        <?php if (!empty($tagsArr)): ?>
+                                            <span class="text-slate-300">&bull;</span>
+                                            <div class="flex items-center gap-1 flex-wrap">
+                                                <span class="material-symbols-rounded text-xs text-slate-400">label</span>
+                                                <?php foreach ($tagsArr as $tagItem): ?>
+                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">
+                                                        #<?= htmlspecialchars($tagItem) ?>
+                                                    </span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <!-- Kolom Kanan: Tombol Aksi (Bitly Action Buttons) -->
+                                <div class="flex items-center gap-1.5 shrink-0 w-full md:w-auto justify-end border-t md:border-t-0 pt-2 md:pt-0">
+                                    <!-- Edit Konten / Kustomisasi QR -->
+                                    <button type="button" onclick="openEditModal(<?= htmlspecialchars(json_encode($u)) ?>)"
+                                        class="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit Konten & Frame">
+                                        <span class="material-symbols-rounded text-lg">edit</span>
+                                    </button>
+
+                                    <!-- Unduh Kode QR (PNG / SVG Dropdown) -->
+                                    <div class="relative group/dl">
+                                        <a href="/api/qr.php?code=<?= urlencode($uSlug) ?>&frame=<?= urlencode($frameType) ?>&cta=<?= urlencode($ctaText) ?>&download=1"
+                                            class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition flex items-center" title="Unduh Kode QR (PNG)">
+                                            <span class="material-symbols-rounded text-lg">file_download</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Detail / Analitik Scan -->
+                                    <a href="/analytics.php?id=<?= $u['id'] ?>"
+                                        class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition" title="Laporan Analitik Scan">
+                                        <span class="material-symbols-rounded text-lg">bar_chart</span>
+                                    </a>
+
+                                    <!-- Opsi Lainnya (More) -->
+                                    <button type="button" onclick="openDrawer(<?= $u['id'] ?>)"
+                                        class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="Lihat Detail Lengkap">
+                                        <span class="material-symbols-rounded text-lg">more_horiz</span>
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- SECTION 3: Microsites / Bio Link View -->
@@ -937,7 +1105,7 @@ foreach ($urls as $u) {
 
             const titleMap = {
                 links: 'Tautan Singkat',
-                qr: 'QR Codes & Smart Frames',
+                qr: 'Kode QR',
                 bios: 'Halaman Microsite (Bio Link)',
                 campaigns: 'Tag & Kampanye Sekolah',
                 api: 'Developer REST API'
@@ -1249,6 +1417,34 @@ foreach ($urls as $u) {
             switchTab('links');
             document.getElementById('liveSearchInput').value = tag;
             filterLinks();
+        }
+
+        // Bitly QR Code Filters
+        function filterQrCards() {
+            const query = (document.getElementById('qrSearchInput')?.value || '').toLowerCase();
+            const cards = document.querySelectorAll('.qr-card-item');
+            cards.forEach(c => {
+                const text = (c.getAttribute('data-slug') + ' ' + c.getAttribute('data-title') + ' ' + c.getAttribute('data-orig') + ' ' + c.getAttribute('data-tags')).toLowerCase();
+                c.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function setQrFilter(type, btn) {
+            document.querySelectorAll('.qr-filter-btn').forEach(b => {
+                b.className = 'qr-filter-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0';
+            });
+            btn.className = 'qr-filter-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shrink-0 shadow-sm';
+
+            const cards = document.querySelectorAll('.qr-card-item');
+            cards.forEach(c => {
+                if (type === 'all') {
+                    c.style.display = '';
+                } else if (type === 'frame') {
+                    c.style.display = (c.getAttribute('data-frame') !== 'none') ? '' : 'none';
+                } else if (type === 'standard') {
+                    c.style.display = (c.getAttribute('data-frame') === 'none') ? '' : 'none';
+                }
+            });
         }
 
         // 6. API Key Handlers
