@@ -1368,7 +1368,15 @@ foreach ($urls as $u) {
             return originalFetch(url, options);
         };
 
-        const allLinksData = <?= json_encode($urls) ?>;
+        <?php
+        // Sanitasi daftar tautan untuk frontend: buang hash password agar tidak terekspos ke klien
+        $clientUrls = array_map(function($item) {
+            $item['has_password'] = !empty($item['password_hash']) ? 1 : 0;
+            unset($item['password_hash']);
+            return $item;
+        }, $urls);
+        ?>
+        const allLinksData = <?= json_encode($clientUrls) ?>;
         let activeLink = null;
         let currentFrame = 'none';
 

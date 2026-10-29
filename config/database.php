@@ -6,11 +6,30 @@
 
 defined('S_LABSCHOOL') or define('S_LABSCHOOL', true);
 
+// Muat variabel lingkungan dari .env lokal jika tersedia
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath) && is_readable($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#')) continue;
+        if (strpos($line, '=') !== false) {
+            [$key, $val] = explode('=', $line, 2);
+            $key = trim($key);
+            $val = trim($val, " \t\n\r\0\x0B\"'");
+            if (getenv($key) === false) {
+                putenv("{$key}={$val}");
+                $_ENV[$key] = $val;
+            }
+        }
+    }
+}
+
 $db_host = getenv('DB_HOST') ?: '127.0.0.1';
 $db_port = getenv('DB_PORT') ?: '3306';
 $db_name = getenv('DB_NAME') ?: 's_labschool_xyz';
 $db_user = getenv('DB_USER') ?: 's_labschool_user';
-$db_pass = getenv('DB_PASS') ?: 'Labschool_Shortener_2026!#';
+$db_pass = getenv('DB_PASS') ?: '';
 
 try {
     $dsn = "mysql:host={$db_host};port={$db_port};dbname={$db_name};charset=utf8mb4";
