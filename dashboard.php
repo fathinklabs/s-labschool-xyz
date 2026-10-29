@@ -371,12 +371,6 @@ $totalBios   = count($microsites);
                 </div>
             </div>
         </div>
-  -H "Authorization: Bearer <?= htmlspecialchars($user['api_key']) ?>" \
-  -H "Content-Type: application/json" \
-  -d '{"original_url": "https://smplabschooljakarta.sch.id/pengumuman", "custom_slug": "info-baru"}'</pre>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- Modal Edit Destination URL (Pro Feature) -->
