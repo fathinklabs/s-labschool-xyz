@@ -49,6 +49,16 @@ if (!$currentUser) {
     exit;
 }
 
+// Validasi CSRF untuk autentikasi sesi browser (bukan API key Bearer)
+if (empty($apiKey)) {
+    $token = $data['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($token)) {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Token keamanan (CSRF) tidak valid atau sesi telah kedaluwarsa. Silakan muat ulang halaman.']);
+        exit;
+    }
+}
+
 $originalUrl = trim($data['original_url'] ?? '');
 $title = trim($data['title'] ?? '');
 $customSlug = trim($data['custom_slug'] ?? '');
@@ -59,8 +69,8 @@ $utmSource = trim($data['utm_source'] ?? '');
 $utmMedium = trim($data['utm_medium'] ?? '');
 $utmCampaign = trim($data['utm_campaign'] ?? '');
 $tags = trim($data['tags'] ?? '');
-$iosUrl = trim($data['ios_url'] ?? '');
-$androidUrl = trim($data['android_url'] ?? '');
+$iosUrl = !empty($data['ios_url']) ? sanitize_safe_url(trim($data['ios_url']), '') : '';
+$androidUrl = !empty($data['android_url']) ? sanitize_safe_url(trim($data['android_url']), '') : '';
 $qrFgColor = trim($data['qr_fg_color'] ?? '#1E40AF');
 $qrBgColor = trim($data['qr_bg_color'] ?? '#FFFFFF');
 $qrFrame = trim($data['qr_frame'] ?? 'none');

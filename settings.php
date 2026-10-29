@@ -30,6 +30,7 @@ $bulkResults = [];
 // 1. ACTION HANDLERS (POST)
 // ==========================================
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action'])) {
+    require_csrf();
     $action = $_POST['action'];
 
     // 1A. Update Profile Pribadi
@@ -729,6 +730,7 @@ if (empty($apiKey)) {
                                                     </td>
                                                     <td class="py-3.5 px-4 text-right">
                                                         <form method="POST" onsubmit="return confirm('Hapus kolaborator ini dari organisasi Anda?');" class="inline">
+                                                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                                             <input type="hidden" name="action" value="remove_collaborator">
                                                             <input type="hidden" name="collaborator_id" value="<?= $collab['user_id'] ?>">
                                                             <button type="submit" class="text-rose-600 hover:text-rose-800 font-bold text-xs p-1">
@@ -757,6 +759,7 @@ if (empty($apiKey)) {
                             </div>
 
                             <form method="POST" action="/settings.php?tab=users" class="space-y-4 text-xs">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="invite_user">
 
                                 <div>
@@ -923,6 +926,7 @@ if (empty($apiKey)) {
                                             <span class="text-[10px] text-slate-400 font-mono">Dibuat <?= date('d M Y', strtotime($grp['created_at'])) ?></span>
                                             <div class="flex items-center gap-2">
                                                 <form method="POST" onsubmit="return confirm('Hapus group ini?');" class="inline">
+                                                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                                     <input type="hidden" name="action" value="delete_group">
                                                     <input type="hidden" name="group_id" value="<?= $grp['id'] ?>">
                                                     <button type="submit" class="text-rose-600 hover:text-rose-800 font-bold p-1">Hapus</button>
@@ -947,6 +951,7 @@ if (empty($apiKey)) {
                             </div>
 
                             <form method="POST" action="/settings.php?tab=groups" class="space-y-4 text-xs">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="create_group">
 
                                 <div>
@@ -1013,6 +1018,7 @@ if (empty($apiKey)) {
                             </h2>
 
                             <form method="POST" action="/settings.php?tab=bulk-upload" class="space-y-4 text-xs">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="bulk_shorten_submit">
 
                                 <div>
@@ -1265,6 +1271,7 @@ if (empty($apiKey)) {
                         </div>
 
                         <form method="POST" action="/settings.php?tab=profile" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6 max-w-xl">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                             <input type="hidden" name="action" value="update_profile">
 
                             <div class="flex items-center gap-4">

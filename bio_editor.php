@@ -453,7 +453,10 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
             try {
                 const res = await fetch('/api/save_microsite.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '<?= csrf_token() ?>'
+                    },
                     body: JSON.stringify(payload)
                 });
                 const json = await res.json();

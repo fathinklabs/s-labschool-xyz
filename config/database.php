@@ -20,9 +20,10 @@ try {
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
 } catch (PDOException $e) {
+    error_log("Koneksi database MariaDB gagal: " . $e->getMessage());
     http_response_code(500);
     die(json_encode([
         'status'  => 'error',
-        'message' => 'Koneksi database gagal: ' . $e->getMessage()
+        'message' => 'Layanan basis data sedang mengalami gangguan teknis. Silakan coba beberapa saat lagi.'
     ]));
 }

@@ -39,6 +39,16 @@ if (!$currentUser) {
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true) ?: $_POST;
 
+// Validasi CSRF untuk autentikasi sesi browser (bukan API key Bearer)
+if (empty($apiKey)) {
+    $token = $data['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($token)) {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Token keamanan (CSRF) tidak valid atau sesi telah kedaluwarsa. Silakan muat ulang halaman.']);
+        exit;
+    }
+}
+
 $urls = [];
 if (!empty($data['urls'])) {
     if (is_array($data['urls'])) {

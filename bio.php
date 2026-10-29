@@ -165,7 +165,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
         <!-- Avatar Profil with Genially Halo Glow -->
         <div class="relative mb-5 group animate-float-soft">
             <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl bg-white/10 p-1.5 transition-transform duration-300 group-hover:scale-105">
-                <img src="<?= htmlspecialchars($site['avatar_url'] ?: '/assets/img/logo-smp-labschool.png') ?>" 
+                <img src="<?= htmlspecialchars(sanitize_safe_url($site['avatar_url'] ?: '/assets/img/logo-smp-labschool.png')) ?>" 
                      alt="<?= htmlspecialchars($site['title']) ?>" 
                      class="w-full h-full object-contain rounded-2xl bg-white/5">
             </div>
@@ -275,7 +275,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                                 <p class="text-xs opacity-75 leading-relaxed"><?= htmlspecialchars($block['subtitle']) ?></p>
                             <?php endif; ?>
                             <?php if (!empty($block['target_url'])): ?>
-                                <a href="<?= htmlspecialchars($block['target_url']) ?>" target="_blank"
+                                <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold <?= $activeTheme['btn_prim'] ?> transition mt-2">
                                     <span>Buka Tautan</span>
                                     <span class="material-symbols-rounded text-sm">open_in_new</span>
@@ -294,7 +294,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                         $animClass = ($block['animation'] === 'pulse') ? 'animate-pulse-custom' : '';
                     ?>
                     <?php if ($block['block_type'] === 'link'): ?>
-                        <a href="<?= htmlspecialchars($block['target_url']) ?>" target="_blank"
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
                            class="p-5 rounded-3xl border <?= $activeTheme['card'] ?> flex flex-col justify-between space-y-4 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl <?= $animClass ?>">
                             <div class="flex items-center justify-between">
                                 <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-blue-400">
@@ -345,7 +345,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
 
                     <?php if ($block['block_type'] === 'link'): ?>
                         <!-- Blok Link Tombol Interaktif dengan Efek Glow Hover -->
-                        <a href="<?= htmlspecialchars($block['target_url']) ?>" target="_blank"
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
                            class="w-full p-4 sm:p-5 rounded-3xl border flex items-center justify-between <?= $activeTheme['card'] ?> transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl <?= $animClass ?> group">
                             <div class="flex items-center gap-3.5 min-w-0">
                                 <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center <?= $activeTheme['accent'] ?> shrink-0 group-hover:scale-110 transition-transform">

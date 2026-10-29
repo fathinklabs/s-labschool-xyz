@@ -1354,6 +1354,20 @@ foreach ($urls as $u) {
 
     <!-- Client-side Data Array for Lightning Performance -->
     <script>
+        const CSRF_TOKEN = '<?= csrf_token() ?>';
+        // Auto-attach X-CSRF-TOKEN to all internal fetch requests
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options = {}) {
+            options = options || {};
+            options.headers = options.headers || {};
+            if (typeof options.headers.set === 'function') {
+                options.headers.set('X-CSRF-TOKEN', CSRF_TOKEN);
+            } else {
+                options.headers['X-CSRF-TOKEN'] = CSRF_TOKEN;
+            }
+            return originalFetch(url, options);
+        };
+
         const allLinksData = <?= json_encode($urls) ?>;
         let activeLink = null;
         let currentFrame = 'none';

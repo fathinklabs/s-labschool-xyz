@@ -5,6 +5,17 @@
  */
 
 if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+               (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+               (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+    session_set_cookie_params([
+        'lifetime' => 86400 * 7,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
 
@@ -185,11 +196,54 @@ function login_user(string $email, string $password): array {
         return ['success' => false, 'message' => 'Akun Anda dinonaktifkan oleh administrator.'];
     }
 
+    // Cegah serangan Session Fixation dengan regenerasi ID sesi
+    session_regenerate_id(true);
     $_SESSION['user_id'] = (int)$user['id'];
     unset($user['password_hash']);
     $_SESSION['cached_user'] = $user;
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
     return ['success' => true, 'message' => 'Login berhasil!'];
+}
+
+/**
+ * Dapatkan atau buat token CSRF untuk sesi saat ini
+ */
+function csrf_token(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * Validasi token CSRF yang dikirimkan klien
+ */
+function verify_csrf_token(?string $token): bool {
+    if (empty($token) || empty($_SESSION['csrf_token'])) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], (string)$token);
+}
+
+/**
+ * Validasi CSRF wajib untuk aksi POST. Menolak jika tidak valid.
+ */
+function require_csrf(): void {
+    $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($token)) {
+        http_response_code(403);
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+                  (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'json') !== false) ||
+                  (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Token keamanan (CSRF) tidak valid atau telah kedaluwarsa. Silakan refresh halaman.']);
+        } else {
+            die('<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>403 - CSRF Invalid</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 text-center font-sans"><div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl max-w-md"><h1 class="text-xl font-bold text-red-600 mb-2">Validasi Keamanan Gagal (CSRF)</h1><p class="text-sm text-slate-500 mb-4">Sesi permintaan Anda tidak valid atau telah kedaluwarsa. Silakan muat ulang halaman dan coba kembali.</p><a href="javascript:location.reload()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm">Muat Ulang Halaman</a></div></body></html>');
+        }
+        exit;
+    }
 }
 
 /**

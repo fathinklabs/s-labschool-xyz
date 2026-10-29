@@ -308,3 +308,26 @@ function user_can_manage_microsite(array $user, array $microsite): bool {
     $groupStmt->execute([$siteOwnerId, $userId]);
     return ((int)$groupStmt->fetchColumn()) > 0;
 }
+
+/**
+ * Sanitasi URL untuk memastikan hanya skema yang aman (http, https, mailto, tel) yang diizinkan.
+ * Mencegah serangan Stored XSS via 'javascript:' atau 'data:'.
+ */
+function sanitize_safe_url(?string $url, string $fallback = '#'): string {
+    if (empty($url)) return $fallback;
+    $url = trim($url);
+    // Hapus karakter kontrol dan non-printable
+    $url = preg_replace('/[\x00-\x1F\x7F]/u', '', $url);
+    
+    // Cek apakah diawali protokol berbahaya
+    if (preg_match('/^(javascript|data|vbscript|file):/i', $url)) {
+        return $fallback;
+    }
+    
+    // Jika tidak memiliki skema dan bukan anchor/relatif aman, defaultkan ke https://
+    if (!preg_match('/^(https?:\/\/|mailto:|tel:|\/)/i', $url)) {
+        return 'https://' . ltrim($url, '/');
+    }
+    
+    return $url;
+}

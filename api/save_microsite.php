@@ -42,11 +42,21 @@ if (!$currentUser) {
     exit;
 }
 
+// Validasi CSRF untuk request berbasis sesi browser (bukan API key Bearer)
+if (empty($apiKey)) {
+    $token = $data['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($token)) {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Token keamanan (CSRF) tidak valid atau sesi telah kedaluwarsa. Silakan refresh halaman.']);
+        exit;
+    }
+}
+
 $micrositeId = (int)($data['id'] ?? 0);
 $slug = sanitize_slug($data['slug'] ?? '');
 $title = trim($data['title'] ?? '');
 $bio = trim($data['bio'] ?? '');
-$avatarUrl = trim($data['avatar_url'] ?? '');
+$avatarUrl = sanitize_safe_url(trim($data['avatar_url'] ?? ''), '');
 $theme = trim($data['theme'] ?? 'labs-navy');
 $templateStyle = trim($data['template_style'] ?? 'genially-showcase');
 $countdownDate = !empty($data['countdown_date']) ? date('Y-m-d H:i:s', strtotime($data['countdown_date'])) : null;
@@ -111,10 +121,10 @@ try {
         $stmt = $pdo->prepare("SELECT id, user_id FROM microsites WHERE id = ?");
         $stmt->execute([$micrositeId]);
         $existing = $stmt->fetch();
-        if (!$existing || ($existing['user_id'] != $currentUser['id'] && $currentUser['role'] !== 'superadmin')) {
+        if (!$existing || !user_can_manage_microsite($currentUser, $existing)) {
             $pdo->rollBack();
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Akses ditolak.']);
+            echo json_encode(['status' => 'error', 'message' => 'Akses ditolak. Anda tidak memiliki izin untuk mengedit microsite ini.']);
             exit;
         }
 
@@ -169,7 +179,7 @@ try {
             : 'link';
         $bTitle = trim($b['title'] ?? 'Tautan');
         $bSub = trim($b['subtitle'] ?? '');
-        $bUrl = trim($b['target_url'] ?? '');
+        $bUrl = sanitize_safe_url(trim($b['target_url'] ?? ''), '');
         $bIcon = trim($b['icon'] ?? 'link');
         $bAnim = trim($b['animation'] ?? 'none');
         $bMeta = is_array($b['metadata'] ?? null) ? json_encode($b['metadata']) : null;
