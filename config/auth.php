@@ -16,19 +16,24 @@ const ALLOWED_DOMAINS = ['labschool.xyz', 'elabschool.sch.id'];
  * Validasi apakah domain email termasuk yang diizinkan
  */
 function is_allowed_domain(string $email): bool {
-    $parts = explode('@', strtolower(trim($email)));
+    $email = strtolower(trim($email));
+    $parts = explode('@', $email);
     if (count($parts) !== 2) {
         return false;
     }
-    return in_array($parts[1], ALLOWED_DOMAINS, true);
+    return in_array(trim($parts[1]), ALLOWED_DOMAINS, true);
 }
 
 /**
  * Mendapatkan domain dari email
  */
 function extract_domain(string $email): ?string {
-    $parts = explode('@', strtolower(trim($email)));
-    return (count($parts) === 2 && in_array($parts[1], ALLOWED_DOMAINS, true)) ? $parts[1] : null;
+    $email = strtolower(trim($email));
+    $parts = explode('@', $email);
+    if (count($parts) === 2 && in_array(trim($parts[1]), ALLOWED_DOMAINS, true)) {
+        return trim($parts[1]);
+    }
+    return null;
 }
 
 /**
@@ -47,11 +52,7 @@ function current_user(): ?array {
         return null;
     }
     
-    if (isset($_SESSION['cached_user'])) {
-        return $_SESSION['cached_user'];
-    }
-
-    $stmt = $pdo->prepare("SELECT id, email, full_name, domain, avatar_url, role, api_key, created_at FROM users WHERE id = ? AND is_active = 1");
+    $stmt = $pdo->prepare("SELECT id, email, full_name, domain, avatar_url, role, api_key, api_key_created_at, created_at FROM users WHERE id = ? AND is_active = 1");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
     if ($user) {
@@ -59,7 +60,7 @@ function current_user(): ?array {
         return $user;
     }
     
-    // User tidak ditemukan atau non-aktif
+    // User tidak ditemukan atau dinonaktifkan
     unset($_SESSION['user_id'], $_SESSION['cached_user']);
     return null;
 }
@@ -75,12 +76,25 @@ function require_login(string $redirect_to = '/login.php'): void {
 }
 
 /**
+ * Wajibkan peran Superadmin untuk mengakses halaman
+ */
+function require_admin(string $redirect_to = '/dashboard.php'): void {
+    require_login();
+    $user = current_user();
+    if (!$user || $user['role'] !== 'superadmin') {
+        http_response_code(403);
+        die('<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Akses Ditolak</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 text-center font-sans"><div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl max-w-md"><h1 class="text-xl font-bold text-red-600 mb-2">Akses Ditolak</h1><p class="text-sm text-slate-500 mb-4">Halaman Admin Panel hanya dapat diakses oleh Administrator Sistem SMP Labschool Jakarta.</p><a href="/dashboard.php" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm">Kembali ke Dashboard</a></div></body></html>');
+    }
+}
+
+/**
  * Proses registrasi user baru
  */
 function register_user(string $email, string $password, string $full_name): array {
     global $pdo;
     $email = strtolower(trim($email));
-    $full_name = trim($full_name);
+    $full_name = strip_tags(trim($full_name));
+    $password = str_replace(["\0", "\x00"], '', (string)$password);
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return ['success' => false, 'message' => 'Format alamat email tidak valid.'];
@@ -105,29 +119,36 @@ function register_user(string $email, string $password, string $full_name): arra
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
     if ($stmt->fetch()) {
-        return ['success' => false, 'message' => 'Alamat email ini sudah terdaftar. Silakan login.'];
+        return ['success' => false, 'message' => 'Alamat email ini sudah terdaftar. Silakan langsung login.'];
     }
 
     $domain = extract_domain($email);
-    $password_hash = password_hash($password, PASSWORD_BCRYPT);
-    $api_key = 'labs_' . bin2hex(random_bytes(20));
+    try {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+    } catch (Throwable $e) {
+        return ['success' => false, 'message' => 'Gagal memproses kata sandi: ' . $e->getMessage()];
+    }
 
-    $insert = $pdo->prepare("INSERT INTO users (email, password_hash, full_name, domain, role, api_key) VALUES (?, ?, ?, ?, 'teacher', ?)");
-    $insert->execute([$email, $password_hash, $full_name, $domain, $api_key]);
-    $userId = (int)$pdo->lastInsertId();
+    try {
+        $insert = $pdo->prepare("INSERT INTO users (email, password_hash, full_name, domain, role, api_key) VALUES (?, ?, ?, ?, 'teacher', NULL)");
+        $insert->execute([$email, $password_hash, $full_name, $domain]);
+        $userId = (int)$pdo->lastInsertId();
 
-    // Auto login
-    $_SESSION['user_id'] = $userId;
-    $_SESSION['cached_user'] = [
-        'id'        => $userId,
-        'email'     => $email,
-        'full_name' => $full_name,
-        'domain'    => $domain,
-        'role'      => 'teacher',
-        'api_key'   => $api_key
-    ];
+        // Auto login
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['cached_user'] = [
+            'id'        => $userId,
+            'email'     => $email,
+            'full_name' => $full_name,
+            'domain'    => $domain,
+            'role'      => 'teacher',
+            'api_key'   => null
+        ];
 
-    return ['success' => true, 'message' => 'Pendaftaran berhasil! Selamat datang di s.labschool.xyz.'];
+        return ['success' => true, 'message' => 'Pendaftaran berhasil! Selamat datang di s.labschool.xyz.'];
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Gagal menyimpan akun: ' . $e->getMessage()];
+    }
 }
 
 /**
@@ -136,6 +157,7 @@ function register_user(string $email, string $password, string $full_name): arra
 function login_user(string $email, string $password): array {
     global $pdo;
     $email = strtolower(trim($email));
+    $password = str_replace(["\0", "\x00"], '', (string)$password);
 
     if (!is_allowed_domain($email)) {
         return [
@@ -144,7 +166,7 @@ function login_user(string $email, string $password): array {
         ];
     }
 
-    $stmt = $pdo->prepare("SELECT id, email, password_hash, full_name, domain, avatar_url, role, api_key, is_active FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, email, password_hash, full_name, domain, avatar_url, role, api_key, api_key_created_at, is_active FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 

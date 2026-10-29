@@ -67,6 +67,12 @@ $totalBios   = count($microsites);
 
             <!-- Profile & Logout -->
             <div class="flex items-center gap-3">
+                <?php if ($user['role'] === 'superadmin'): ?>
+                    <a href="/admin.php" class="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs shadow-md shadow-red-500/20 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        <span>Admin Panel</span>
+                    </a>
+                <?php endif; ?>
                 <div class="text-right hidden sm:block">
                     <div class="text-xs font-bold text-slate-900"><?= htmlspecialchars($user['full_name']) ?></div>
                     <div class="text-[11px] text-slate-500 font-mono"><?= htmlspecialchars($user['email']) ?></div>
@@ -297,27 +303,74 @@ $totalBios   = count($microsites);
             <?php endif; ?>
         </div>
 
-        <!-- Tab 3: Developer API Key -->
+        <!-- Tab 3: Developer API Key (On-Demand & Tampilkan Sekali) -->
         <div id="tabContentApi" class="hidden">
             <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
                 <div>
-                    <h2 class="text-lg font-black text-slate-900">Developer REST API (Fitur Business/Pro)</h2>
-                    <p class="text-xs text-slate-500 mt-1">Gunakan API Key ini untuk membuat short link secara otomatis dari sistem Moodle, CBT, atau SISFO Labschool.</p>
+                    <h2 class="text-lg font-black text-slate-900">Developer REST API (Fitur Integrasi Sistem)</h2>
+                    <p class="text-xs text-slate-500 mt-1">Gunakan API Key ini untuk membuat short link secara terprogram dari Moodle CBT, Portal SISFO, atau sistem internal Labschool.</p>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">
-                    <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Your Secret API Key</div>
-                        <div class="font-mono font-bold text-sm text-slate-800 select-all" id="apiKeyText"><?= htmlspecialchars($user['api_key']) ?></div>
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Kunci API</div>
+                            <?php if (!empty($user['api_key'])): ?>
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                        API Key Aktif
+                                    </span>
+                                    <span class="text-xs text-slate-400 font-mono">
+                                        <?= !empty($user['api_key_created_at']) ? 'Dibuat: ' . date('d M Y H:i', strtotime($user['api_key_created_at'])) . ' WIB' : '' ?>
+                                    </span>
+                                </div>
+                                <div class="font-mono text-xs text-slate-600 font-bold mt-2 tracking-wider bg-slate-200/70 px-3 py-1.5 rounded-lg inline-block select-none">
+                                    labs_••••••••••••••••••••••••••••••••••••••••
+                                </div>
+                            <?php else: ?>
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-600">
+                                    Belum Ada API Key
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Anda belum menerbitkan API Key. Klik tombol di samping untuk membuat kunci pertama Anda.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <?php if (!empty($user['api_key'])): ?>
+                                <button type="button" onclick="requestApiKey('reset')" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <span>Reset & Buat Kunci Baru</span>
+                                </button>
+                                <button type="button" onclick="revokeApiKey()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-red-50 hover:text-red-600 text-slate-600 font-bold text-xs transition" title="Cabut Kunci">
+                                    Cabut
+                                </button>
+                            <?php else: ?>
+                                <button type="button" onclick="requestApiKey('generate')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Terbitkan API Key</span>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <button type="button" onclick="copyLink('<?= htmlspecialchars($user['api_key']) ?>')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">
-                        Salin API Key
-                    </button>
+
+                    <div class="p-3.5 rounded-xl bg-blue-50/80 border border-blue-100 flex items-start gap-2.5 text-xs text-blue-900">
+                        <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <p class="leading-relaxed">
+                            <strong>Kebijakan Keamanan Kunci:</strong> Demi menjaga keamanan hak akses akun Anda, nilai rahasia API Key <strong>hanya dimunculkan sekali</strong> pada jendela dialog saat Anda meminta pembuatan atau reset kunci. Jika Anda kehilangan kunci lama, silakan gunakan tombol <em>Reset & Buat Kunci Baru</em>.
+                        </p>
+                    </div>
                 </div>
 
                 <div class="space-y-2">
-                    <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Contoh Pemanggilan via cURL:</h4>
+                    <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Format Pemanggilan REST API:</h4>
                     <pre class="p-4 rounded-2xl bg-slate-900 text-emerald-400 text-xs font-mono overflow-x-auto">curl -X POST https://s.labschool.xyz/api/shorten.php \
+  -H "Authorization: Bearer labs_your_secret_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{"original_url": "https://smplabschooljakarta.sch.id/pengumuman", "custom_slug": "agenda-baru"}'</pre>
+                </div>
+            </div>
+        </div>
   -H "Authorization: Bearer <?= htmlspecialchars($user['api_key']) ?>" \
   -H "Content-Type: application/json" \
   -d '{"original_url": "https://smplabschooljakarta.sch.id/pengumuman", "custom_slug": "info-baru"}'</pre>
@@ -361,6 +414,41 @@ $totalBios   = count($microsites);
                     <button type="submit" id="btnSaveEdit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-500/20">Simpan Perubahan</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Reveal API Key (Tampilkan Sekali) -->
+    <div id="apiKeyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center gap-3 text-emerald-600">
+                <div class="p-2.5 rounded-2xl bg-emerald-50">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 leading-tight">API Key Berhasil Diterbitkan!</h3>
+                    <p class="text-xs text-slate-500">Kunci rahasia integrasi REST API Anda</p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold leading-relaxed">
+                ⚠️ <strong>PENTING:</strong> Salin dan simpan kunci ini di tempat aman sekarang. Demi keamanan akun, kunci rahasia ini <strong>hanya ditampilkan sekali ini saja</strong> dan tidak akan dapat dilihat kembali setelah Anda menutup dialog ini!
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Your Secret API Key</label>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="revealedApiKey" readonly class="w-full px-3.5 py-3 rounded-xl bg-slate-100 font-mono font-bold text-xs text-slate-900 border border-slate-300 outline-none select-all">
+                    <button type="button" onclick="copyRevealedApiKey()" class="px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shrink-0">
+                        Salin
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="button" onclick="closeApiKeyModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition">
+                    Saya Sudah Menyalin Kunci & Tutup
+                </button>
+            </div>
         </div>
     </div>
 
@@ -516,6 +604,59 @@ $totalBios   = count($microsites);
                 btn.disabled = false;
                 btn.innerText = 'Simpan Perubahan';
             }
+        }
+
+        async function requestApiKey(action) {
+            const msg = action === 'reset' 
+                ? 'Apakah Anda yakin ingin mereset API Key? Kunci lama akan otomatis tidak berlaku dan tidak dapat digunakan lagi.'
+                : 'Terbitkan API Key baru untuk akun Anda?';
+            if (!confirm(msg)) return;
+
+            try {
+                const res = await fetch('/api/user/api_key.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: action })
+                });
+                const json = await res.json();
+                if (json.status === 'success') {
+                    document.getElementById('revealedApiKey').value = json.api_key;
+                    document.getElementById('apiKeyModal').classList.remove('hidden');
+                } else {
+                    alert('Gagal: ' + json.message);
+                }
+            } catch (e) {
+                alert('Terjadi kesalahan jaringan.');
+            }
+        }
+
+        async function revokeApiKey() {
+            if (!confirm('Apakah Anda yakin ingin mencabut / menonaktifkan API Key Anda? Sistem yang terhubung tidak akan dapat membuat link lagi.')) return;
+
+            try {
+                const res = await fetch('/api/user/api_key.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'revoke' })
+                });
+                const json = await res.json();
+                alert(json.message);
+                window.location.reload();
+            } catch (e) {
+                alert('Terjadi kesalahan jaringan.');
+            }
+        }
+
+        function copyRevealedApiKey() {
+            const input = document.getElementById('revealedApiKey');
+            navigator.clipboard.writeText(input.value);
+            alert('API Key berhasil disalin ke clipboard!');
+        }
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('hidden');
+            document.getElementById('revealedApiKey').value = '';
+            window.location.reload();
         }
     </script>
 </body>
