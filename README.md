@@ -6,7 +6,7 @@
 [![Nginx](https://img.shields.io/badge/Nginx-Reverse_Proxy-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
-**`s.labschool.xyz`** adalah platform pemendek tautan mandiri (*enterprise self-hosted URL shortener*), pembuat kode QR dinamis berbingkai profesional ala **Bitly**, dan perancang halaman tautan interaktif (*link in bio / microsite*) modern ala **Genially** yang dirancang khusus untuk ekosistem **Labschool** (SMP, SMA, KB-TK, dan PSB Labschool).
+**`s.labschool.xyz`** adalah platform pemendek tautan mandiri (*enterprise self-hosted URL shortener*), pembuat kode QR dinamis berbingkai profesional, dan perancang halaman tautan interaktif (*link in bio / microsite*) modern yang dirancang khusus untuk ekosistem **Labschool** (SMP, SMA, KB-TK, dan PSB Labschool).
 
 ---
 
@@ -14,8 +14,8 @@
 
 - [Fitur Utama](#-fitur-utama)
   - [1. Enterprise URL Shortener & Deep Linking](#1-enterprise-url-shortener--deep-linking)
-  - [2. Bitly-Style Dynamic QR Code Generator](#2-bitly-style-dynamic-qr-code-generator)
-  - [3. Genially-Style Interactive Microsite Builder](#3-genially-style-interactive-microsite-builder)
+  - [2. Enterprise Dynamic QR Code Generator](#2-enterprise-dynamic-qr-code-generator)
+  - [3. Interactive Microsite Builder](#3-interactive-microsite-builder)
   - [4. Real-time Analytics & Geolocation](#4-real-time-analytics--geolocation)
   - [5. User & Role Management](#5-user--role-management)
   - [6. Developer REST API](#6-developer-rest-api)
@@ -52,7 +52,7 @@
 - **Instant Status Toggle**: Nonaktifkan atau aktifkan kembali tautan seketika dengan switch on/off.
 - **Drawer Editor**: Edit tautan dan target tujuan langsung melalui antarmuka side-drawer tanpa berpindah halaman.
 
-### 2. Bitly-Style Dynamic QR Code Generator
+### 2. Enterprise Dynamic QR Code Generator
 - **Frame & Template Kustom**:
   - *Standard* (Clean QR code tanpa bingkai)
   - *Scan Me* (Badge teks instruksi di atas atau bawah)
@@ -126,7 +126,7 @@ s-labschool-xyz/
 ├── analytics.php                     # Halaman detail grafik & log analitik
 ├── bio.php                           # Tampilan publik Microsite (Link in Bio)
 ├── bio_editor.php                    # Panel perancang WYSIWYG Microsite
-├── dashboard.php                     # Dashboard utama pengguna (Bitly layout)
+├── dashboard.php                     # Dashboard utama pengguna (Enterprise layout)
 ├── index.php                         # Landing page publik & quick shortener
 ├── login.php                         # Halaman autentikasi masuk
 ├── logout.php                        # Terminasi sesi akun

@@ -130,7 +130,7 @@ if ($matrix && !empty($matrix['bcode'])) {
         }
     }
 
-    // Fitur Bitly Smart QR Frames: Menambahkan frame dan CTA badge jika diaktifkan
+    // Fitur Smart QR Frames: Menambahkan frame dan CTA badge jika diaktifkan
     if ($frame === 'badge-bottom' || $frame === 'card') {
         $framePadding = 24;
         $badgeHeight = 44;

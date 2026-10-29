@@ -92,7 +92,7 @@ if (!empty($urlRow['password_hash'])) {
 // Catat log klik analitik (IP, Geolokasi CF, User Agent, Referrer)
 record_click((int)$urlRow['id']);
 
-// Cek Device-based Routing (Fitur Bitly Deep Linking)
+// Cek Device-based Routing (Deep Linking Native Apps)
 $targetUrl = $urlRow['original_url'];
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 

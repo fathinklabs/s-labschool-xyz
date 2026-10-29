@@ -1,6 +1,6 @@
 <?php
 /**
- * API: Bulk Shorten Links (Fitur Bitly Enterprise: Pemendek Tautan Massal)
+ * API: Bulk Shorten Links (Fitur Enterprise: Pemendek Tautan Massal)
  * Menerima daftar tautan dalam format JSON array atau teks baris-per-baris
  */
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * User Dashboard: s.labschool.xyz
- * Bitly Enterprise Layout & Full Feature Parity
+ * Enterprise Layout & Full Feature Platform
  * (Left Sidebar, Create Dropdown, Sliding Detail Drawer, Smart QR Frames, Deep Linking, Tagging & Bulk Shorten)
  */
 
@@ -46,7 +46,7 @@ foreach ($urls as $u) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitly Dashboard — s.labschool.xyz</title>
+    <title>Dashboard - s.labschool.xyz</title>
     <link rel="icon" href="/assets/img/logo-smp-labschool.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,7 +85,7 @@ foreach ($urls as $u) {
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex font-sans overflow-x-hidden">
 
-    <!-- 1. LEFT SIDEBAR (Bitly Navigation Style) -->
+    <!-- 1. LEFT SIDEBAR (Enterprise Navigation) -->
     <aside class="w-64 bg-slate-900 text-white shrink-0 flex flex-col justify-between hidden md:flex min-h-screen sticky top-0 z-30">
         <div class="p-5 space-y-6">
             <!-- Brand Logo -->
@@ -138,18 +138,30 @@ foreach ($urls as $u) {
                 </button>
                 <button onclick="switchTab('qr')" id="navLinkQr" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">qr_code</span>
-                    <span>QR Codes & Frames</span>
+                    <span>QR Codes</span>
                 </button>
                 <button onclick="switchTab('bios')" id="navLinkBios" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">view_stream</span>
-                    <span>Link-in-bio (Pages)</span>
+                    <span>Halaman (Labs Pages)</span>
                     <span class="ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= $totalBios ?></span>
                 </button>
+                <a href="/analytics.php" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
+                    <span class="material-symbols-rounded text-xl">bar_chart</span>
+                    <span>Analitik</span>
+                </a>
                 <button onclick="switchTab('campaigns')" id="navLinkCampaigns" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">label</span>
                     <span>Tag & Kampanye</span>
                     <span class="ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= count($allTags) ?></span>
                 </button>
+                <a href="/settings.php?tab=integrations" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
+                    <span class="material-symbols-rounded text-xl">widgets</span>
+                    <span>Integrasi</span>
+                </a>
+                <a href="/settings.php?tab=account-details" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
+                    <span class="material-symbols-rounded text-xl">settings</span>
+                    <span>Pengaturan</span>
+                </a>
                 <button onclick="switchTab('api')" id="navLinkApi" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">data_object</span>
                     <span>Developer REST API</span>
@@ -245,23 +257,69 @@ foreach ($urls as $u) {
 
             <!-- SECTION 1: Tautan (Links View) -->
             <div id="sectionLinks" class="space-y-4">
-                
-                <!-- Filter Pills: All, Active, PIN, Expired & Tag Pills -->
-                <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none">
-                    <button type="button" onclick="setQuickFilter('all', this)" class="quick-filter-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
-                        Semua (<?= $totalLinks ?>)
-                    </button>
-                    <button type="button" onclick="setQuickFilter('active', this)" class="quick-filter-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0">
-                        Aktif Saja
-                    </button>
-                    <button type="button" onclick="setQuickFilter('pin', this)" class="quick-filter-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0">
-                        Terproteksi PIN
-                    </button>
-                    <?php foreach ($allTags as $t): ?>
-                        <button type="button" onclick="setTagFilter('<?= htmlspecialchars($t) ?>', this)" class="quick-tag-btn px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0">
-                            #<?= htmlspecialchars($t) ?>
+                <!-- Header Toolbar: Labs Links & Actions -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                            <span class="material-symbols-rounded text-2xl">link</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl font-black text-slate-900 leading-tight">Labs Links</h1>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600"><?= $totalLinks ?> Tautan</span>
+                            </div>
+                            <p class="text-xs text-slate-500">Kelola pemendek tautan, deep link aplikasi, proteksi PIN, dan analisis klik SMP Labschool Jakarta.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openCreateModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5 shrink-0">
+                            <span class="material-symbols-rounded text-base">add</span>
+                            <span>Create link</span>
                         </button>
-                    <?php endforeach; ?>
+                        <button type="button" onclick="window.location.href='/api/export_csv.php'" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 shrink-0" title="Export CSV">
+                            <span class="material-symbols-rounded text-base text-amber-500">crown</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search & Filters Toolbar -->
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
+                    <!-- Live Search -->
+                    <div class="relative flex-1">
+                        <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                        <input type="text" id="linkSearchInput" oninput="filterLinkCards()" placeholder="Search links, title, or destination..."
+                            class="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none text-xs transition">
+                        <button type="button" onclick="document.getElementById('linkSearchInput').value=''; filterLinkCards();" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+                            <span class="material-symbols-rounded text-base">close</span>
+                        </button>
+                    </div>
+
+                    <!-- Filter Options -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none font-bold">
+                        <button type="button" onclick="setQuickFilter('all', this)" class="quick-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0 flex items-center gap-1.5">
+                            <span>Show: All</span>
+                        </button>
+                        <button type="button" onclick="setQuickFilter('active', this)" class="quick-filter-btn px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            <span>Active</span>
+                        </button>
+                        <button type="button" onclick="setQuickFilter('pin', this)" class="quick-filter-btn px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0 flex items-center gap-1">
+                            <span class="material-symbols-rounded text-xs">lock</span>
+                            <span>PIN</span>
+                        </button>
+                        <?php foreach ($allTags as $t): ?>
+                            <button type="button" onclick="setTagFilter('<?= htmlspecialchars($t) ?>', this)" class="quick-tag-btn px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0">
+                                #<?= htmlspecialchars($t) ?>
+                            </button>
+                        <?php endforeach; ?>
+                        <div class="h-4 w-px bg-slate-200 hidden md:block"></div>
+                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
+                            <button type="button" class="p-1 rounded-lg bg-white shadow-xs text-slate-800" title="List View"><span class="material-symbols-rounded text-base">format_list_bulleted</span></button>
+                            <button type="button" class="p-1 rounded-lg text-slate-400 hover:text-slate-700" title="Agenda View"><span class="material-symbols-rounded text-base">view_agenda</span></button>
+                            <button type="button" class="p-1 rounded-lg text-slate-400 hover:text-slate-700" title="Grid View"><span class="material-symbols-rounded text-base">grid_view</span></button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Feed Daftar Tautan -->
@@ -271,7 +329,7 @@ foreach ($urls as $u) {
                             <span class="material-symbols-rounded text-3xl">link_off</span>
                         </div>
                         <h3 class="text-base font-extrabold text-slate-800">Belum ada tautan yang dibuat</h3>
-                        <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">Mulai perpendek tautan panjang Anda dengan fitur enterprise ala Bitly & s.id.</p>
+                        <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">Mulai perpendek tautan panjang Anda dengan fitur enterprise Labschool.</p>
                         <button type="button" onclick="openCreateModal()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/20">
                             + Buat Tautan Pertama
                         </button>
@@ -296,78 +354,97 @@ foreach ($urls as $u) {
                                  data-clicks="<?= (int)$u['clicks_count'] ?>"
                                  onclick="handleLinkRowClick(event, <?= $u['id'] ?>)">
                                 
-                                <div class="space-y-1.5 flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <a href="<?= $uShort ?>" target="_blank" onclick="event.stopPropagation();" class="font-extrabold text-base text-blue-600 hover:underline flex items-center gap-1">
-                                            <span>s.labschool.xyz/<?= htmlspecialchars($uSlug) ?></span>
-                                            <span class="material-symbols-rounded text-sm opacity-60">open_in_new</span>
-                                        </a>
+                                <!-- Left Info: Checkbox + Short Link + Destination -->
+                                <div class="flex items-start gap-3.5 flex-1 min-w-0">
+                                    <input type="checkbox" onclick="event.stopPropagation();" class="mt-1 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    <div class="space-y-1.5 flex-1 min-w-0">
+                                        <!-- Title -->
+                                        <h3 class="text-sm font-extrabold text-slate-900 truncate hover:text-blue-600 transition"><?= htmlspecialchars($u['title']) ?></h3>
 
-                                        <?php if (!empty($u['password_hash'])): ?>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-                                                <span class="material-symbols-rounded text-xs">lock</span>
-                                                PIN
-                                            </span>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($u['ios_url']) || !empty($u['android_url'])): ?>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800" title="Deep Link Device Routing">
-                                                <span class="material-symbols-rounded text-xs">devices</span>
-                                                Deep Link
-                                            </span>
-                                        <?php endif; ?>
-
-                                        <?php if ((int)$u['is_active'] !== 1): ?>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">
-                                                Nonaktif
-                                            </span>
-                                        <?php endif; ?>
-
-                                        <span class="text-xs text-slate-400">&bull; <?= time_ago($u['created_at']) ?></span>
-                                    </div>
-
-                                    <div class="text-sm font-bold text-slate-800 truncate"><?= htmlspecialchars($u['title']) ?></div>
-                                    <div class="text-xs text-slate-400 truncate max-w-lg"><?= htmlspecialchars($u['original_url']) ?></div>
-
-                                    <!-- Tags list -->
-                                    <?php if (!empty($tagsArr)): ?>
-                                        <div class="flex items-center gap-1.5 flex-wrap pt-1">
-                                            <?php foreach ($tagsArr as $tagItem): ?>
-                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600">
-                                                    #<?= htmlspecialchars($tagItem) ?>
-                                                </span>
-                                            <?php endforeach; ?>
+                                        <!-- Short URL with copy button -->
+                                        <div class="flex items-center gap-2">
+                                            <a href="<?= $uShort ?>" target="_blank" onclick="event.stopPropagation();" class="font-extrabold text-xs text-blue-600 hover:underline flex items-center gap-1">
+                                                <span>s.labschool.xyz/<?= htmlspecialchars($uSlug) ?></span>
+                                            </a>
+                                            <button type="button" onclick="event.stopPropagation(); copyLink('<?= $uShort ?>', this)" class="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100" title="Salin Tautan">
+                                                <span class="material-symbols-rounded text-sm">content_copy</span>
+                                            </button>
                                         </div>
-                                    <?php endif; ?>
+
+                                        <!-- Destination URL with subdirectory_arrow_right -->
+                                        <div class="flex items-center gap-1.5 text-xs text-slate-500 truncate max-w-xl">
+                                            <span class="material-symbols-rounded text-sm text-slate-400 shrink-0">subdirectory_arrow_right</span>
+                                            <span class="truncate"><?= htmlspecialchars($u['original_url']) ?></span>
+                                        </div>
+
+                                        <!-- Bottom Info Metadata: Date, Tags, Badges -->
+                                        <div class="flex items-center gap-3 pt-1 text-[11px] text-slate-400 flex-wrap">
+                                            <span class="flex items-center gap-1">
+                                                <span class="material-symbols-rounded text-xs">calendar_today</span>
+                                                <span><?= date('M d, Y', strtotime($u['created_at'])) ?></span>
+                                            </span>
+                                            <?php if (!empty($tagsArr)): ?>
+                                                <span class="flex items-center gap-1">
+                                                    <span class="material-symbols-rounded text-xs">sell</span>
+                                                    <span><?= htmlspecialchars(implode(', ', $tagsArr)) ?></span>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="flex items-center gap-1 text-slate-400">
+                                                    <span class="material-symbols-rounded text-xs">sell</span>
+                                                    <span>No tags</span>
+                                                </span>
+                                            <?php endif; ?>
+                                            <?php if (!empty($u['password_hash'])): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                                    <span class="material-symbols-rounded text-xs">lock</span>
+                                                    PIN
+                                                </span>
+                                            <?php endif; ?>
+                                            <?php if (!empty($u['ios_url']) || !empty($u['android_url'])): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">
+                                                    <span class="material-symbols-rounded text-xs">devices</span>
+                                                    Deep Link
+                                                </span>
+                                            <?php endif; ?>
+                                            <?php if ((int)$u['is_active'] === 1): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                                    Active
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">
+                                                    Inactive
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Actions & Analytics -->
-                                <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-between md:justify-end" onclick="event.stopPropagation();">
-                                    <!-- Clicks Counter (Opens Drawer) -->
-                                    <button type="button" onclick="openDrawer(<?= $u['id'] ?>)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-xs font-bold">
-                                        <span class="material-symbols-rounded text-base">bar_chart</span>
-                                        <span><?= number_format($u['clicks_count']) ?> Klik</span>
-                                    </button>
+                                <!-- Right: Engagement Box + Quick Action Icons -->
+                                <div class="flex items-center gap-5 shrink-0 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100" onclick="event.stopPropagation();">
+                                    <!-- Engagements Box -->
+                                    <div class="text-right">
+                                        <div class="flex items-center md:justify-end gap-1.5 text-xs font-black text-slate-900">
+                                            <span class="material-symbols-rounded text-base text-blue-600">ads_click</span>
+                                            <span><?= number_format($u['clicks_count']) ?> engagements</span>
+                                        </div>
+                                        <div class="text-[10px] text-slate-400 hidden sm:block">Includes Labs Link clicks, QR Code scans, and Labs Page clicks</div>
+                                    </div>
 
-                                    <!-- Copy Button -->
-                                    <button type="button" onclick="copyLink('<?= $uShort ?>', this)" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="Salin Tautan">
-                                        <span class="material-symbols-rounded text-lg">content_copy</span>
-                                    </button>
-
-                                    <!-- QR Code Button (Opens QR Drawer / Modal) -->
-                                    <button type="button" onclick="openDrawerWithQr(<?= $u['id'] ?>)" class="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition" title="Lihat QR Code & Frame">
-                                        <span class="material-symbols-rounded text-lg">qr_code</span>
-                                    </button>
-
-                                    <!-- Edit Link Button -->
-                                    <button type="button" onclick="openEditModal(<?= htmlspecialchars(json_encode($u)) ?>)" class="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit Tautan">
-                                        <span class="material-symbols-rounded text-lg">edit</span>
-                                    </button>
-
-                                    <!-- Delete Link Button -->
-                                    <button type="button" onclick="deleteLink(<?= $u['id'] ?>)" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Hapus">
-                                        <span class="material-symbols-rounded text-lg">delete</span>
-                                    </button>
+                                    <!-- Action Icons -->
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" onclick="openEditModal(<?= htmlspecialchars(json_encode($u)) ?>)" class="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition" title="Edit Link">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        </button>
+                                        <button type="button" onclick="shareLink('<?= $uShort ?>', '<?= htmlspecialchars(addslashes($u['title'])) ?>')" class="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition" title="Share">
+                                            <span class="material-symbols-rounded text-lg">share</span>
+                                        </button>
+                                        <a href="/analytics.php?id=<?= $u['id'] ?>" class="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition" title="Laporan Analitik">
+                                            <span class="material-symbols-rounded text-lg">bar_chart</span>
+                                        </a>
+                                        <button type="button" onclick="openDrawer(<?= $u['id'] ?>)" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="More details">
+                                            <span class="material-symbols-rounded text-lg">more_horiz</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -375,10 +452,10 @@ foreach ($urls as $u) {
                 <?php endif; ?>
             </div>
 
-            <!-- SECTION 2: QR Codes & Frames View (Bitly Layout Parity) -->
+            <!-- SECTION 2: QR Codes & Frames View -->
             <div id="sectionQr" class="hidden space-y-4">
                 
-                <!-- Bitly Header & Action Toolbar -->
+                <!-- Header & Action Toolbar -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600">
@@ -422,7 +499,7 @@ foreach ($urls as $u) {
                     </div>
                 </div>
 
-                <!-- Feed Daftar Kode QR Ala Bitly (Card Container List) -->
+                <!-- Feed Daftar Kode QR (Card Container List) -->
                 <?php if (empty($urls)): ?>
                     <div class="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm">
                         <div class="w-16 h-16 mx-auto mb-4 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -454,7 +531,7 @@ foreach ($urls as $u) {
                                  data-tags="<?= htmlspecialchars($u['tags'] ?? '') ?>"
                                  data-frame="<?= htmlspecialchars($frameType) ?>">
                                 
-                                <!-- Kolom Kiri: Checkbox & Gambar QR Code (Bitly image-container) -->
+                                <!-- Kolom Kiri: Checkbox & Gambar QR Code -->
                                 <div class="flex items-center gap-3 shrink-0">
                                     <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
                                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-50 border border-slate-200 p-1.5 flex items-center justify-center shrink-0 relative group shadow-xs cursor-pointer"
@@ -469,7 +546,7 @@ foreach ($urls as $u) {
                                     </div>
                                 </div>
 
-                                <!-- Kolom Tengah: Konten Detail (Bitly card-content) -->
+                                <!-- Kolom Tengah: Konten Detail -->
                                 <div class="flex-1 min-w-0 space-y-1.5">
                                     <!-- Badge Kategori Tipe (Website / Portal Sekolah) -->
                                     <div class="flex items-center gap-2 flex-wrap">
@@ -499,7 +576,7 @@ foreach ($urls as $u) {
                                         <?= htmlspecialchars($u['title']) ?>
                                     </h3>
 
-                                    <!-- URL Tujuan Asli (Bitly subdirectory_arrow_right) -->
+                                    <!-- URL Tujuan Asli (subdirectory_arrow_right) -->
                                     <div class="flex items-center gap-1.5 text-xs text-slate-500 truncate">
                                         <span class="material-symbols-rounded text-sm text-slate-400 shrink-0">subdirectory_arrow_right</span>
                                         <a href="<?= htmlspecialchars($u['original_url']) ?>" target="_blank" class="hover:underline text-slate-600 truncate max-w-md">
@@ -507,7 +584,7 @@ foreach ($urls as $u) {
                                         </a>
                                     </div>
 
-                                    <!-- Metadata Bawah: Scan Count, Tanggal, Short URL & Tags (Bitly bottom-info) -->
+                                    <!-- Metadata Bawah: Scan Count, Tanggal, Short URL & Tags -->
                                     <div class="flex items-center gap-4 flex-wrap pt-1 text-[11px] text-slate-500 font-medium">
                                         <!-- Scans Count -->
                                         <a href="/analytics.php?id=<?= $u['id'] ?>" class="flex items-center gap-1 font-bold text-slate-700 hover:text-blue-600 transition" title="Lihat Analitik Scan">
@@ -550,7 +627,7 @@ foreach ($urls as $u) {
                                     </div>
                                 </div>
 
-                                <!-- Kolom Kanan: Tombol Aksi (Bitly Action Buttons) -->
+                                <!-- Kolom Kanan: Tombol Aksi -->
                                 <div class="flex items-center gap-1.5 shrink-0 w-full md:w-auto justify-end border-t md:border-t-0 pt-2 md:pt-0">
                                     <!-- Edit Konten / Kustomisasi QR -->
                                     <button type="button" onclick="openEditModal(<?= htmlspecialchars(json_encode($u)) ?>)"
@@ -586,51 +663,207 @@ foreach ($urls as $u) {
 
             <!-- SECTION 3: Microsites / Bio Link View -->
             <div id="sectionBios" class="hidden space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-base font-extrabold text-slate-900">Halaman Microsite & Bio Link</h2>
-                        <p class="text-xs text-slate-500">Buat landing page mini untuk organisasi, OSIS, MPK, atau ekstrakurikuler Labschool.</p>
+                <!-- Header Toolbar: Labs Pages -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-purple-50 text-purple-600">
+                            <span class="material-symbols-rounded text-2xl">view_stream</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl font-black text-slate-900 leading-tight">Labs Pages</h1>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600"><?= $totalBios ?> Halaman</span>
+                            </div>
+                            <p class="text-xs text-slate-500">Pilih template interaktif atau rancang dari awal untuk profil, kegiatan sekolah, dan kartu nama digital.</p>
+                        </div>
                     </div>
-                    <a href="/bio_editor.php" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
-                        <span class="material-symbols-rounded text-lg">add</span>
-                        <span>Buat Bio Page Baru</span>
-                    </a>
+
+                    <div class="flex items-center gap-2">
+                        <a href="/bio_editor.php" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md shadow-purple-500/20 transition flex items-center gap-1.5 shrink-0">
+                            <span class="material-symbols-rounded text-base">add</span>
+                            <span>Create Page</span>
+                        </a>
+                    </div>
                 </div>
 
-                <?php if (empty($microsites)): ?>
-                    <div class="bg-white rounded-3xl p-12 text-center border border-slate-200">
-                        <p class="text-sm text-slate-500 font-semibold mb-2">Belum ada halaman microsite yang dibuat.</p>
-                        <a href="/bio_editor.php" class="inline-block mt-2 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">Buat Sekarang</a>
+                <!-- Template Selector Card Catalog (Enterprise Template Catalog) -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-5">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Select a template</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">You'll be able to change the content, colors, and layout later.</p>
                     </div>
-                <?php else: ?>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <?php foreach ($microsites as $m): ?>
-                            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col justify-between space-y-4">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700">
-                                            s.labschool.xyz/p/<?= htmlspecialchars($m['slug']) ?>
-                                        </span>
-                                        <span class="text-xs text-slate-400 font-bold"><?= number_format($m['clicks_count']) ?> Views</span>
-                                    </div>
-                                    <h3 class="text-base font-extrabold text-slate-900"><?= htmlspecialchars($m['title']) ?></h3>
-                                    <p class="text-xs text-slate-500 line-clamp-2 mt-1"><?= htmlspecialchars($m['bio'] ?: 'Tidak ada deskripsi bio.') ?></p>
-                                </div>
 
-                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                                    <a href="/p/<?= htmlspecialchars($m['slug']) ?>" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">
-                                        Buka Halaman Publik &rarr;
-                                    </a>
-                                    <div class="flex items-center gap-2">
-                                        <a href="/bio_editor.php?id=<?= $m['id'] ?>" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">
-                                            Edit Desain
-                                        </a>
+                    <!-- Category Filter Tabs -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none" id="bioCategoryTabs">
+                        <button type="button" onclick="filterBioTemplates('all', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
+                            All templates
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('link-in-bio', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Link-in-bio
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('products', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Products and services
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('card', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Digital business card
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('promotions', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Promotions
+                        </button>
+                        <a href="/bio_editor.php" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0 flex items-center gap-1 font-extrabold">
+                            <span class="material-symbols-rounded text-sm">add</span>
+                            <span>Start from scratch</span>
+                        </a>
+                    </div>
+
+                    <!-- Template Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="bioTemplateGrid">
+                        
+                        <!-- Template 1: Link-in-Bio Official Labschool -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="link-in-bio">
+                            <div class="p-4 bg-gradient-to-b from-blue-900 to-blue-950 text-white space-y-3">
+                                <div class="w-12 h-12 rounded-xl bg-white p-1 shadow-md mx-auto">
+                                    <img src="/assets/img/logo-smp-labschool.png" alt="Logo" class="w-full h-full object-contain">
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="font-extrabold text-sm">SMP Labschool Jakarta</h3>
+                                    <p class="text-[10px] text-blue-200">Berdikari, Berprestasi, Berkarakter</p>
+                                </div>
+                                <div class="flex items-center justify-center gap-3 text-xs text-blue-200 pt-1">
+                                    <span>Instagram</span> &bull; <span>YouTube</span> &bull; <span>Website</span>
+                                </div>
+                                <div class="space-y-1.5 pt-2">
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Portal Pembelajaran LMS</div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Penerimaan Siswa Baru (PSB)</div>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Labs Official Bio</span>
+                                <a href="/bio_editor.php?template=genially-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 2: Digital Business Card Guru & Pegawai -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="card">
+                            <div class="p-4 bg-gradient-to-b from-slate-900 to-slate-800 text-white space-y-3">
+                                <div class="w-12 h-12 rounded-full bg-blue-600 text-white font-black text-sm flex items-center justify-center mx-auto shadow-md">
+                                    AF
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="font-extrabold text-sm">Abdul Fathir Faruqi</h3>
+                                    <p class="text-[10px] text-slate-300">Guru Matematika & IT Labschool</p>
+                                </div>
+                                <div class="bg-white/5 rounded-xl p-2.5 space-y-1 text-[10px]">
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">call</span> <span>(021) 4786-0038</span></div>
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">mail</span> <span>fathink@gmail.com</span></div>
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">language</span> <span>smplabschooljakarta.sch.id</span></div>
+                                </div>
+                                <div class="w-full py-1.5 rounded-lg bg-blue-600 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                    <span class="material-symbols-rounded text-xs">contact_page</span>
+                                    <span>Simpan Kontak (vCard)</span>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Digital Business Card</span>
+                                <a href="/bio_editor.php?template=genially-cards" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 3: Event & Promotion (Cosmic Countdown) -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="promotions">
+                            <div class="p-4 bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 text-white space-y-3">
+                                <div class="text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/30">OPEN HOUSE 2027</span>
+                                    <h3 class="font-extrabold text-sm mt-1">PSB Labschool Jakarta</h3>
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-2.5 text-center">
+                                    <div class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Hitung Mundur Acara</div>
+                                    <div class="font-mono font-black text-sm text-amber-300 mt-0.5">14 : 08 : 32 : 10</div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="w-full py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-[10px] font-black text-slate-950 text-center shadow-md">Daftar Online Sekarang</div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Unduh Brosur Informasi</div>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Event Countdown & Promo</span>
+                                <a href="/bio_editor.php?template=genially-roadmap" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 4: Products & Services (Layanan Akademik) -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="products">
+                            <div class="p-4 bg-gradient-to-b from-emerald-900 to-slate-900 text-white space-y-3">
+                                <div class="text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">Layanan Siswa</span>
+                                    <h3 class="font-extrabold text-sm mt-1">Pusat Layanan Akademik</h3>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">download</span>
+                                        <span>Modul & Bank Soal Ujian</span>
+                                    </div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">calendar_month</span>
+                                        <span>Kalender Pendidikan 2026/2027</span>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Products & Services</span>
+                                <a href="/bio_editor.php?template=genially-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
-                <?php endif; ?>
+                </div>
+
+                <!-- Active Pages List -->
+                <div class="space-y-3 pt-2">
+                    <h2 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Halaman Aktif Anda (<?= $totalBios ?>)</h2>
+                    <?php if (empty($microsites)): ?>
+                        <div class="bg-white rounded-3xl p-8 text-center border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold mb-2">Belum ada halaman microsite yang dipublikasikan.</p>
+                            <a href="/bio_editor.php" class="inline-block px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">Buat Halaman Pertama</a>
+                        </div>
+                    <?php else: ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <?php foreach ($microsites as $m): ?>
+                                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700">
+                                                s.labschool.xyz/p/<?= htmlspecialchars($m['slug']) ?>
+                                            </span>
+                                            <span class="text-xs text-slate-400 font-bold"><?= number_format($m['clicks_count']) ?> Views</span>
+                                        </div>
+                                        <h3 class="text-base font-extrabold text-slate-900"><?= htmlspecialchars($m['title']) ?></h3>
+                                        <p class="text-xs text-slate-500 line-clamp-2 mt-1"><?= htmlspecialchars($m['bio'] ?: 'Tidak ada deskripsi bio.') ?></p>
+                                    </div>
+
+                                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                        <a href="/p/<?= htmlspecialchars($m['slug']) ?>" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">
+                                            Buka Halaman Publik &rarr;
+                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a href="/bio_editor.php?id=<?= $m['id'] ?>" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">
+                                                Edit Desain
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- SECTION 4: Campaigns & Tags View -->
@@ -740,7 +973,7 @@ foreach ($urls as $u) {
         </div>
     </div>
 
-    <!-- 3. RIGHT SLIDING DRAWER (Bitly Detail & Analytics Panel) -->
+    <!-- 3. RIGHT SLIDING DRAWER (Detail & Analytics Panel) -->
     <div id="drawerOverlay" onclick="closeDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden transition-opacity"></div>
     <aside id="detailDrawer" class="fixed top-0 right-0 w-full sm:w-[460px] h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200">
         <!-- Drawer Header -->
@@ -1419,7 +1652,7 @@ foreach ($urls as $u) {
             filterLinks();
         }
 
-        // Bitly QR Code Filters
+        // QR Code Filters
         function filterQrCards() {
             const query = (document.getElementById('qrSearchInput')?.value || '').toLowerCase();
             const cards = document.querySelectorAll('.qr-card-item');
@@ -1500,5 +1733,85 @@ foreach ($urls as $u) {
             window.location.reload();
         }
     </script>
+
+    <!-- Labs Assist AI Side Drawer (AI Side Drawer) -->
+    <div id="assistOverlay" onclick="toggleLabsAssist()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+    <aside id="labsAssistDrawer" class="fixed top-0 right-0 w-full sm:w-[460px] h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200">
+        <!-- Header -->
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-blue-900 to-indigo-950 text-white">
+            <div class="flex items-center gap-2.5">
+                <div class="p-1.5 rounded-xl bg-white/10 text-amber-300">
+                    <span class="material-symbols-rounded text-2xl">auto_awesome</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold leading-tight">Labs Assist</h3>
+                    <p class="text-[11px] text-blue-200">AI Assistant s.labschool.xyz</p>
+                </div>
+            </div>
+            <button type="button" onclick="toggleLabsAssist()" class="p-1.5 rounded-xl hover:bg-white/10 text-slate-300 hover:text-white transition">
+                <span class="material-symbols-rounded text-xl">close</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6 flex-1 overflow-y-auto text-xs text-slate-600">
+            <div>
+                <h4 class="text-sm font-extrabold text-slate-900">Tingkatkan Produktivitas Anda</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Bawa kecerdasan buatan ke dalam alur kerja Anda dengan Labs Assist — mulai dari membuat tautan hingga menemukan tren performa tautan sekolah.
+                </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-blue-50/80 border border-blue-100 space-y-2.5 text-xs text-blue-950 font-bold">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-base">check_circle</span>
+                    <span>Get instant analytics and performance insights</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-base">check_circle</span>
+                    <span>Create and optimize links with AI assistance</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-base">check_circle</span>
+                    <span>Generate QR Codes and branded content</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-base">check_circle</span>
+                    <span>Discover trends and patterns automatically</span>
+                </div>
+            </div>
+
+            <!-- Quick Suggestion Prompts -->
+            <div class="space-y-2">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Saran Perintah Cepat:</label>
+                <div class="flex flex-col gap-2 font-bold text-xs">
+                    <button type="button" onclick="setAssistPrompt('Analisis performa klik tautan minggu ini dan berikan ringkasan.')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-left hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
+                        <span>Rangkum performa klik minggu ini</span>
+                        <span class="material-symbols-rounded text-slate-400 text-sm">arrow_forward</span>
+                    </button>
+                    <button type="button" onclick="setAssistPrompt('Buat rekomendasi vanity slug untuk pengumuman ujian matematika.')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-left hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
+                        <span>Rekomendasikan vanity slug tautan</span>
+                        <span class="material-symbols-rounded text-slate-400 text-sm">arrow_forward</span>
+                    </button>
+                    <button type="button" onclick="setAssistPrompt('Bandingkan jumlah scan QR Code vs klik tautan langsung.')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-left hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
+                        <span>Bandingkan scan QR vs klik langsung</span>
+                        <span class="material-symbols-rounded text-slate-400 text-sm">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Input -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50/60 space-y-2">
+            <div class="relative flex items-center">
+                <input type="text" id="assistPromptInput" placeholder="Tanyakan ke Labs Assist..." class="w-full pl-4 pr-12 py-3 rounded-2xl bg-white border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none text-xs font-medium">
+                <button type="button" onclick="sendAssistQuery()" class="absolute right-2 p-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition">
+                    <span class="material-symbols-rounded text-base">arrow_forward</span>
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-400 text-center">Labs Assist can make mistakes. Always verify your links, codes, and data.</p>
+        </div>
+    </aside>
+    
 </body>
 </html>

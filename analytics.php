@@ -58,7 +58,7 @@ $refStmt = $pdo->prepare("SELECT referrer, COUNT(*) as total FROM click_logs WHE
 $refStmt->execute([$linkId]);
 $refRows = $refStmt->fetchAll();
 
-// 4. Fitur Bitly: Peak Hours Activity Heatmap (24 Jam x 7 Hari)
+// 4. Fitur Enterprise: Peak Hours Activity Heatmap (24 Jam x 7 Hari)
 $heatmapStmt = $pdo->prepare("
     SELECT HOUR(clicked_at) as chour, DAYOFWEEK(clicked_at) as cday, COUNT(*) as total
     FROM click_logs
@@ -188,7 +188,7 @@ $recentRows = $recentStmt->fetchAll();
             </div>
         </div>
 
-        <!-- Fitur Bitly: Peak Hours & Days Engagement Heatmap -->
+        <!-- Fitur Enterprise: Peak Hours & Days Engagement Heatmap -->
         <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -196,7 +196,7 @@ $recentRows = $recentStmt->fetchAll();
                         <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                         <span>Aktivitas Jam Sibuk Pengunjung (Peak Hours Heatmap)</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Pola interaksi audiens berdasarkan jam dalam hari (WIB) dan hari dalam sepekan ala Bitly Enterprise.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Pola interaksi audiens berdasarkan jam dalam hari (WIB) dan hari dalam sepekan.</p>
                 </div>
                 <div class="hidden sm:flex items-center gap-2 text-[11px] font-bold text-slate-400">
                     <span>Sedikit</span>
