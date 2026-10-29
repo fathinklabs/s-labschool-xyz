@@ -47,15 +47,31 @@ $orgId = 'labs_3v10apvpbq';
 $planName = 'Enterprise Education Plan';
 $totalSeats = 10;
 
-// Ambil Seluruh User (untuk tab Users)
-$usersStmt = $pdo->query("
-    SELECT u.id, u.email, u.full_name, u.role, u.is_active, u.created_at,
-           (SELECT COUNT(*) FROM short_urls WHERE user_id = u.id) as total_links
-    FROM users u
-    ORDER BY u.created_at ASC
-");
-$allUsers = $usersStmt->fetchAll();
-$usedSeats = count($allUsers);
+// Scope Protection: Hak Akses Seluruh Pengguna Khusus Administrator
+$isAdmin = in_array($user['role'] ?? '', ['superadmin', 'admin'], true);
+
+if ($isAdmin) {
+    // Administrator: Akses penuh ke seluruh daftar pengguna organisasi
+    $usersStmt = $pdo->query("
+        SELECT u.id, u.email, u.full_name, u.role, u.is_active, u.created_at,
+               (SELECT COUNT(*) FROM short_urls WHERE user_id = u.id) as total_links
+        FROM users u
+        ORDER BY u.created_at ASC
+    ");
+    $allUsers = $usersStmt->fetchAll();
+    $usedSeats = count($allUsers);
+} else {
+    // Pengguna non-admin: Scope dibatasi secara ketat hanya untuk akun milik sendiri
+    $usersStmt = $pdo->prepare("
+        SELECT u.id, u.email, u.full_name, u.role, u.is_active, u.created_at,
+               (SELECT COUNT(*) FROM short_urls WHERE user_id = u.id) as total_links
+        FROM users u
+        WHERE u.id = ?
+    ");
+    $usersStmt->execute([$user['id']]);
+    $allUsers = $usersStmt->fetchAll();
+    $usedSeats = 1;
+}
 
 // Generate atau ambil API Key
 $apiKeyStmt = $pdo->prepare("SELECT api_key FROM users WHERE id = ?");
@@ -241,7 +257,11 @@ if (empty($apiKey)) {
                         <li>
                             <a href="/settings.php?tab=users" class="flex items-center justify-between px-3 py-2 rounded-xl transition <?= $tab === 'users' ? 'bg-blue-50 text-blue-700 font-extrabold' : 'text-slate-600 hover:bg-slate-50' ?>">
                                 <span>Users</span>
-                                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px]"><?= $usedSeats ?>/<?= $totalSeats ?></span>
+                                <?php if ($isAdmin): ?>
+                                    <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px]"><?= $usedSeats ?>/<?= $totalSeats ?></span>
+                                <?php else: ?>
+                                    <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[9px] font-bold">Admin Only</span>
+                                <?php endif; ?>
                             </a>
                         </li>
                         <li>
@@ -296,24 +316,46 @@ if (empty($apiKey)) {
                 <!-- TAB 1: USERS (Account Details Users Table Parity) -->
                 <?php if ($tab === 'users'): ?>
                     <div class="space-y-6">
+                        
+                        <?php if (!$isAdmin): ?>
+                            <!-- Non-Admin Scope Restriction Banner -->
+                            <div class="bg-amber-50 border border-amber-200/90 rounded-2xl p-5 flex items-start gap-4">
+                                <div class="p-2.5 rounded-xl bg-amber-100 text-amber-700 shrink-0">
+                                    <span class="material-symbols-rounded text-2xl">admin_panel_settings</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <h3 class="text-sm font-extrabold text-amber-900">Hak Akses Terbatas (Administrator Only)</h3>
+                                    <p class="text-xs text-amber-800 leading-relaxed">
+                                        Lingkup (scope) seluruh pengguna organisasi hanya dapat diakses, dikelola, dan diekspor oleh <strong>Administrator Akun</strong>. Tampilan di bawah ini dibatasi secara aman hanya untuk rincian akun Anda sendiri.
+                                    </p>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
                                 <h1 class="text-2xl font-black text-slate-900 tracking-tight">Users</h1>
                                 <p class="text-xs font-semibold text-slate-500 mt-1">
-                                    Using <span class="font-bold text-slate-800"><?= $usedSeats ?></span> of <?= $totalSeats ?> user seats 
-                                    <span class="text-slate-400">(0 pending requests, 0 invites sent)</span>
+                                    <?php if ($isAdmin): ?>
+                                        Using <span class="font-bold text-slate-800"><?= $usedSeats ?></span> of <?= $totalSeats ?> user seats 
+                                        <span class="text-slate-400">(0 pending requests, 0 invites sent)</span>
+                                    <?php else: ?>
+                                        Scope Akun Anda: <span class="font-bold text-slate-800"><?= htmlspecialchars($user['email']) ?></span> (1 Akun Terdaftar)
+                                    <?php endif; ?>
                                 </p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="exportUsersCsv()" class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-base">file_download</span>
-                                    <span>Export</span>
-                                </button>
-                                <button type="button" onclick="openAddUserModal()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-base">add</span>
-                                    <span>Add new user</span>
-                                </button>
-                            </div>
+                            <?php if ($isAdmin): ?>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="exportUsersCsv()" class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-base">file_download</span>
+                                        <span>Export</span>
+                                    </button>
+                                    <button type="button" onclick="openAddUserModal()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-base">add</span>
+                                        <span>Add new user</span>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Active / Pending Filter Tabs & Search Bar -->
@@ -322,11 +364,13 @@ if (empty($apiKey)) {
                                 <button class="pb-3 border-b-2 border-blue-600 text-blue-600">Active (<?= $usedSeats ?>)</button>
                                 <button class="pb-3 text-slate-400 hover:text-slate-600">Pending (0)</button>
                             </div>
-                            <div class="relative w-full sm:w-64 pb-2">
-                                <span class="material-symbols-rounded absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
-                                <input type="text" id="userSearchInput" onkeyup="filterUserTable()" placeholder="Cari user atau email..."
-                                    class="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-100 border-none text-xs font-medium focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
+                            <?php if ($isAdmin): ?>
+                                <div class="relative w-full sm:w-64 pb-2">
+                                    <span class="material-symbols-rounded absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+                                    <input type="text" id="userSearchInput" onkeyup="filterUserTable()" placeholder="Cari user atau email..."
+                                        class="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-100 border-none text-xs font-medium focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Users Table -->

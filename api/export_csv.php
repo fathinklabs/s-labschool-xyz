@@ -22,6 +22,47 @@ if (!$currentUser) {
     die('Akses ditolak. Silakan login terlebih dahulu.');
 }
 
+// Handler Ekspor Seluruh Pengguna (Hanya Administrator)
+if (($_GET['type'] ?? '') === 'users') {
+    if (!in_array($currentUser['role'], ['superadmin', 'admin'], true)) {
+        http_response_code(403);
+        die('Akses ditolak. Ekspor seluruh pengguna hanya diizinkan untuk Administrator.');
+    }
+
+    $usersStmt = $pdo->query("
+        SELECT u.id, u.email, u.full_name, u.role, u.is_active, u.created_at,
+               (SELECT COUNT(*) FROM short_urls WHERE user_id = u.id) as total_links
+        FROM users u
+        ORDER BY u.created_at ASC
+    ");
+    $usersData = $usersStmt->fetchAll();
+
+    $filename = "users-export-" . date('Ymd-His') . ".csv";
+    header('Content-Type: text/csv; charset=utf-8');
+    header("Content-Disposition: attachment; filename=\"{$filename}\"");
+
+    $out = fopen('php://output', 'w');
+    fputs($out, "\xEF\xBB\xBF");
+    fputcsv($out, ['Daftar Pengguna s.labschool.xyz']);
+    fputcsv($out, ['Total Pengguna', count($usersData)]);
+    fputcsv($out, ['Waktu Ekspor', date('Y-m-d H:i:s')]);
+    fputcsv($out, []);
+    fputcsv($out, ['ID', 'Nama Lengkap', 'Email', 'Role / Peran', 'Status', 'Total Tautan', 'Tanggal Bergabung']);
+    foreach ($usersData as $ud) {
+        fputcsv($out, [
+            $ud['id'],
+            $ud['full_name'],
+            $ud['email'],
+            $ud['role'],
+            $ud['is_active'] ? 'Aktif' : 'Non-aktif',
+            $ud['total_links'],
+            $ud['created_at']
+        ]);
+    }
+    fclose($out);
+    exit;
+}
+
 $urlId = (int)($_GET['id'] ?? 0);
 if ($urlId <= 0) {
     http_response_code(400);
