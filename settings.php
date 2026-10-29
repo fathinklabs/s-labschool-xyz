@@ -394,7 +394,7 @@ if (empty($apiKey)) {
                 </a>
                 <a href="/dashboard.php?tab=bios" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">view_stream</span>
-                    <span>Halaman (Labs Pages)</span>
+                    <span>Pages</span>
                 </a>
                 <a href="/analytics.php" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">bar_chart</span>

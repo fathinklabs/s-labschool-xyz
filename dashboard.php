@@ -170,10 +170,10 @@ foreach ($urls as $u) {
                         <span class="material-symbols-rounded text-blue-600 text-lg">qr_code</span>
                         <span>QR Code Kustom & Frame</span>
                     </button>
-                    <a href="/bio_editor.php" class="block w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2.5">
+                    <button type="button" onclick="openSelectTemplateModal(); closeCreateDropdown();" class="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2.5">
                         <span class="material-symbols-rounded text-purple-600 text-lg">view_stream</span>
-                        <span>Halaman Bio Link</span>
-                    </a>
+                        <span>Create Page</span>
+                    </button>
                 </div>
             </div>
 
@@ -190,7 +190,7 @@ foreach ($urls as $u) {
                 </button>
                 <button onclick="switchTab('bios')" id="navLinkBios" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
                     <span class="material-symbols-rounded text-xl">view_stream</span>
-                    <span>Halaman (Labs Pages)</span>
+                    <span>Pages</span>
                     <span class="ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= $totalBios ?></span>
                 </button>
                 <a href="/analytics.php" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
@@ -726,18 +726,18 @@ foreach ($urls as $u) {
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h1 class="text-xl font-black text-slate-900 leading-tight">Labs Pages</h1>
-                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600"><?= $totalBios ?> Halaman</span>
+                                <h1 class="text-xl font-black text-slate-900 leading-tight">Pages</h1>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600"><?= $totalBios ?> Pages</span>
                             </div>
-                            <p class="text-xs text-slate-500">Pilih template interaktif atau rancang dari awal untuk profil, kegiatan sekolah, dan kartu nama digital.</p>
+                            <p class="text-xs text-slate-500">Kelola halaman profil interaktif, showcase kegiatan sekolah, and kartu nama digital.</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <a href="/bio_editor.php" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md shadow-purple-500/20 transition flex items-center gap-1.5 shrink-0">
+                        <button type="button" onclick="openSelectTemplateModal()" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md shadow-purple-500/20 transition flex items-center gap-1.5 shrink-0">
                             <span class="material-symbols-rounded text-base">add</span>
                             <span>Create Page</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -765,7 +765,7 @@ foreach ($urls as $u) {
                         <button type="button" onclick="filterBioTemplates('promotions', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
                             Promotions
                         </button>
-                        <a href="/bio_editor.php" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0 flex items-center gap-1 font-extrabold">
+                        <a href="/page_builder.php?template=blank" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0 flex items-center gap-1 font-extrabold">
                             <span class="material-symbols-rounded text-sm">add</span>
                             <span>Start from scratch</span>
                         </a>
@@ -794,7 +794,7 @@ foreach ($urls as $u) {
                             </div>
                             <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                                 <span class="text-xs font-extrabold text-slate-800">Labs Official Bio</span>
-                                <a href="/bio_editor.php?template=genially-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                <a href="/page_builder.php?template=link-in-bio" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
                                     Use template
                                 </a>
                             </div>
@@ -822,7 +822,7 @@ foreach ($urls as $u) {
                             </div>
                             <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                                 <span class="text-xs font-extrabold text-slate-800">Digital Business Card</span>
-                                <a href="/bio_editor.php?template=genially-cards" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                <a href="/page_builder.php?template=digital-card" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
                                     Use template
                                 </a>
                             </div>
@@ -846,7 +846,7 @@ foreach ($urls as $u) {
                             </div>
                             <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                                 <span class="text-xs font-extrabold text-slate-800">Event Countdown & Promo</span>
-                                <a href="/bio_editor.php?template=genially-roadmap" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                <a href="/page_builder.php?template=school-event" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
                                     Use template
                                 </a>
                             </div>
@@ -872,7 +872,7 @@ foreach ($urls as $u) {
                             </div>
                             <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                                 <span class="text-xs font-extrabold text-slate-800">Products & Services</span>
-                                <a href="/bio_editor.php?template=genially-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                <a href="/page_builder.php?template=portfolio-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
                                     Use template
                                 </a>
                             </div>
@@ -883,11 +883,11 @@ foreach ($urls as $u) {
 
                 <!-- Active Pages List -->
                 <div class="space-y-3 pt-2">
-                    <h2 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Halaman Aktif Anda (<?= $totalBios ?>)</h2>
+                    <h2 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Halaman Pages Aktif Anda (<?= $totalBios ?>)</h2>
                     <?php if (empty($microsites)): ?>
                         <div class="bg-white rounded-3xl p-8 text-center border border-slate-200">
-                            <p class="text-xs text-slate-400 font-semibold mb-2">Belum ada halaman microsite yang dipublikasikan.</p>
-                            <a href="/bio_editor.php" class="inline-block px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">Buat Halaman Pertama</a>
+                            <p class="text-xs text-slate-400 font-semibold mb-2">Belum ada halaman Pages yang dipublikasikan.</p>
+                            <button type="button" onclick="openSelectTemplateModal()" class="inline-block px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition">Buat Page Pertama</button>
                         </div>
                     <?php else: ?>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -909,8 +909,9 @@ foreach ($urls as $u) {
                                             Buka Halaman Publik &rarr;
                                         </a>
                                         <div class="flex items-center gap-2">
-                                            <a href="/bio_editor.php?id=<?= $m['id'] ?>" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">
-                                                Edit Desain
+                                            <a href="/page_builder.php?id=<?= $m['id'] ?>" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-xs font-bold transition flex items-center gap-1">
+                                                <span class="material-symbols-rounded text-sm">edit</span>
+                                                <span>Edit Page</span>
                                             </a>
                                         </div>
                                     </div>
@@ -1352,7 +1353,209 @@ foreach ($urls as $u) {
         </div>
     </div>
 
-    <!-- Client-side Data Array for Lightning Performance -->
+    <!-- ======================================================== -->
+    <!-- MODAL: SELECT A TEMPLATE (Bitly-Style Flow)              -->
+    <!-- ======================================================== -->
+    <div id="modalSelectTemplate" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-rounded text-2xl">dashboard_customize</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-black text-slate-900">Select a template</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 uppercase">Interactive</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Pilih template awal atau mulai dari kanvas kosong untuk memulai merancang Page Anda. Anda dapat mengubah konten, warna, dan blok nanti.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSelectTemplateModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                    <span class="material-symbols-rounded text-xl">close</span>
+                </button>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none" id="modalCategoryTabs">
+                <button type="button" onclick="filterModalTemplates('all', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
+                    All templates
+                </button>
+                <button type="button" onclick="filterModalTemplates('link-in-bio', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                    Link-in-bio
+                </button>
+                <button type="button" onclick="filterModalTemplates('school-event', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                    School Event & Announcement
+                </button>
+                <button type="button" onclick="filterModalTemplates('digital-card', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                    Digital Business Card
+                </button>
+                <button type="button" onclick="filterModalTemplates('portfolio-showcase', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                    Portfolio & Showcase
+                </button>
+                <button type="button" onclick="filterModalTemplates('roadmap-course', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                    Alur & Roadmap
+                </button>
+            </div>
+
+            <!-- Templates Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modalTemplateGrid">
+                
+                <!-- 1. Official Link in Bio -->
+                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="link-in-bio">
+                    <div class="p-4 bg-gradient-to-b from-blue-900 to-blue-950 text-white space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/20 text-blue-200 border border-blue-400/30 uppercase">Link in Bio</span>
+                            <span class="material-symbols-rounded text-blue-300 text-lg">auto_awesome</span>
+                        </div>
+                        <div class="text-center pt-1">
+                            <div class="w-10 h-10 rounded-xl bg-white p-1 shadow-md mx-auto mb-1.5">
+                                <img src="/assets/img/logo-smp-labschool.png" alt="Logo" class="w-full h-full object-contain">
+                            </div>
+                            <h4 class="font-extrabold text-xs">SMP Labschool Jakarta</h4>
+                            <p class="text-[10px] text-blue-200">Official Portal & Multi-Links</p>
+                        </div>
+                        <div class="space-y-1 pt-1">
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Portal Resmi Sekolah</div>
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">LMS & Pembelajaran</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-slate-800">Labs Official Bio</span>
+                        <a href="/page_builder.php?template=link-in-bio" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                            Use template
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. School Event & Announcement -->
+                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="school-event">
+                    <div class="p-4 bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 text-white space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase">Event Countdown</span>
+                            <span class="material-symbols-rounded text-amber-300 text-lg">timer</span>
+                        </div>
+                        <div class="text-center pt-1">
+                            <h4 class="font-extrabold text-xs">Labs Open House 2026</h4>
+                            <div class="bg-white/10 rounded-xl p-2 mt-2 font-mono font-black text-xs text-amber-300">14 : 08 : 32 : 10</div>
+                        </div>
+                        <div class="space-y-1 pt-1">
+                            <div class="w-full py-1 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-[9px] font-black text-slate-950 text-center">Formulir Registrasi</div>
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Unduh Brosur PDF</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-slate-800">School Event</span>
+                        <a href="/page_builder.php?template=school-event" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                            Use template
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. Digital Business Card -->
+                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="digital-card">
+                    <div class="p-4 bg-gradient-to-b from-slate-900 to-slate-800 text-white space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-400/20 text-blue-300 border border-blue-400/30 uppercase">Digital Card</span>
+                            <span class="material-symbols-rounded text-blue-400 text-lg">badge</span>
+                        </div>
+                        <div class="text-center pt-1">
+                            <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center mx-auto mb-1.5">AF</div>
+                            <h4 class="font-extrabold text-xs">Profil Guru & Tenaga Pendidik</h4>
+                            <p class="text-[10px] text-slate-300">Guru Matematika & IT</p>
+                        </div>
+                        <div class="space-y-1 pt-1">
+                            <div class="w-full py-1 rounded-lg bg-blue-600 text-[9px] font-bold text-center">Simpan Kontak (vCard)</div>
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Chat WhatsApp</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-slate-800">Business Card</span>
+                        <a href="/page_builder.php?template=digital-card" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                            Use template
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4. Portfolio & Showcase -->
+                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="portfolio-showcase">
+                    <div class="p-4 bg-gradient-to-b from-emerald-950 to-slate-900 text-white space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 uppercase">Showcase</span>
+                            <span class="material-symbols-rounded text-emerald-300 text-lg">workspace_premium</span>
+                        </div>
+                        <div class="text-center pt-1">
+                            <h4 class="font-extrabold text-xs">Karya Inovasi & Riset Siswa</h4>
+                            <p class="text-[10px] text-emerald-200">Juara 1 Lomba Sains Nasional</p>
+                        </div>
+                        <div class="space-y-1 pt-1">
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Video Presentasi Ilmiah</div>
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Unduh Paper PDF</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-slate-800">Portfolio Showcase</span>
+                        <a href="/page_builder.php?template=portfolio-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                            Use template
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 5. Alur & Roadmap Pendaftaran -->
+                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="roadmap-course">
+                    <div class="p-4 bg-gradient-to-b from-blue-950 via-slate-900 to-slate-950 text-white space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 uppercase">Roadmap Alur</span>
+                            <span class="material-symbols-rounded text-cyan-300 text-lg">route</span>
+                        </div>
+                        <div class="text-center pt-1">
+                            <h4 class="font-extrabold text-xs">Alur Pendaftaran PSB Online</h4>
+                            <p class="text-[10px] text-slate-300">Tahap 1 s.d. Tahap 4</p>
+                        </div>
+                        <div class="space-y-1 pt-1">
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Langkah 1: Akun & Rapor</div>
+                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Langkah 2: Ujian CBT</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-slate-800">Alur & Roadmap</span>
+                        <a href="/page_builder.php?template=roadmap-course" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                            Use template
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 6. Start from Scratch -->
+                <div class="modal-tmpl-item border-2 border-dashed border-slate-300 rounded-2xl p-5 hover:border-blue-500 hover:bg-blue-50/30 transition flex flex-col justify-between text-center space-y-3" data-category="all">
+                    <div class="space-y-2 pt-3">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center mx-auto">
+                            <span class="material-symbols-rounded text-2xl">add_box</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-slate-900">Mulai dari Kanvas Kosong</h4>
+                        <p class="text-[11px] text-slate-500">Rancang tata letak, tombol, tema warna, dan susunan blok sendiri dari awal.</p>
+                    </div>
+                    <a href="/page_builder.php?template=blank" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-sm transition">
+                        Start from Scratch
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <a href="/page_builder.php?template=blank" class="text-xs font-extrabold text-blue-600 hover:underline flex items-center gap-1">
+                    <span class="material-symbols-rounded text-sm">edit_note</span>
+                    <span>Atau lewati pilihan dan mulai kanvas kosong &rarr;</span>
+                </a>
+                <button type="button" onclick="closeSelectTemplateModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <!-- Client-side Data Array for Lightning Performance -->
     <script>
         const CSRF_TOKEN = '<?= csrf_token() ?>';
         // Auto-attach X-CSRF-TOKEN to all internal fetch requests
@@ -1809,6 +2012,65 @@ foreach ($urls as $u) {
             document.getElementById('revealedApiKey').value = '';
             window.location.reload();
         }
+    
+        // Bitly-Style Page Creation & Template Filter Controls
+        function openSelectTemplateModal() {
+            const modal = document.getElementById('modalSelectTemplate');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSelectTemplateModal() {
+            const modal = document.getElementById('modalSelectTemplate');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Handle Escape key to close modal
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSelectTemplateModal();
+            }
+        });
+
+        function filterBioTemplates(cat, btn) {
+            document.querySelectorAll('.bio-cat-btn').forEach(b => {
+                b.className = 'bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0';
+            });
+            if (btn) {
+                btn.className = 'bio-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0';
+            }
+            document.querySelectorAll('#bioTemplateGrid .bio-tmpl-item').forEach(el => {
+                const itemCat = el.getAttribute('data-category');
+                if (cat === 'all' || itemCat === cat) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
+
+        function filterModalTemplates(cat, btn) {
+            document.querySelectorAll('.modal-cat-btn').forEach(b => {
+                b.className = 'modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0';
+            });
+            if (btn) {
+                btn.className = 'modal-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0';
+            }
+            document.querySelectorAll('#modalTemplateGrid .modal-tmpl-item').forEach(el => {
+                const itemCat = el.getAttribute('data-category');
+                if (cat === 'all' || itemCat === cat || itemCat === 'all') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
+
     </script>
 
     <!-- Labs Assist AI Side Drawer (AI Side Drawer) -->

@@ -124,8 +124,9 @@ s-labschool-xyz/
 │   └── helpers.php                   # Fungsi utilitas & Base62 encoder
 ├── admin.php                         # Dashboard khusus Administrator
 ├── analytics.php                     # Halaman detail grafik & log analitik
-├── bio.php                           # Tampilan publik Microsite (Link in Bio)
-├── bio_editor.php                    # Panel perancang WYSIWYG Microsite
+├── bio.php                           # Tampilan publik Labs Pages (/p/{slug})
+├── page_builder.php                  # Interactive Page Builder & Template Engine
+├── bio_editor.php                    # Legacy redirect stub ke page_builder.php
 ├── dashboard.php                     # Dashboard utama pengguna (Enterprise layout)
 ├── index.php                         # Landing page publik & quick shortener
 ├── login.php                         # Halaman autentikasi masuk

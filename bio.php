@@ -330,6 +330,41 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
+                    <?php elseif ($block['block_type'] === 'vcard'): ?>
+                        <a href="/vcard.php?name=<?= urlencode($site['title']) ?>&org=SMP+Labschool+Jakarta&email=<?= urlencode($socials['email'] ?? '') ?>&phone=<?= urlencode($socials['whatsapp'] ?? '') ?>"
+                           class="col-span-full p-4 rounded-3xl border flex items-center justify-center gap-2.5 <?= $activeTheme['btn_prim'] ?> shadow-xl transition transform hover:-translate-y-1 font-extrabold text-sm">
+                            <span class="material-symbols-rounded text-xl">contact_phone</span>
+                            <span><?= htmlspecialchars($block['title'] ?: 'Simpan Kontak ke HP') ?></span>
+                        </a>
+                    <?php elseif ($block['block_type'] === 'pdf'): ?>
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
+                           class="p-5 rounded-3xl border <?= $activeTheme['card'] ?> flex flex-col justify-between space-y-4 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                    <span class="material-symbols-rounded text-xl">description</span>
+                                </div>
+                                <span class="material-symbols-rounded text-lg opacity-40">download</span>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-sm tracking-tight mb-1"><?= htmlspecialchars($block['title']) ?></h3>
+                                <?php if (!empty($block['subtitle'])): ?>
+                                    <p class="text-[11px] opacity-70 line-clamp-2"><?= htmlspecialchars($block['subtitle']) ?></p>
+                                <?php endif; ?>
+                            </div>
+                        </a>
+                    <?php elseif ($block['block_type'] === 'faq'): ?>
+                        <details class="col-span-full p-5 rounded-3xl border <?= $activeTheme['card'] ?> group transition-all">
+                            <summary class="font-extrabold text-sm cursor-pointer list-none flex items-center justify-between gap-3">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-rounded text-purple-400 text-base">quiz</span>
+                                    <span><?= htmlspecialchars($block['title']) ?></span>
+                                </span>
+                                <span class="material-symbols-rounded text-lg group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <div class="mt-2.5 pt-2.5 border-t border-white/10 text-xs opacity-80 leading-relaxed">
+                                <?= nl2br(htmlspecialchars($block['subtitle'] ?: $block['target_url'])) ?>
+                            </div>
+                        </details>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </div>
@@ -396,6 +431,42 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                             <span class="material-symbols-rounded text-xl">contact_phone</span>
                             <span><?= htmlspecialchars($block['title'] ?: 'Simpan Kontak ke HP') ?></span>
                         </a>
+
+                    <?php elseif ($block['block_type'] === 'pdf'): ?>
+                        <!-- Blok Unduhan Berkas / PDF -->
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank" download
+                           class="w-full p-4 sm:p-5 rounded-3xl border flex items-center justify-between <?= $activeTheme['card'] ?> transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl <?= $animClass ?> group">
+                            <div class="flex items-center gap-3.5 min-w-0">
+                                <div class="w-11 h-11 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <span class="material-symbols-rounded text-2xl">description</span>
+                                </div>
+                                <div class="text-left truncate">
+                                    <div class="font-extrabold text-sm sm:text-base tracking-tight truncate"><?= htmlspecialchars($block['title']) ?></div>
+                                    <?php if (!empty($block['subtitle'])): ?>
+                                        <div class="text-xs opacity-70 truncate"><?= htmlspecialchars($block['subtitle']) ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 text-xs font-bold shrink-0">
+                                <span class="material-symbols-rounded text-base">download</span>
+                                <span>Unduh</span>
+                            </div>
+                        </a>
+
+                    <?php elseif ($block['block_type'] === 'faq'): ?>
+                        <!-- Blok FAQ / Pertanyaan Accordion -->
+                        <details class="w-full p-5 rounded-3xl border <?= $activeTheme['card'] ?> group transition-all">
+                            <summary class="font-extrabold text-sm sm:text-base cursor-pointer list-none flex items-center justify-between gap-3">
+                                <span class="flex items-center gap-2.5">
+                                    <span class="material-symbols-rounded text-purple-400 text-xl">quiz</span>
+                                    <span><?= htmlspecialchars($block['title']) ?></span>
+                                </span>
+                                <span class="material-symbols-rounded text-lg group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <div class="mt-3 pt-3 border-t border-white/10 text-xs opacity-85 leading-relaxed">
+                                <?= nl2br(htmlspecialchars($block['subtitle'] ?: $block['target_url'])) ?>
+                            </div>
+                        </details>
 
                     <?php endif; ?>
                 <?php endforeach; ?>
