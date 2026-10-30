@@ -11,6 +11,7 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 | **Keamanan & Kredensial** | Isolasi `.env`, Anti-CSRF, XSS Sanitasi, Nginx Hardening | 🛡️ Kritis | `Completed` ✅ | `.env`, `config/`, `s.labschool.xyz.conf` |
 | **Pages Platform** | Bitly-Style Flow (`Create Page` &rarr; `Template` &rarr; `Builder`) | 🔥 Tinggi | `Completed` ✅ | `dashboard.php`, `page_builder.php`, `bio.php` |
 | **Pages Platform** | Fully Migrate dari `bio_editor.php` ke `page_builder.php` (API, Aliases & Deprecation) | 🔥 Tinggi | `Completed` ✅ | `page_builder.php`, `api/save_page.php`, `bio_editor.php` |
+| **Pages Platform** | Master Template Collection (20 Templates across 4 Bitly Categories + Microsite Assets) | 🔥 Tinggi | Completed ✅ | config/templates.php, dashboard.php, page_builder.php |
 | **Drawer Navigasi** | Left Sidebar Drawer Dinamis + Mini Icon-Rail (76px) | ⚡ Sedang | `Completed` ✅ | `dashboard.php` |
 | **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
 | **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Completed` ✅ | `settings.php` |
@@ -35,7 +36,20 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 - [x] **Pertahanan Stored XSS**: Sanitasi protokol URL (`sanitize_safe_url`) memblokir skema berbahaya (`javascript:`, `data:`, `vbscript:`).
 - [x] **Atribut Cookie Sesi**: Konfigurasi otomatis `secure`, `HttpOnly`, dan `SameSite=Lax`.
 
-### 2. 📄 Arsitektur Pages Bergaya Bitly & Page Builder
+### 2. 📄 Arsitektur Pages Bergaya Bitly & Master Template Collection
+- [x] **Master Template Collection (20 Template Lengkap)**:
+  - Terpusat di config/templates.php dengan inisialisasi blok, layout, tema warna, dan countdown.
+  - **3 Template Microsite dari Folder (G:...\microsite-templates)**:
+    * product-services-agency (Awesome UI/UX & Creative Agency)
+    * digital-card-designer (Hand-Drawn Graphic Designer & Artist)
+    * link-in-bio-web-design (Modern Web Design Studio)
+  - **4 Variasi Template Baru per Kategori Standar Bitly**:
+    * **Link-in-bio (5)**: Official Labs Portal, Student Creator & Podcast, OSIS & Ekskul Hub, Alumni Network, Web Design Studio.
+    * **Product and services (5)**: Creative Agency, Koperasi & Merchandise, Bimbel & Ujian, Kantin Sehat, Penyewaan Fasilitas.
+    * **Digital business card (5)**: Graphic Designer, Pendidik & Guru, Kepala Sekolah & Manajemen, Konselor BK, Dokter & UKS.
+    * **Promotions (4)**: Open House & Edufair 2026, Promo Early Bird PSB 2027/2028, Pentas Seni & Bazaar, Beasiswa Bakat & Prestasi.
+    * **Kanvas Kosong (1)**: Start from scratch.
+  - **Render Dinamis Modal Template**: Filter kategori tabs instan (case-insensitive) dan hero image cards / gradient cards.
 - [x] **Standarisasi Istilah 'Pages'**: Mengubah istilah ambigu `Microsite / Bio Link` menjadi `Pages` di seluruh dashboard, pengaturan, dan navigasi (di mana *Link-in-bio* kini merupakan salah satu kategori template).
 - [x] **Flow Pembuatan Halaman Bergaya Bitly**:
   - `Pages` &rarr; `Create Page` &rarr; `Select Template Modal` &rarr; `Page Builder`.
