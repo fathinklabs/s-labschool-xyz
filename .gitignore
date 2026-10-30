@@ -12,3 +12,8 @@ Thumbs.db
 # Uploads & Temp
 uploads/temp/
 *.tmp
+
+# Template source archives and design raw files
+microsite-templates/*.zip
+microsite-templates/**/*.eps
+microsite-templates/**/*.ai
