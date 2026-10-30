@@ -10,6 +10,7 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 | :--- | :--- | :---: | :---: | :--- |
 | **Keamanan & Kredensial** | Isolasi `.env`, Anti-CSRF, XSS Sanitasi, Nginx Hardening | 🛡️ Kritis | `Completed` ✅ | `.env`, `config/`, `s.labschool.xyz.conf` |
 | **Pages Platform** | Bitly-Style Flow (`Create Page` &rarr; `Template` &rarr; `Builder`) | 🔥 Tinggi | `Completed` ✅ | `dashboard.php`, `page_builder.php`, `bio.php` |
+| **Pages Platform** | Fully Migrate dari `bio_editor.php` ke `page_builder.php` (API, Aliases & Deprecation) | 🔥 Tinggi | `In Progress` 🚧 | `page_builder.php`, `api/save_page.php`, `bio_editor.php` |
 | **Drawer Navigasi** | Left Sidebar Drawer Dinamis + Mini Icon-Rail (76px) | ⚡ Sedang | `Completed` ✅ | `dashboard.php` |
 | **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
 | **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Planned` ⏳ | `settings.php` |
@@ -73,6 +74,24 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 ---
 
 ## 🚀 Rencana Fitur Baru & Backlog Prioritas
+
+### 📄 Migrasi Penuh (Full Migration) dari `bio_editor.php` ke `page_builder.php`
+Menuntaskan transisi arsitektural menyeluruh dari arsitektur editor legasi (`bio_editor.php` / `bio_edit.php`) ke engine modern `page_builder.php` hingga tidak ada lagi dependensi lawas.
+
+- [x] **Penerapan Engine Baru**: Implementasi `page_builder.php` lengkap dengan drawer blok komponen dan inisialisasi preset template.
+- [x] **Redirect Transisi**: `bio_editor.php` meneruskan query string (`?id=...`, `?template=...`) via HTTP 302 redirect.
+- [ ] **Migrasi Endpoint API Penyimpanan**:
+  - Implementasi endpoint utama `api/save_page.php` menggantikan `api/save_microsite.php`.
+  - Dukungan backward-compatibility alias untuk integrasi API pihak ketiga atau skrip otomatisasi lama.
+- [ ] **Pembersihan & Standardisasi Nomenklatur Kode**:
+  - Menghapus seluruh variabel internal, parameter query, dan terminologi yang masih mengacu pada `bio_edit` atau `microsite` di lapisan klien.
+  - Abstraksi penamaan tabel basis data (`microsites` &rarr; alias `pages`, `microsite_blocks` &rarr; alias `page_blocks`).
+- [ ] **Siklus Depresiasi & Pensiun Berkas Usang**:
+  - Upgrade redirect `bio_editor.php` dari 302 (Temporary) menjadi 301 (Permanent Redirect).
+  - Penambahan HTTP response header `Deprecation: true` dan `Link: </page_builder.php>; rel="successor-version"`.
+  - Jadwal penghapusan berkas fisik `bio_editor.php` setelah seluruh sesi dan bookmark terkonvergensi penuh.
+
+---
 
 ### 1. 🔑 Request Reset Password (Forgot Password) via Email XOAUTH2
 Menyediakan alur pemulihan kata sandi mandiri yang aman bagi pengguna yang lupa password melalui pengiriman tautan reset ke email resmi pengguna.
@@ -244,7 +263,7 @@ Kustomisasi kode QR terlengkap di `api/qr.php` dan modal QR di `dashboard.php`.
 
 ```
 [Release v1.2] ✅ Hardening Keamanan, Bitly-Style Pages, Mini-Rail Left Drawer, User Groups
-[Sprint 1]     ───> Reset Password via Email XOAUTH2 + Hide Disabled Tabs Settings
+[Sprint 1]     ───> Fully Migrate ke page_builder.php + Reset Password via Email XOAUTH2 + Hide Disabled Tabs Settings
 [Sprint 2]     ───> Admin Global Configuration Module + Metrics Usage (Storage, Data, DB)
 [Sprint 3]     ───> Login OAuth2 Google Workspace Labschool + Redis Session Management
 [Sprint 4]     ───> Mobile View Refinement (Bottom-Sheet & Cards) + Advance Page Builder Phase 2
