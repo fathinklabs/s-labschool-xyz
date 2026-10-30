@@ -5,6 +5,24 @@
  */
 
 if (session_status() === PHP_SESSION_NONE) {
+    // Redis Session Save Handler (dengan fallback otomatis ke file jika Redis tidak tersedia)
+    if (extension_loaded('redis')) {
+        try {
+            $redisHost = getenv('REDIS_HOST') ?: '127.0.0.1';
+            $redisPort = (int)(getenv('REDIS_PORT') ?: 6379);
+            $redisTimeout = 1.0;
+            
+            $testRedis = new \Redis();
+            if (@$testRedis->connect($redisHost, $redisPort, $redisTimeout)) {
+                $testRedis->close();
+                ini_set('session.save_handler', 'redis');
+                ini_set('session.save_path', "tcp://{$redisHost}:{$redisPort}?prefix=labs_sess:&timeout=2.0");
+            }
+        } catch (\Throwable $e) {
+            // Fallback transparan ke file default PHP session handler
+        }
+    }
+
     $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);

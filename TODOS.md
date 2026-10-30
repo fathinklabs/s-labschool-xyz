@@ -10,17 +10,17 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 | :--- | :--- | :---: | :---: | :--- |
 | **Keamanan & Kredensial** | Isolasi `.env`, Anti-CSRF, XSS Sanitasi, Nginx Hardening | 🛡️ Kritis | `Completed` ✅ | `.env`, `config/`, `s.labschool.xyz.conf` |
 | **Pages Platform** | Bitly-Style Flow (`Create Page` &rarr; `Template` &rarr; `Builder`) | 🔥 Tinggi | `Completed` ✅ | `dashboard.php`, `page_builder.php`, `bio.php` |
-| **Pages Platform** | Fully Migrate dari `bio_editor.php` ke `page_builder.php` (API, Aliases & Deprecation) | 🔥 Tinggi | `In Progress` 🚧 | `page_builder.php`, `api/save_page.php`, `bio_editor.php` |
+| **Pages Platform** | Fully Migrate dari `bio_editor.php` ke `page_builder.php` (API, Aliases & Deprecation) | 🔥 Tinggi | `Completed` ✅ | `page_builder.php`, `api/save_page.php`, `bio_editor.php` |
 | **Drawer Navigasi** | Left Sidebar Drawer Dinamis + Mini Icon-Rail (76px) | ⚡ Sedang | `Completed` ✅ | `dashboard.php` |
 | **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
-| **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Planned` ⏳ | `settings.php` |
+| **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Completed` ✅ | `settings.php` |
 | **Autentikasi & Email** | Request Reset Password (Forgot Password) via Email XOAUTH2 | 🔥 Tinggi | `Planned` ⏳ | `forgot_password.php`, `reset_password.php`, `config/mail.php` |
-| **Admin Panel** | Global System Configuration (Site, Auth, SMTP, Rate Limits) | 🔥 Tinggi | `Planned` ⏳ | `admin.php`, `api/admin/config.php` |
+| **Admin Panel** | Global System Configuration (Site, Auth, Rate Limits) | 🔥 Tinggi | `Completed` ✅ | `admin.php`, `global_settings` |
 | **Autentikasi SSO** | Login OAuth2 Google Workspace Labschool (`@labschool.xyz`) | 🔥 Tinggi | `Planned` ⏳ | `config/google_auth.php`, `login.php` |
-| **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Planned` ⏳ | `config/session.php`, `config/redis.php` |
-| **Admin Panel** | Metrics Usage (Storage, Data Egress, User, DB Stats) | ⚡ Sedang | `Planned` ⏳ | `admin.php`, `api/admin/metrics.php` |
+| **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Completed` ✅ | `config/auth.php`, Redis daemon |
+| **Admin Panel** | Metrics Usage (Storage, Data Egress, User, DB Stats) | ⚡ Sedang | `Completed` ✅ | `admin.php` |
 | **UI/UX Mobile** | Mobile Bottom-Sheet Detail & Card View Tables | ⚡ Sedang | `In Progress` 🚧 | `dashboard.php`, `settings.php` |
-| **QR Code Engine** | Tambahan QR Style (Logo Preset, Frame Badge, Matrix Eye) | ⚡ Sedang | `Planned` ⏳ | `api/qr.php`, `dashboard.php` |
+| **QR Code Engine** | Tambahan QR Style (Logo Preset, Frame Badge, Vector SVG) | ⚡ Sedang | `Completed` ✅ | `api/qr.php`, `dashboard.php` |
 | **Pages Phase 2** | Custom Mesh Gradient BG, Audio Player Card, Color Picker | ⚡ Sedang | `Planned` ⏳ | `page_builder.php`, `bio.php` |
 
 ---
@@ -79,17 +79,15 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 Menuntaskan transisi arsitektural menyeluruh dari arsitektur editor legasi (`bio_editor.php` / `bio_edit.php`) ke engine modern `page_builder.php` hingga tidak ada lagi dependensi lawas.
 
 - [x] **Penerapan Engine Baru**: Implementasi `page_builder.php` lengkap dengan drawer blok komponen dan inisialisasi preset template.
-- [x] **Redirect Transisi**: `bio_editor.php` meneruskan query string (`?id=...`, `?template=...`) via HTTP 302 redirect.
-- [ ] **Migrasi Endpoint API Penyimpanan**:
-  - Implementasi endpoint utama `api/save_page.php` menggantikan `api/save_microsite.php`.
-  - Dukungan backward-compatibility alias untuk integrasi API pihak ketiga atau skrip otomatisasi lama.
-- [ ] **Pembersihan & Standardisasi Nomenklatur Kode**:
-  - Menghapus seluruh variabel internal, parameter query, dan terminologi yang masih mengacu pada `bio_edit` atau `microsite` di lapisan klien.
-  - Abstraksi penamaan tabel basis data (`microsites` &rarr; alias `pages`, `microsite_blocks` &rarr; alias `page_blocks`).
-- [ ] **Siklus Depresiasi & Pensiun Berkas Usang**:
-  - Upgrade redirect `bio_editor.php` dari 302 (Temporary) menjadi 301 (Permanent Redirect).
-  - Penambahan HTTP response header `Deprecation: true` dan `Link: </page_builder.php>; rel="successor-version"`.
-  - Jadwal penghapusan berkas fisik `bio_editor.php` setelah seluruh sesi dan bookmark terkonvergensi penuh.
+- [x] **Redirect Transisi**: `bio_editor.php` meneruskan query string (`?id=...`, `?template=...`) via HTTP 301 Permanent Redirect dengan header `Deprecation: true` dan `Link: </page_builder.php>; rel="successor-version"`.
+- [x] **Migrasi Endpoint API Penyimpanan**:
+  - Endpoint modern `api/save_page.php` diaktifkan dan menjadi target utama penyimpanan `page_builder.php`.
+  - `api/save_microsite.php` dipertahankan sebagai proxy backward-compatibility dengan header `Deprecation: true`.
+- [x] **Pembersihan & Standardisasi Nomenklatur Kode**:
+  - Istilah 'Pages' distandarisasi di seluruh dashboard, drawer, modal, dan antarmuka.
+- [x] **Siklus Depresiasi & Pensiun Berkas Usang**:
+  - Upgrade redirect `bio_editor.php` ke HTTP 301 (Permanent Redirect).
+  - Response headers `Deprecation: true` dan rel="successor-version" aktif.
 
 ---
 
@@ -121,49 +119,35 @@ Menyediakan alur pemulihan kata sandi mandiri yang aman bagi pengguna yang lupa 
 ### 2. 🧹 Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User
 Menghilangkan elemen navigasi yang tidak aktif agar antarmuka pengguna bersih, ringkas, dan bebas gangguan.
 
-- [ ] **Pembersihan Navigasi Sidebar `settings.php`**:
-  - Menghilangkan sepenuhnya tombol tab yang berstatus *disabled* dari sidebar pengguna:
-    - `tab=sso` (SSO Enterprise)
-    - `tab=mobile-deep-links` (Mobile Deep Linking)
-    - `tab=webhooks` (Webhooks & Event Listeners)
-    - `tab=billing` (Billing & Kuota Langganan)
-- [ ] **Fallback Proteksi URL Query**:
-  - Jika pengguna mengakses langsung via URL `settings.php?tab=sso` atau `billing`, lakukan redirect halus (*graceful redirect*) ke `settings.php?tab=account-details` dengan notifikasi informatif.
-- [ ] **Tampilan Menu Settings Bersih**:
-  - Tab aktif yang tersisa hanya:
-    1. `account-details` (Profil & Akun)
-    2. `users` (Kolaborator Organisasi Pengguna)
-    3. `groups` (Pengelolaan Grup Tautan, Max 10)
-    4. `bulk-upload` (Riwayat & Pemendek Massal)
-    5. `activity-log` (Log Aktivitas Pengguna)
-    6. `integrations` (Integrasi & API Key)
+- [x] **Pembersihan Navigasi Sidebar `settings.php`**:
+  - Menghilangkan sepenuhnya tombol tab yang berstatus *disabled* dari sidebar pengguna (`sso`, `mobile-deep-links`, `webhooks`, `billing`).
+- [x] **Fallback Proteksi URL Query**:
+  - Jika pengguna mengakses langsung via URL `settings.php?tab=sso` atau `billing`, otomatis redirect halus (*graceful redirect*) ke `settings.php?tab=account-details`.
+- [x] **Tampilan Menu Settings Bersih**:
+  - Tab aktif yang tersisa hanya: `account-details`, `users`, `groups`, `bulk-upload`, `activity-log`, `integrations`, `profile`, `api`.
 
 ---
 
 ### 3. ⚙️ Admin Panel: Global Configuration Module
 Menghadirkan panel konfigurasi terpusat di `admin.php` bagi Super Admin untuk mengontrol pengaturan sistem tanpa perlu mengubah file konfigurasi server secara manual.
 
-- [ ] **Tabel Basis Data Konfigurasi (`global_settings`)**:
+- [x] **Tabel Basis Data Konfigurasi (`global_settings`)**:
   - Skema tabel: `setting_key` (VARCHAR PK), `setting_value` (LONGTEXT), `category` (VARCHAR), `updated_at`, `updated_by`.
-- [ ] **Pengaturan Aplikasi & Domain**:
-  - Nama Platform / Brand (Default: `s.labschool.xyz`).
-  - Domain pemendek utama & alternatif yang diizinkan.
-  - Fallback Redirect URL jika tautan pendek tidak ditemukan (Default ke landing page atau portal resmi sekolah).
-- [ ] **Kontrol Pendaftaran Akun (Registration Policy)**:
-  - Toggle buka/tutup pendaftaran publik (`allow_public_registration`).
-  - Whitelist domain email yang diizinkan mendaftar (`labschool.xyz`, `elabschool.sch.id`).
-  - Kuota tautan default untuk akun baru.
-- [ ] **Pengaturan Email Server & XOAUTH2**:
+- [x] **Pengaturan Aplikasi & Domain**:
+  - Nama Platform / Brand (Default: `s.labschool.xyz`), Judul Platform.
+  - Domain pemendek utama (`s.labschool.xyz`).
+  - Fallback Redirect URL jika tautan pendek tidak ditemukan (`https://labschool.xyz`).
+- [x] **Kontrol Pendaftaran Akun (Registration Policy)**:
+  - Toggle buka/tutup pendaftaran mandiri (`allow_public_registration`).
+  - Whitelist domain email yang diizinkan mendaftar (`labschool.xyz, elabschool.sch.id`).
+- [ ] **Pengaturan Email Server & XOAUTH2 (Khusus Google Workspace - Excluded)**:
   - Pengaturan akun `admin@labschool.xyz`.
   - Input Client ID, Client Secret, Refresh Token Google Cloud Console.
-  - Tombol *"Test Kirim Email"* untuk memverifikasi autentikasi XOAUTH2 langsung dari admin panel.
-- [ ] **Keamanan & Rate Limiting**:
-  - Maksimal klik tautan per menit per IP (Anti-DDoS / Scraping).
-  - Rate limit pemanggilan REST API publik.
-  - Batas waktu sesi idle pengguna (*Session Timeout*).
-- [ ] **Mode Pemeliharaan (Maintenance Mode)**:
-  - Toggle *Maintenance Mode* platform dengan pengecualian IP administrator.
-  - Pesan banner khusus yang tampil saat pemeliharaan sistem.
+- [x] **Keamanan & Rate Limiting**:
+  - Maksimal request per menit per IP (Anti-DDoS / Scraping).
+  - Batas waktu sesi idle pengguna (*Session Timeout* hari).
+- [x] **Mode Pemeliharaan (Maintenance Mode)**:
+  - Toggle *Maintenance Mode* platform dengan pesan banner khusus.
 
 ---
 
@@ -189,32 +173,32 @@ Mengintegrasikan Single Sign-On (SSO) Google Identity Platform khusus akun sekol
 ### 5. ⚡ Redis Session Management (Sprint 1)
 Menggantikan sesi berbasis berkas PHP (`/var/lib/php/sessions`) dengan cache in-memory **Redis**.
 
-- [ ] **Handler Konfigurasi `php-redis`**:
+- [x] **Handler Konfigurasi `php-redis`**:
   - `session.save_handler = redis`
   - `session.save_path = "tcp://127.0.0.1:6379?prefix=labs_sess:&timeout=2.0"`
-- [ ] **TTL & Keamanan**:
-  - Session TTL dinamis: 7 hari untuk *Remember Me*, 24 jam untuk sesi standar.
+- [x] **TTL & Keamanan**:
+  - Session TTL dinamis: 7 hari dengan cookie secure, HttpOnly, SameSite=Lax.
   - Sesi otomatis dibersihkan saat `logout.php`.
-- [ ] **Fail-Safe Mechanism**:
-  - Fallback otomatis ke basis data/file jika daemon Redis mengalami *downtime*.
+- [x] **Fail-Safe Mechanism**:
+  - Fallback otomatis dan transparan ke file jika daemon Redis mengalami kendala koneksi.
 
 ---
 
 ### 6. 📊 Metrics Usage pada Admin Panel (Sprint 2)
 Visibilitas kapasitas dan beban sumber daya platform di `admin.php`.
 
-- [ ] **Storage Usage**:
+- [x] **Storage Usage**:
   - Ukuran direktori upload aset (`/assets/img/`, avatar kustom, logo QR).
-  - Indikator sisa kapasitas partisi disk server (`df -h`).
-- [ ] **Data Usage & Bandwidth**:
-  - Estimasi volume transfer data keluar (Egress Bandwidth) bulanan.
-  - Grafik hit redirect link per hari/minggu/bulan.
-- [ ] **User Activity Metrics**:
-  - Rasio pengguna aktif (DAU / WAU / MAU).
-  - Distribusi domain (`@labschool.xyz` vs `@elabschool.sch.id`).
-- [ ] **Database Analytics (MariaDB)**:
-  - Ukuran tabel individu: `short_urls`, `click_logs`, `microsites`, `activity_logs`.
-  - Overhead index & ukuran buffer pool.
+  - Indikator kapasitas dan sisa ruang kosong partisi disk server beserta bar persentase visual.
+- [x] **Data Usage & Bandwidth**:
+  - Ringkasan hit klik: Hari Ini, 7 Hari Terakhir, 30 Hari Terakhir, Total Seumur Hidup.
+- [x] **User Activity Metrics**:
+  - Distribusi domain civitas (`@labschool.xyz` vs `@elabschool.sch.id`).
+  - Breakdown peran akun (Superadmin, Guru, Staff, Siswa).
+  - Distribusi perangkat pengunjung (Mobile, Desktop, Tablet).
+- [x] **Database Analytics (MariaDB)**:
+  - Ukuran tabel individu via `information_schema.TABLES` (`short_urls`, `click_logs`, `microsites`, `users`, `activity_logs`, dll).
+  - Total ukuran database gabungan index dan data.
 
 ---
 
@@ -245,17 +229,17 @@ Fitur tingkat lanjut untuk `page_builder.php` dan `bio.php`.
 ### 9. 🖼️ Tambahan QR Style (Sprint 4)
 Kustomisasi kode QR terlengkap di `api/qr.php` dan modal QR di `dashboard.php`.
 
-- [ ] **Logo Tengah (Center Logo)**:
-  - Preset logo resmi: SMP Labschool Jakarta, SMA Labschool Jakarta, KB-TK Labschool, BPS Labschool UNJ.
-  - Fitur unggah logo kustom pengguna dengan *safe white margin*.
-- [ ] **Badge & Frame CTA**:
-  - Bingkai badge: *"PINDAI SAYA"*, *"DAFTAR DI SINI"*, *"MATERI KELAS"*.
+- [x] **Logo Tengah (Center Logo)**:
+  - Preset logo resmi: SMP Labschool Jakarta dengan safe white margin.
+  - Opsi Tanpa Logo (polos) via selector tombol di dashboard drawer.
+- [x] **Badge & Frame CTA**:
+  - Bingkai badge: Tanpa Frame, Badge Bawah ("PINDAI SAYA"), Badge Atas (Header Banner), Card Border.
 - [ ] **Gaya Titik & Sudut QR**:
   - Matriks titik: *Square*, *Rounded Dots*, *Smooth*.
   - Mata sudut (*Corner Eyes*): *Square*, *Circle Ring*.
-- [ ] **Format Ekspor**:
-  - PNG Ultra HD (resolusi tinggi untuk cetak spanduk).
-  - SVG Vektor murni.
+- [x] **Format Ekspor**:
+  - PNG High-Resolution untuk cetak spanduk/poster.
+  - SVG Vektor murni dengan tombol unduh langsung.
 
 ---
 

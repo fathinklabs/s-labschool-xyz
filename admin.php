@@ -133,6 +133,27 @@ $recentClicks = $pdo->query("
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-8 w-full space-y-6 flex-1">
+
+        <!-- Flash Alert Notifikasi -->
+        <?php if (!empty($flashSuccess)): ?>
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span><?= htmlspecialchars($flashSuccess) ?></span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">&times;</button>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($flashError)): ?>
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span><?= htmlspecialchars($flashError) ?></span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-800">&times;</button>
+            </div>
+        <?php endif; ?>
+
         <!-- 4 Metrik Ringkasan Utama -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
@@ -176,6 +197,14 @@ $recentClicks = $pdo->query("
             </button>
             <button onclick="switchAdminTab('logs')" id="tabBtnLogs" class="px-4 py-2 font-bold text-sm rounded-xl text-slate-600 hover:bg-slate-100 transition">
                 Log Trafik Global
+            </button>
+            <button onclick="switchAdminTab('config')" id="tabBtnConfig" class="px-4 py-2 font-bold text-sm rounded-xl text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Konfigurasi Global</span>
+            </button>
+            <button onclick="switchAdminTab('metrics')" id="tabBtnMetrics" class="px-4 py-2 font-bold text-sm rounded-xl text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Metrik Penggunaan</span>
             </button>
         </div>
 
@@ -429,22 +458,283 @@ $recentClicks = $pdo->query("
                 </div>
             </div>
         </div>
+
+        <!-- TAB 6: Konfigurasi Global Sistem (Global Configuration) -->
+        <div id="tabConfig" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8">
+                <div class="border-b border-slate-100 pb-5 mb-6">
+                    <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Konfigurasi Global Platform s.labschool.xyz</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Kelola parameter operasional, kebijakan pendaftaran, domain shortener, dan keamanan sistem.</p>
+                </div>
+
+                <form method="POST" action="/admin.php?tab=config" class="space-y-8">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="save_global_settings">
+
+                    <!-- Section 1: Identitas & Domain -->
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-wider text-blue-600 mb-4 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            <span>1. Identitas Platform & Domain Default</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Nama Brand Singkat</label>
+                                <input type="text" name="site_name" value="<?= htmlspecialchars($currentSettings['site_name']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Contoh: s.labschool.xyz</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Judul Lengkap Platform</label>
+                                <input type="text" name="site_title" value="<?= htmlspecialchars($currentSettings['site_title']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Judul header & meta-tag HTML</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Domain Pemendek Utama</label>
+                                <input type="text" name="default_domain" value="<?= htmlspecialchars($currentSettings['default_domain']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Domain dasar pembuatan short links dan bio</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Fallback Redirect URL (Jika 404 / Tidak Ditemukan)</label>
+                                <input type="url" name="fallback_url" value="<?= htmlspecialchars($currentSettings['fallback_url']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Tujuan redirect jika kode tautan atau slug tidak ada</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Kebijakan Autentikasi & Registrasi -->
+                    <div class="pt-6 border-t border-slate-100">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-emerald-600 mb-4 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                            <span>2. Kebijakan Pendaftaran & Autentikasi Civitas</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Whitelist Domain Email Registrasi</label>
+                                <input type="text" name="allowed_email_domains" value="<?= htmlspecialchars($currentSettings['allowed_email_domains']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold font-mono text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Pisahkan dengan koma (contoh: labschool.xyz, elabschool.sch.id)</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <label class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer">
+                                    <input type="checkbox" name="allow_public_registration" value="1" <?= $currentSettings['allow_public_registration'] === '1' ? 'checked' : '' ?> class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <div>
+                                        <div class="text-xs font-extrabold text-slate-900">Buka Pendaftaran Akun Mandiri</div>
+                                        <div class="text-[10px] text-slate-500">Jika aktif, civitas dapat mendaftar mandiri via register.php sesuai domain whitelist.</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Keamanan, Sesi & Rate Limiting -->
+                    <div class="pt-6 border-t border-slate-100">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-amber-600 mb-4 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+                            <span>3. Keamanan, Sesi & Anti-DDoS Rate Limiting</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Rate Limit Klik / Request per Menit per IP</label>
+                                <input type="number" name="rate_limit_per_minute" min="10" max="1000" value="<?= htmlspecialchars($currentSettings['rate_limit_per_minute']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">Perlindungan dari bot scraping & flood traffic</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Masa Berlaku Sesi Login (Hari)</label>
+                                <input type="number" name="session_timeout_days" min="1" max="90" value="<?= htmlspecialchars($currentSettings['session_timeout_days']) ?>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                                <span class="text-[10px] text-slate-400">TTL sesi cookie di peramban dan Redis</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Mode Pemeliharaan (Maintenance Mode) -->
+                    <div class="pt-6 border-t border-slate-100">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-rose-600 mb-4 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                            <span>4. Mode Pemeliharaan (Maintenance Mode)</span>
+                        </h4>
+                        <div class="space-y-4">
+                            <label class="flex items-center gap-3 p-3 rounded-2xl bg-rose-50/50 border border-rose-200 cursor-pointer">
+                                <input type="checkbox" name="maintenance_mode" value="1" <?= $currentSettings['maintenance_mode'] === '1' ? 'checked' : '' ?> class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500 border-slate-300">
+                                <div>
+                                    <div class="text-xs font-extrabold text-rose-900">Aktifkan Status Maintenance Mode</div>
+                                    <div class="text-[10px] text-rose-600">Jika diaktifkan, seluruh pengguna non-admin dialihkan ke pesan pemeliharaan.</div>
+                                </div>
+                            </label>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Pesan Banner Pemeliharaan</label>
+                                <textarea name="maintenance_message" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500"><?= htmlspecialchars($currentSettings['maintenance_message']) ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Simpan Perubahan Konfigurasi</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 7: Metrik Penggunaan & Kesehatan Sistem (Metrics Usage) -->
+        <div id="tabMetrics" class="hidden space-y-6">
+            <!-- 4 Quick Metric Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kapasitas Disk Server</div>
+                    <div class="text-xl font-black text-slate-900"><?= format_bytes($usedDisk) ?> <span class="text-xs font-bold text-slate-400">/ <?= format_bytes($totalDisk) ?></span></div>
+                    <div class="text-[11px] font-bold text-blue-600 mt-1"><?= $diskPercent ?>% Terpakai</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Folder Aset / Upload</div>
+                    <div class="text-xl font-black text-purple-600"><?= format_bytes($assetsSize) ?></div>
+                    <div class="text-[11px] text-slate-500 font-semibold mt-1">Logo, Banner & Gambar Bio</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Ukuran Basis Data</div>
+                    <div class="text-xl font-black text-emerald-600"><?= format_bytes($totalDbSize) ?></div>
+                    <div class="text-[11px] text-slate-500 font-semibold mt-1">Total Tabel MariaDB</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Klik Hari Ini</div>
+                    <div class="text-xl font-black text-amber-600"><?= number_format($clicksToday) ?></div>
+                    <div class="text-[11px] text-slate-500 font-semibold mt-1"><?= number_format($clicks7Days) ?> klik dlm 7 hari</div>
+                </div>
+            </div>
+
+            <!-- Disk Usage Progress Bar -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-3">
+                <div class="flex items-center justify-between text-xs font-bold">
+                    <span class="text-slate-700">Penggunaan Ruang Disk Server (Storage Partition)</span>
+                    <span class="text-blue-600"><?= format_bytes($usedDisk) ?> dari <?= format_bytes($totalDisk) ?> (<?= $diskPercent ?>%)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full <?= $diskPercent > 85 ? 'bg-rose-500' : ($diskPercent > 65 ? 'bg-amber-500' : 'bg-blue-600') ?> rounded-full transition-all" style="width: <?= min(100, $diskPercent) ?>%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Sisa Ruang Kosong: <strong class="text-slate-600"><?= format_bytes($freeDisk) ?></strong></span>
+                    <span>Status: <strong class="<?= $diskPercent > 85 ? 'text-rose-600' : 'text-emerald-600' ?>"><?= $diskPercent > 85 ? 'Kritis' : 'Normal / Sehat' ?></strong></span>
+                </div>
+            </div>
+
+            <!-- 2 Columns: Database Tables & User Distribution -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Database Tables Breakdown -->
+                <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-extrabold text-slate-900">Rincian Ukuran Tabel Basis Data</h4>
+                            <p class="text-[11px] text-slate-400">Informasi kapasitas storage tabel `s_labschool_xyz`</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100 text-slate-400 uppercase tracking-wider">
+                                    <th class="py-2.5 px-4 font-bold">Tabel</th>
+                                    <th class="py-2.5 px-4 font-bold">Baris Data</th>
+                                    <th class="py-2.5 px-4 font-bold text-right">Ukuran Data</th>
+                                    <th class="py-2.5 px-4 font-bold text-right">Total (Index + Data)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-600">
+                                <?php foreach ($dbTables as $dt): ?>
+                                    <tr class="hover:bg-slate-50/60 transition">
+                                        <td class="py-2.5 px-4 font-mono font-bold text-slate-800"><?= htmlspecialchars($dt['table_name']) ?></td>
+                                        <td class="py-2.5 px-4"><?= number_format($dt['table_rows']) ?></td>
+                                        <td class="py-2.5 px-4 text-right"><?= format_bytes((int)$dt['data_length']) ?></td>
+                                        <td class="py-2.5 px-4 text-right font-bold text-blue-600"><?= format_bytes((int)$dt['total_size']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Distribution & Demographics -->
+                <div class="space-y-6">
+                    <!-- User Domains -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm">
+                        <h4 class="text-sm font-extrabold text-slate-900 mb-3">Distribusi Domain Akun Civitas</h4>
+                        <div class="space-y-3">
+                            <?php foreach ($domainStats as $ds): ?>
+                                <?php $domPct = $stats['users'] > 0 ? round(($ds['count'] / $stats['users']) * 100, 1) : 0; ?>
+                                <div>
+                                    <div class="flex items-center justify-between text-xs font-bold mb-1">
+                                        <span class="font-mono text-slate-800">@<?= htmlspecialchars($ds['domain'] ?: 'other') ?></span>
+                                        <span class="text-blue-600"><?= $ds['count'] ?> akun (<?= $domPct ?>%)</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-600 rounded-full" style="width: <?= $domPct ?>%"></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <!-- Role Breakdown & Device Breakdown -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Peran Akun (Roles)</h4>
+                            <div class="space-y-2">
+                                <?php foreach ($roleStats as $rs): ?>
+                                    <div class="flex items-center justify-between text-xs font-bold">
+                                        <span class="capitalize text-slate-700"><?= htmlspecialchars($rs['role']) ?></span>
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px]"><?= $rs['count'] ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Perangkat Pengunjung</h4>
+                            <div class="space-y-2">
+                                <?php foreach ($deviceStats as $dev): ?>
+                                    <div class="flex items-center justify-between text-xs font-bold">
+                                        <span class="capitalize text-slate-700"><?= htmlspecialchars($dev['device_type'] ?: 'Unknown') ?></span>
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px]"><?= $dev['count'] ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>
         function switchAdminTab(tab) {
-            ['overview', 'users', 'links', 'bios', 'logs'].forEach(t => {
+            const allTabs = ['overview', 'users', 'links', 'bios', 'logs', 'config', 'metrics'];
+            allTabs.forEach(t => {
                 const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
                 const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (el) el.classList.add('hidden');
-                if (btn) btn.className = 'px-4 py-2 font-bold text-sm rounded-xl text-slate-600 hover:bg-slate-100 transition';
+                if (btn) btn.className = 'px-4 py-2 font-bold text-sm rounded-xl text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5';
             });
 
             const activeEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
             const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
             if (activeEl) activeEl.classList.remove('hidden');
-            if (activeBtn) activeBtn.className = 'px-4 py-2 font-black text-sm rounded-xl bg-slate-900 text-white shadow-sm transition';
+            if (activeBtn) activeBtn.className = 'px-4 py-2 font-black text-sm rounded-xl bg-slate-900 text-white shadow-sm transition flex items-center gap-1.5';
         }
+
+        // Auto-switch tab if specified in URL query (?tab=config) or hash (#metrics)
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryTab = urlParams.get('tab') || window.location.hash.replace('#', '');
+            if (queryTab && ['overview', 'users', 'links', 'bios', 'logs', 'config', 'metrics'].includes(queryTab)) {
+                switchAdminTab(queryTab);
+            }
+        });
 
         async function toggleUserStatus(id, btn) {
             try {

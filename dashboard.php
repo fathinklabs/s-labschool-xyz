@@ -1178,15 +1178,31 @@ foreach ($urls as $u) {
                     <img id="drawerQrImage" src="" alt="QR Code" class="max-w-[200px] h-auto object-contain rounded-lg shadow-xs">
                 </div>
 
-                <!-- Frame Selectors -->
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold text-slate-600">Pilih Tipe Frame:</label>
+                <!-- Frame Selectors & Logo Presets -->
+                <div class="space-y-2">
+                    <label class="block text-[11px] font-bold text-slate-600">Pilih Gaya Frame QR:</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="setDrawerQrFrame('none')" id="qrFrameNone" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-blue-600 text-blue-600">
+                        <button type="button" onclick="setDrawerQrFrame('none')" id="qrFrame_none" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600">
                             Tanpa Frame
                         </button>
-                        <button type="button" onclick="setDrawerQrFrame('badge-bottom')" id="qrFrameBadge" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200">
-                            Badge "PINDAI SAYA"
+                        <button type="button" onclick="setDrawerQrFrame('badge-bottom')" id="qrFrame_badge_bottom" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Badge Bawah
+                        </button>
+                        <button type="button" onclick="setDrawerQrFrame('badge-top')" id="qrFrame_badge_top" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Badge Atas
+                        </button>
+                        <button type="button" onclick="setDrawerQrFrame('card')" id="qrFrame_card" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Card Border
+                        </button>
+                    </div>
+
+                    <label class="block text-[11px] font-bold text-slate-600 pt-1">Logo Tengah:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setDrawerQrLogo('smp')" id="qrLogo_smp" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600">
+                            Logo SMP Labschool
+                        </button>
+                        <button type="button" onclick="setDrawerQrLogo('none')" id="qrLogo_none" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Tanpa Logo (Polos)
                         </button>
                     </div>
                 </div>
@@ -1766,10 +1782,32 @@ foreach ($urls as $u) {
             openDrawer(linkId);
         }
 
+        let currentFrame = 'none';
+        let currentQrLogo = 'smp';
+
         function setDrawerQrFrame(frame) {
             currentFrame = frame;
-            document.getElementById('qrFrameNone').className = frame === 'none' ? 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600' : 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200';
-            document.getElementById('qrFrameBadge').className = frame === 'badge-bottom' ? 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600' : 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200';
+            ['none', 'badge-bottom', 'badge-top', 'card'].forEach(f => {
+                const btn = document.getElementById('qrFrame_' + f.replace('-', '_'));
+                if (btn) {
+                    btn.className = f === frame 
+                        ? 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600'
+                        : 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50';
+                }
+            });
+            updateDrawerQrImage();
+        }
+
+        function setDrawerQrLogo(logo) {
+            currentQrLogo = logo;
+            ['smp', 'none'].forEach(l => {
+                const btn = document.getElementById('qrLogo_' + l);
+                if (btn) {
+                    btn.className = l === logo 
+                        ? 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600'
+                        : 'px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50';
+                }
+            });
             updateDrawerQrImage();
         }
 
@@ -1777,7 +1815,7 @@ foreach ($urls as $u) {
             if (!activeLink) return;
             const slug = activeLink.custom_slug || activeLink.short_code;
             const cta = encodeURIComponent(activeLink.qr_cta_text || 'PINDAI SAYA');
-            const qrUrl = `/api/qr.php?code=${encodeURIComponent(slug)}&frame=${currentFrame}&cta=${cta}&size=320`;
+            const qrUrl = `/api/qr.php?code=${encodeURIComponent(slug)}&frame=${currentFrame}&logo=${currentQrLogo}&cta=${cta}&size=360`;
             document.getElementById('drawerQrImage').src = qrUrl;
             document.getElementById('drawerQrDownloadPng').href = qrUrl + '&download=1';
             document.getElementById('drawerQrDownloadSvg').href = `/api/qr.php?code=${encodeURIComponent(slug)}&format=svg&download=1`;

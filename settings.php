@@ -20,6 +20,10 @@ $userId = (int)$user['id'];
 
 $tab = $_GET['tab'] ?? 'account-details';
 $disabledTabs = ['sso', 'mobile-deep-links', 'webhooks', 'billing'];
+if (in_array($tab, $disabledTabs, true)) {
+    header('Location: /settings.php?tab=account-details', true, 302);
+    exit;
+}
 
 // Pesan Flash
 $flashSuccess = '';
@@ -537,47 +541,7 @@ if (empty($apiKey)) {
                             </a>
                         </li>
 
-                        <!-- DISABLED TABS: Billing, SSO, Mobile Deep Links, Webhooks -->
-                        <li class="pt-2 border-t border-slate-100 text-slate-400">
-                            <span class="block px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-300">Disabled Features</span>
-                        </li>
-                        <li>
-                            <a href="/settings.php?tab=billing" class="flex items-center justify-between px-3 py-2 rounded-xl transition text-slate-400 hover:bg-slate-50">
-                                <span class="flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm">lock</span>
-                                    <span>Billing & usage</span>
-                                </span>
-                                <span class="text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-mono">Disabled</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/settings.php?tab=sso" class="flex items-center justify-between px-3 py-2 rounded-xl transition text-slate-400 hover:bg-slate-50">
-                                <span class="flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm">lock</span>
-                                    <span>Single sign-on</span>
-                                </span>
-                                <span class="text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-mono">Disabled</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/settings.php?tab=mobile-deep-links" class="flex items-center justify-between px-3 py-2 rounded-xl transition text-slate-400 hover:bg-slate-50">
-                                <span class="flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm">lock</span>
-                                    <span>Mobile deep links</span>
-                                </span>
-                                <span class="text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-mono">Disabled</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/settings.php?tab=webhooks" class="flex items-center justify-between px-3 py-2 rounded-xl transition text-slate-400 hover:bg-slate-50">
-                                <span class="flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm">lock</span>
-                                    <span>Webhooks</span>
-                                </span>
-                                <span class="text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-mono">Disabled</span>
-                            </a>
-                        </li>
-                    </ul>
+                        </ul>
                 </div>
 
                 <!-- Developer Settings Section -->

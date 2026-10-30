@@ -15,6 +15,7 @@ $frame = trim($_GET['frame'] ?? 'none');
 $ctaText = trim($_GET['cta'] ?? 'PINDAI SAYA');
 $download = !empty($_GET['download']);
 $size = min(max((int)($_GET['size'] ?? 400), 120), 1200);
+$logoParam = strtolower(trim($_GET['logo'] ?? 'smp'));
 
 if (empty($code)) {
     http_response_code(400);
@@ -108,9 +109,9 @@ if ($matrix && !empty($matrix['bcode'])) {
         }
     }
 
-    // Tempel Logo Labschool di tengah jika file logo tersedia
+    // Tempel Logo Labschool di tengah jika diaktifkan (default: smp)
     $logoPath = __DIR__ . '/../assets/img/logo-smp-labschool.png';
-    if (file_exists($logoPath)) {
+    if ($logoParam !== 'none' && $logoParam !== '0' && file_exists($logoPath)) {
         $logo = imagecreatefrompng($logoPath);
         if ($logo) {
             $logoW = imagesx($logo);
@@ -130,8 +131,8 @@ if ($matrix && !empty($matrix['bcode'])) {
         }
     }
 
-    // Fitur Smart QR Frames: Menambahkan frame dan CTA badge jika diaktifkan
-    if ($frame === 'badge-bottom' || $frame === 'card') {
+    // Fitur Smart QR Frames: Menambahkan frame dan CTA badge jika diaktifkan (badge-bottom, card, badge-top)
+    if (in_array($frame, ['badge-bottom', 'card', 'badge-top'], true)) {
         $framePadding = 24;
         $badgeHeight = 44;
         $framedW = $imgSize + ($framePadding * 2);
@@ -149,27 +150,42 @@ if ($matrix && !empty($matrix['bcode'])) {
         imagerectangle($framedImg, 0, 0, $framedW - 1, $framedH - 1, $borderCol);
         imagerectangle($framedImg, 1, 1, $framedW - 2, $framedH - 2, $borderCol);
         
-        // Salin QR code ke tengah atas
-        imagecopy($framedImg, $img, $framePadding, $framePadding, 0, 0, $imgSize, $imgSize);
-        imagedestroy($img);
-        
-        // Tombol / Badge CTA di bawah
-        $bX1 = $framePadding;
-        $bY1 = $imgSize + $framePadding + 8;
-        $bX2 = $framedW - $framePadding;
-        $bY2 = $framedH - $framePadding;
-        imagefilledrectangle($framedImg, $bX1, $bY1, $bX2, $bY2, $badgeBg);
-        
-        // Render Teks CTA
         $font = 5; // Built-in font size 5 GD
         $charW = imagefontwidth($font);
         $charH = imagefontheight($font);
         $label = mb_strtoupper($ctaText, 'UTF-8');
         $textLen = strlen($label);
-        $textX = $bX1 + (($bX2 - $bX1) - ($textLen * $charW)) / 2;
-        $textY = $bY1 + (($bY2 - $bY1) - $charH) / 2;
-        imagestring($framedImg, $font, (int)max($bX1 + 4, $textX), (int)$textY, $label, $badgeTxt);
-        
+
+        if ($frame === 'badge-top') {
+            // Header bar di atas
+            $bX1 = $framePadding;
+            $bY1 = $framePadding;
+            $bX2 = $framedW - $framePadding;
+            $bY2 = $framePadding + $badgeHeight - 8;
+            imagefilledrectangle($framedImg, $bX1, $bY1, $bX2, $bY2, $badgeBg);
+
+            $textX = $bX1 + (($bX2 - $bX1) - ($textLen * $charW)) / 2;
+            $textY = $bY1 + (($bY2 - $bY1) - $charH) / 2;
+            imagestring($framedImg, $font, (int)max($bX1 + 4, $textX), (int)$textY, $label, $badgeTxt);
+
+            // Salin QR code di bawah header
+            imagecopy($framedImg, $img, $framePadding, $framePadding + $badgeHeight, 0, 0, $imgSize, $imgSize);
+        } else {
+            // Salin QR code ke tengah atas (badge-bottom / card)
+            imagecopy($framedImg, $img, $framePadding, $framePadding, 0, 0, $imgSize, $imgSize);
+            
+            // Tombol / Badge CTA di bawah
+            $bX1 = $framePadding;
+            $bY1 = $imgSize + $framePadding + 8;
+            $bX2 = $framedW - $framePadding;
+            $bY2 = $framedH - $framePadding;
+            imagefilledrectangle($framedImg, $bX1, $bY1, $bX2, $bY2, $badgeBg);
+            
+            $textX = $bX1 + (($bX2 - $bX1) - ($textLen * $charW)) / 2;
+            $textY = $bY1 + (($bY2 - $bY1) - $charH) / 2;
+            imagestring($framedImg, $font, (int)max($bX1 + 4, $textX), (int)$textY, $label, $badgeTxt);
+        }
+        imagedestroy($img);
         $img = $framedImg;
     }
 

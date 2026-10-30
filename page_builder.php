@@ -1061,7 +1061,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
             }
 
             try {
-                const res = await fetch('/api/save_microsite.php', {
+                const res = await fetch('/api/save_page.php', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
