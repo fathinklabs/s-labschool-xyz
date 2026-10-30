@@ -366,7 +366,48 @@ function send_mail_xoauth2(
 }
 
 /**
- * 1. Kirim Email Konfirmasi Pendaftaran Akun Baru
+ * 1. Kirim Email Verifikasi Pendaftaran Akun Baru (Wajib Verifikasi Sebelum Login)
+ */
+function send_email_verification(string $toEmail, string $fullName, string $verifyLink): array {
+    $title = "Verifikasi Alamat Email Anda";
+    $preheader = "Satu langkah lagi untuk mengaktifkan akun portal s.labschool.xyz Anda.";
+    
+    $content = '
+    <p>Halo <strong>' . htmlspecialchars($fullName) . '</strong>,</p>
+    <p>Terima kasih telah mendaftar di <strong>s.labschool.xyz</strong> — Layanan Enterprise URL Shortener, Dynamic QR Code, dan Interactive Pages resmi SMP Labschool Jakarta.</p>
+    
+    <div style="background-color: #EFF6FF; border-radius: 14px; border: 1px solid #BFDBFE; padding: 16px 20px; margin: 20px 0;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px;">
+            <tr>
+                <td style="color: #64748B; padding: 4px 0; width: 130px;">Email Terdaftar:</td>
+                <td style="color: #0F172A; font-weight: 700; font-family: monospace;">' . htmlspecialchars($toEmail) . '</td>
+            </tr>
+            <tr>
+                <td style="color: #64748B; padding: 4px 0;">Status Akun:</td>
+                <td style="color: #D97706; font-weight: 700;">Menunggu Verifikasi Email</td>
+            </tr>
+            <tr>
+                <td style="color: #64748B; padding: 4px 0;">Masa Berlaku:</td>
+                <td style="color: #2563EB; font-weight: 700;">24 Jam</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Demi keamanan sistem civitas akademika dan memastikan keabsahan akun, Anda wajib memverifikasi alamat email ini sebelum dapat masuk (login) ke dashboard platform.</p>
+    <p>Silakan klik tombol di bawah ini untuk memverifikasi alamat email dan mengaktifkan akun Anda:</p>';
+
+    $ctaText = "Verifikasi Email Saya";
+    $ctaUrl = $verifyLink;
+    $note = "Penting: Tautan verifikasi ini berlaku selama 24 jam. Jika tombol di atas tidak dapat diklik, Anda dapat menyalin tautan berikut ke peramban: " . htmlspecialchars($verifyLink);
+
+    $html = render_labschool_email_layout($title, $preheader, $content, $ctaText, $ctaUrl, $note);
+    $subject = "Verifikasi Alamat Email Akun s.labschool.xyz";
+
+    return send_mail_xoauth2($toEmail, $subject, $html);
+}
+
+/**
+ * 1b. Kirim Email Konfirmasi Pendaftaran Akun Baru (Legacy / Info)
  */
 function send_registration_confirmation_email(string $toEmail, string $fullName): array {
     $title = "Selamat Datang di s.labschool.xyz";

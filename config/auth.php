@@ -183,37 +183,94 @@ function register_user(string $email, string $password, string $full_name): arra
     }
 
     try {
-        $insert = $pdo->prepare("INSERT INTO users (email, password_hash, full_name, domain, role, api_key) VALUES (?, ?, ?, ?, 'teacher', NULL)");
+        // User baru dibuat dengan status email_verified_at = NULL dan is_active = 0 (menunggu verifikasi)
+        $insert = $pdo->prepare("INSERT INTO users (email, password_hash, full_name, domain, role, api_key, is_active, email_verified_at) VALUES (?, ?, ?, ?, 'teacher', NULL, 0, NULL)");
         $insert->execute([$email, $password_hash, $full_name, $domain]);
         $userId = (int)$pdo->lastInsertId();
 
-        // Auto login
-        $_SESSION['user_id'] = $userId;
-        $_SESSION['cached_user'] = [
-            'id'        => $userId,
-            'email'     => $email,
-            'full_name' => $full_name,
-            'domain'    => $domain,
-            'role'      => 'teacher',
-            'api_key'   => null
-        ];
+        // Terbitkan token verifikasi email (berlaku 24 jam)
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = date('Y-m-d H:i:s', time() + 86400);
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
 
-        // Kirim email konfirmasi pendaftaran secara resmi via XOAUTH2 Google Workspace
+        $vStmt = $pdo->prepare("INSERT INTO email_verifications (user_id, email, token, expires_at, ip_address) VALUES (?, ?, ?, ?, ?)");
+        $vStmt->execute([$userId, $email, $token, $expiresAt, $ip]);
+
+        $verifyLink = "https://s.labschool.xyz/verify_email.php?token=" . $token;
+
+        // Kirim email verifikasi resmi via XOAUTH2 Google Workspace
         try {
             require_once __DIR__ . '/mail.php';
-            send_registration_confirmation_email($email, $full_name);
+            send_email_verification($email, $full_name, $verifyLink);
         } catch (\Throwable $e) {
-            error_log("Gagal mengirim email konfirmasi registrasi ({$email}): " . $e->getMessage());
+            error_log("Gagal mengirim email verifikasi ({$email}): " . $e->getMessage());
         }
 
-        return ['success' => true, 'message' => 'Pendaftaran berhasil! Selamat datang di s.labschool.xyz.'];
+        return [
+            'success'            => true,
+            'needs_verification' => true,
+            'email'              => $email,
+            'message'            => 'Pendaftaran berhasil! Tautan verifikasi telah dikirim ke ' . $email . '. Silakan periksa kotak masuk email Anda dan klik tautan untuk mengaktifkan akun sebelum dapat masuk.'
+        ];
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Gagal menyimpan akun: ' . $e->getMessage()];
     }
 }
 
 /**
- * Proses login user
+ * Kirim Ulang Tautan Verifikasi Email
+ */
+function resend_verification_email(string $email): array {
+    global $pdo;
+    $email = strtolower(trim($email));
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !is_allowed_domain($email)) {
+        return ['success' => false, 'message' => 'Alamat email tidak valid atau di luar domain resmi Labschool.'];
+    }
+
+    $stmt = $pdo->prepare("SELECT id, full_name, is_active, email_verified_at FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        return ['success' => false, 'message' => 'Alamat email tidak ditemukan dalam pendaftaran.'];
+    }
+
+    if (!empty($user['email_verified_at'])) {
+        return ['success' => false, 'message' => 'Akun ini sudah diverifikasi sebelumnya. Silakan langsung masuk (login).'];
+    }
+
+    // Rate limiting: Maksimal 5 pengiriman ulang per jam per email
+    $rateStmt = $pdo->prepare("SELECT COUNT(*) FROM email_verifications WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+    $rateStmt->execute([$email]);
+    if ((int)$rateStmt->fetchColumn() >= 5) {
+        return ['success' => false, 'message' => 'Anda telah melebihi batas pengiriman email verifikasi. Silakan tunggu 1 jam lagi sebelum mencoba kembali.'];
+    }
+
+    // Generate token baru 24 jam
+    $token = bin2hex(random_bytes(32));
+    $expiresAt = date('Y-m-d H:i:s', time() + 86400);
+    $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+    $vStmt = $pdo->prepare("INSERT INTO email_verifications (user_id, email, token, expires_at, ip_address) VALUES (?, ?, ?, ?, ?)");
+    $vStmt->execute([(int)$user['id'], $email, $token, $expiresAt, $ip]);
+
+    $verifyLink = "https://s.labschool.xyz/verify_email.php?token=" . $token;
+
+    try {
+        require_once __DIR__ . '/mail.php';
+        $mailRes = send_email_verification($email, $user['full_name'], $verifyLink);
+        if ($mailRes['success']) {
+            return ['success' => true, 'message' => 'Tautan verifikasi baru berhasil dikirim ke ' . $email . '.'];
+        }
+        return ['success' => false, 'message' => 'Gagal mengirim email: ' . $mailRes['message']];
+    } catch (\Throwable $e) {
+        return ['success' => false, 'message' => 'Kesalahan saat mengirim email: ' . $e->getMessage()];
+    }
+}
+
+/**
+ * Proses login user (Wajib Email Terverifikasi)
  */
 function login_user(string $email, string $password): array {
     global $pdo;
@@ -227,12 +284,22 @@ function login_user(string $email, string $password): array {
         ];
     }
 
-    $stmt = $pdo->prepare("SELECT id, email, password_hash, full_name, domain, avatar_url, role, api_key, api_key_created_at, is_active FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, email, password_hash, full_name, domain, avatar_url, role, api_key, api_key_created_at, is_active, email_verified_at FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($password, $user['password_hash'])) {
         return ['success' => false, 'message' => 'Email atau kata sandi tidak cocok.'];
+    }
+
+    // Validasi apakah email sudah diverifikasi
+    if (empty($user['email_verified_at'])) {
+        return [
+            'success'            => false,
+            'needs_verification' => true,
+            'email'              => $email,
+            'message'            => 'Akun Anda belum aktif karena alamat email belum diverifikasi. Silakan periksa email sekolah Anda untuk tautan verifikasi.'
+        ];
     }
 
     if ((int)$user['is_active'] !== 1) {

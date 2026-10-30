@@ -16,6 +16,7 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 | **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
 | **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Completed` ✅ | `settings.php` |
 | **Autentikasi & Email** | Request Reset Password (Forgot Password) via Email XOAUTH2 | 🔥 Tinggi | `Completed` ✅ | `forgot_password.php`, `reset_password.php`, `config/mail.php` |
+| **Autentikasi & Email** | Verifikasi Alamat Email Registrasi (Wajib Verifikasi Sebelum Login) | 🔥 Tinggi | `Completed` ✅ | `verify_email.php`, `config/auth.php`, `config/mail.php` |
 | **Admin Panel** | Global System Configuration (Site, Auth, Rate Limits) | 🔥 Tinggi | `Completed` ✅ | `admin.php`, `global_settings` |
 | **Autentikasi SSO** | Login OAuth2 Google Workspace Labschool (`@labschool.xyz`) | 🔥 Tinggi | `Planned` ⏳ | `config/google_auth.php`, `login.php` |
 | **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Completed` ✅ | `config/auth.php`, Redis daemon |
@@ -127,8 +128,11 @@ Menyediakan alur pemulihan kata sandi mandiri yang aman bagi pengguna yang lupa 
   - Validasi ketat token sebelum menampilkan form password baru.
   - Indikator kekuatan kata sandi (*Password Strength Meter*) interaktif 4 parameter.
   - Re-hash password dengan `PASSWORD_BCRYPT` (cost 12) dan invalidasi token.
-- [x] **Konfirmasi Registrasi Civitas Baru**:
-  - Pendaftaran mandiri via `register.php` otomatis mengirimkan email konfirmasi selamat datang resmi berdesain Labschool.
+- [x] **Verifikasi Alamat Email Civitas Baru (Wajib Sebelum Login)**:
+  - Pendaftaran mandiri via `register.php` otomatis menerbitkan token verifikasi unik 64-hex (berlaku 24 jam) di tabel `email_verifications`.
+  - Mengirimkan email resmi *"Verifikasi Alamat Email Akun s.labschool.xyz"* via XOAUTH2 Google Workspace.
+  - Pengguna tidak dapat login sebelum mengklik tombol verifikasi pada email (`email_verified_at` bernilai valid).
+  - Halaman `verify_email.php` memvalidasi token, mengaktifkan akun, serta menyediakan formulir kirim ulang verifikasi dengan rate limiting.
 - [x] **Admin Panel XOAUTH2 Verification**:
   - Indikator status koneksi XOAUTH2 dan widget uji coba kirim email verifikasi di `admin.php?tab=config`.
 

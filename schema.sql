@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `role` ENUM('superadmin', 'teacher', 'staff', 'student') DEFAULT 'teacher',
     `api_key` VARCHAR(64) UNIQUE NOT NULL,
     `is_active` TINYINT(1) DEFAULT 1,
+    `email_verified_at` DATETIME NULL DEFAULT NULL,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX `idx_domain` (`domain`),
@@ -177,4 +178,35 @@ CREATE TABLE IF NOT EXISTS `activity_logs` (
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     INDEX `idx_user_activity` (`user_id`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. Tabel Token Reset Kata Sandi (Password Resets)
+CREATE TABLE IF NOT EXISTS `password_resets` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `email` VARCHAR(191) NOT NULL,
+    `token` VARCHAR(64) NOT NULL UNIQUE,
+    `ip_address` VARCHAR(45) NULL,
+    `user_agent` VARCHAR(255) NULL,
+    `is_used` TINYINT(1) DEFAULT 0,
+    `expires_at` DATETIME NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_token` (`token`),
+    INDEX `idx_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. Tabel Token Verifikasi Email Pendaftaran (Email Verifications)
+CREATE TABLE IF NOT EXISTS `email_verifications` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `token` VARCHAR(64) NOT NULL UNIQUE,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `expires_at` DATETIME NOT NULL,
+    `is_verified` TINYINT(1) DEFAULT 0,
+    `verified_at` DATETIME NULL,
+    `ip_address` VARCHAR(45) NULL,
+    INDEX `idx_user_id` (`user_id`),
+    INDEX `idx_token` (`token`),
+    INDEX `idx_email` (`email`),
+    CONSTRAINT `fk_email_verif_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

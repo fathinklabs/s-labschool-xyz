@@ -22,7 +22,7 @@ $stats = [
 
 // 2. Daftar Seluruh Pengguna
 $usersStmt = $pdo->query("
-    SELECT u.id, u.email, u.full_name, u.domain, u.role, u.is_active, u.created_at,
+    SELECT u.id, u.email, u.full_name, u.domain, u.role, u.is_active, u.email_verified_at, u.created_at,
            (SELECT COUNT(*) FROM short_urls WHERE user_id = u.id) as total_links,
            (SELECT COUNT(*) FROM microsites WHERE user_id = u.id) as total_bios
     FROM users u
@@ -405,10 +405,21 @@ try {
                                     <td class="py-3.5 px-4 font-semibold text-slate-700">
                                         <?= $u['total_links'] ?> link &bull; <?= $u['total_bios'] ?> bio
                                     </td>
-                                    <td class="py-3.5 px-4">
+                                    <td class="py-3.5 px-4 space-y-1">
                                         <button onclick="toggleUserStatus(<?= $u['id'] ?>, this)" class="px-2.5 py-1 rounded-full text-[11px] font-bold transition <?= $u['is_active'] ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600' ?>">
                                             <?= $u['is_active'] ? 'Aktif' : 'Diblokir' ?>
                                         </button>
+                                        <?php if (!empty($u['email_verified_at'])): ?>
+                                            <div class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                <span>Terverifikasi</span>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="text-[10px] text-amber-600 font-bold flex items-center gap-1">
+                                                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                                <span>Pending Verif</span>
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="py-3.5 px-4 text-slate-400"><?= date('d M Y', strtotime($u['created_at'])) ?></td>
                                     <td class="py-3.5 px-4 text-right">

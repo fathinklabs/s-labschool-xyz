@@ -238,8 +238,12 @@ $user = current_user();
 
             <!-- Form Register -->
             <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs hidden">
-                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-semibold leading-relaxed">
-                    Pendaftaran eksklusif: Hanya alamat email berakhiran <strong>@labschool.xyz</strong> atau <strong>@elabschool.sch.id</strong> yang dapat mendaftar.
+                <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-[11px] font-semibold leading-relaxed">
+                    <div class="font-extrabold flex items-center gap-1.5 mb-1 text-blue-800">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Pendaftaran Khusus Civitas Labschool</span>
+                    </div>
+                    Hanya email <strong>@labschool.xyz</strong> atau <strong>@elabschool.sch.id</strong> yang didukung. Tautan verifikasi akan dikirimkan ke email Anda untuk mengaktifkan akun sebelum dapat login.
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Nama Lengkap Guru / Staff / Siswa *</label>
@@ -329,7 +333,13 @@ $user = current_user();
                 if (json.status === 'success') {
                     window.location.href = '/dashboard.php';
                 } else {
-                    alert('Gagal Masuk: ' + json.message);
+                    if (json.needs_verification) {
+                        if (confirm(json.message + '\n\nApakah Anda ingin membuka halaman petunjuk verifikasi & kirim ulang email?')) {
+                            window.location.href = '/verify_email.php?sent=1&email=' + encodeURIComponent(payload.email);
+                        }
+                    } else {
+                        alert('Gagal Masuk: ' + json.message);
+                    }
                 }
             } catch (err) {
                 alert('Terjadi kesalahan jaringan.');
@@ -360,8 +370,12 @@ $user = current_user();
                 });
                 const json = await res.json();
                 if (json.status === 'success') {
-                    alert('Pendaftaran Berhasil! Selamat datang di s.labschool.xyz');
-                    window.location.href = '/dashboard.php';
+                    if (json.needs_verification) {
+                        alert(json.message);
+                        window.location.href = '/verify_email.php?sent=1&email=' + encodeURIComponent(payload.email);
+                    } else {
+                        window.location.href = '/dashboard.php';
+                    }
                 } else {
                     alert('Gagal Daftar: ' + json.message);
                 }

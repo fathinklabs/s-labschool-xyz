@@ -21,7 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'success', 'message' => $res['message']]);
     } else {
         http_response_code(400);
-        echo json_encode(['status' => 'error', 'message' => $res['message']]);
+        echo json_encode([
+            'status'             => 'error',
+            'needs_verification' => $res['needs_verification'] ?? false,
+            'email'              => $res['email'] ?? $email,
+            'message'            => $res['message']
+        ]);
     }
     exit;
 }
