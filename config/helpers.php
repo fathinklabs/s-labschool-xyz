@@ -343,3 +343,23 @@ function format_bytes(int|float $bytes, int $precision = 2): string {
     $bytes /= (1 << (10 * $pow));
     return round($bytes, $precision) . ' ' . $units[$pow];
 }
+
+/**
+ * Ambil nilai konfigurasi global dari database (dengan memory cache)
+ */
+function get_global_setting(string $key, string $default = ''): string {
+    global $pdo;
+    static $settingsCache = null;
+    if ($settingsCache === null) {
+        $settingsCache = [];
+        try {
+            if (isset($pdo)) {
+                $rows = $pdo->query("SELECT setting_key, setting_value FROM global_settings")->fetchAll(PDO::FETCH_KEY_PAIR);
+                if ($rows) {
+                    $settingsCache = $rows;
+                }
+            }
+        } catch (Exception $e) {}
+    }
+    return $settingsCache[$key] ?? $default;
+}

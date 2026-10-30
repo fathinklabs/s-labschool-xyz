@@ -50,7 +50,13 @@ function is_allowed_domain(string $email): bool {
     if (count($parts) !== 2) {
         return false;
     }
-    return in_array(trim($parts[1]), ALLOWED_DOMAINS, true);
+    $domain = trim($parts[1]);
+    $rawWhitelist = function_exists('get_global_setting') ? get_global_setting('allowed_email_domains', 'labschool.xyz, elabschool.sch.id') : 'labschool.xyz, elabschool.sch.id';
+    $whitelist = array_filter(array_map('trim', explode(',', strtolower($rawWhitelist))));
+    if (empty($whitelist)) {
+        $whitelist = ['labschool.xyz', 'elabschool.sch.id'];
+    }
+    return in_array($domain, $whitelist, true);
 }
 
 /**
@@ -131,6 +137,17 @@ function register_user(string $email, string $password, string $full_name): arra
     $email = strtolower(trim($email));
     $full_name = strip_tags(trim($full_name));
     $password = str_replace(["\0", "\x00"], '', (string)$password);
+
+    // Cek kebijakan pendaftaran mandiri dari Konfigurasi Global
+    if (function_exists('get_global_setting')) {
+        $allowReg = get_global_setting('allow_public_registration', '0');
+        if ($allowReg !== '1') {
+            return [
+                'success' => false,
+                'message' => 'Pendaftaran akun mandiri sedang dinonaktifkan oleh Administrator. Silakan hubungi admin sekolah.'
+            ];
+        }
+    }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return ['success' => false, 'message' => 'Format alamat email tidak valid.'];
