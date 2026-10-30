@@ -1,170 +1,178 @@
-# 📋 Roadmap & Daftar Tugas Pengembangan (TODOS) - s.labschool.xyz
+# 📋 Roadmap & Status Pengembangan (TODOS) - s.labschool.xyz
 
-Dokumen ini mencatat rencana kerja, backlog fitur prioritas, dan arsitektur teknis yang akan diimplementasikan pada platform **s.labschool.xyz** (Labschool Enterprise URL Shortener, Dynamic QR Code & Microsite Platform).
+Dokumen ini mencatat rencana kerja, status rilis fitur, dan arsitektur teknis platform **s.labschool.xyz** (Labschool Enterprise URL Shortener, Dynamic QR Code, and Interactive Pages Platform &bull; SMP Labschool Jakarta).
 
 ---
 
-## 📌 Status Ringkasan Roadmap
+## 📌 Matriks Status Fitur & Modul
 
 | Kategori | Fitur / Item | Prioritas | Status | Target Modul / File |
 | :--- | :--- | :---: | :---: | :--- |
-| **Autentikasi** | Login OAuth2 Google Workspace Labschool | 🔥 Tinggi | `Planned` | `config/google_auth.php`, `login.php` |
-| **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Planned` | `config/session.php`, `config/redis.php` |
-| **Admin Panel** | Metrics Usage (Storage, Data, User, DB) | ⚡ Sedang | `Planned` | `admin.php`, `api/admin/metrics.php` |
-| **Microsite** | Advance Page Builder (Themes, BG, Palettes, Cards) | ⚡ Sedang | `Planned` | `bio_editor.php`, `bio.php` |
-| **UI/UX** | Fix Mobile View yang Masih Terbatas | 🔥 Tinggi | `Planned` | `dashboard.php`, `settings.php`, `admin.php` |
-| **QR Code** | Tambahan QR Style (Logo, Badge, Border, Eye) | ⚡ Sedang | `Planned` | `api/qr.php`, `dashboard.php` |
+| **Keamanan & Kredensial** | Isolasi `.env`, Anti-CSRF, XSS Sanitasi, Nginx Hardening | 🛡️ Kritis | `Completed` ✅ | `.env`, `config/`, `s.labschool.xyz.conf` |
+| **Pages Platform** | Bitly-Style Flow (`Create Page` &rarr; `Template` &rarr; `Builder`) | 🔥 Tinggi | `Completed` ✅ | `dashboard.php`, `page_builder.php`, `bio.php` |
+| **Drawer Navigasi** | Left Sidebar Drawer Dinamis + Mini Icon-Rail (76px) | ⚡ Sedang | `Completed` ✅ | `dashboard.php` |
+| **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
+| **Autentikasi SSO** | Login OAuth2 Google Workspace Labschool (`@labschool.xyz`) | 🔥 Tinggi | `Planned` ⏳ | `config/google_auth.php`, `login.php` |
+| **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Planned` ⏳ | `config/session.php`, `config/redis.php` |
+| **Admin Panel** | Metrics Usage (Storage, Data Egress, User, DB Stats) | ⚡ Sedang | `Planned` ⏳ | `admin.php`, `api/admin/metrics.php` |
+| **UI/UX Mobile** | Mobile Bottom-Sheet Detail & Card View Tables | ⚡ Sedang | `In Progress` 🚧 | `dashboard.php`, `settings.php` |
+| **QR Code Engine** | Tambahan QR Style (Logo Preset, Frame Badge, Matrix Eye) | ⚡ Sedang | `Planned` ⏳ | `api/qr.php`, `dashboard.php` |
+| **Pages Phase 2** | Custom Mesh Gradient BG, Audio Player Card, Color Picker | ⚡ Sedang | `Planned` ⏳ | `page_builder.php`, `bio.php` |
 
 ---
 
-## 🚀 Rincian Backlog & Spesifikasi Fitur
+## ✅ Fitur yang Telah Selesai (Completed Milestones)
 
-### 1. 🔐 Login OAuth2 Google Workspace Labschool
-Mengintegrasikan autentikasi Single Sign-On (SSO) menggunakan Google Identity Platform khusus untuk akun Google Workspace Labschool.
+### 1. 🛡️ Keamanan & Perlindungan Data Produksi
+- [x] **Pemisahan Kredensial Basis Data**: Password basis data MariaDB telah dipindahkan dari berkas kode ke `/var/www/s.labschool.xyz/.env` dengan izin berkas ketat (`chmod 600`, kepemilikan `nginx:nginx`).
+- [x] **Nginx Security Rules**: Pemblokiran akses publik HTTP/HTTPS ke seluruh folder `/config/` (`return 404`) serta ekstensi sensitif (`.env`, `.sql`, `.log`, `.md`, `.bak`).
+- [x] **Security Headers Lengkap**: `Strict-Transport-Security: max-age=31536000`, `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Permissions-Policy`.
+- [x] **Sistem Proteksi Anti-CSRF**: Validasi token `csrf_token()` dan `verify_csrf_token()` pada seluruh endpoint POST internal.
+- [x] **Pertahanan Stored XSS**: Sanitasi protokol URL (`sanitize_safe_url`) memblokir skema berbahaya (`javascript:`, `data:`, `vbscript:`).
+- [x] **Atribut Cookie Sesi**: Konfigurasi otomatis `secure`, `HttpOnly`, dan `SameSite=Lax`.
 
-- [ ] **Google Cloud Console Setup**:
-  - Konfigurasi OAuth 2.0 Client ID & Secret untuk domain `s.labschool.xyz`.
+### 2. 📄 Arsitektur Pages Bergaya Bitly & Page Builder
+- [x] **Standarisasi Istilah 'Pages'**: Mengubah istilah ambigu `Microsite / Bio Link` menjadi `Pages` di seluruh dashboard, pengaturan, dan navigasi (di mana *Link-in-bio* kini merupakan salah satu kategori template).
+- [x] **Flow Pembuatan Halaman Bergaya Bitly**:
+  - `Pages` &rarr; `Create Page` &rarr; `Select Template Modal` &rarr; `Page Builder`.
+- [x] **Koleksi 6 Preset Template Awal**:
+  1. *Official Link in Bio*: Portal resmi sekolah, LMS, PSB online, YouTube Labschool.
+  2. *School Event & Announcement*: Countdown hitung mundur acara, video teaser YouTube, registrasi online, unduh brosur PDF.
+  3. *Digital Business Card*: Kartu nama guru/staf, one-click unduh kontak vCard (.vcf) ke HP, chat WhatsApp.
+  4. *Portfolio & Showcase*: Dokumentasi proyek sains siswa, video presentasi, unduh paper riset PDF.
+  5. *Alur & Roadmap Pendaftaran*: Alur bertahap 4 langkah pendaftaran PSB dengan nomor urut & FAQ akordion.
+  6. *Start from Scratch*: Kanvas kosong siap rancang.
+- [x] **Engine Baru `page_builder.php`**: Menggantikan `bio_editor.php` dengan inisialisasi preset otomatis, pemilihan layout Genially (*Showcase*, *Roadmap*, *Cards Grid*), pemilih tema (*Labs Navy*, *Cosmic Neon*, *Labs Gold*, *Emerald*, *Clean Slate*), dan countdown editor.
+- [x] **Backward-Compatibility Redirect**: `bio_editor.php` dipertahankan sebagai HTTP 302 redirect stub meneruskan parameter query (`?id=...`, `?template=...`).
+- [x] **Drawer Blok Komponen Slide-over (`#drawerAddBlock`)**: Pilihan elemen interaktif (Tautan, YouTube, Pengumuman, vCard, PDF, FAQ) dalam drawer responsif dengan efek sorotan animasi (*ring pulse*).
+- [x] **Dukungan Render Publik di `bio.php`**: Render visual untuk berkas PDF, akordion FAQ, dan tombol vCard.
+
+### 3. 📱 Dynamic Left Sidebar Drawer & Mini Icon-Rail (76px)
+- [x] **Drawer Responsif**:
+  - Di layar seluler (`< 768px`), sidebar berubah menjadi off-canvas drawer dengan latar belakang *backdrop blur overlay* (`#sidebarBackdrop`).
+  - Menutup otomatis saat memilih menu tab atau menekan tombol <kbd>Esc</kbd>.
+- [x] **Pita Baris Ikon (Mini-Rail) pada Desktop (`>= 768px`)**:
+  - Saat di-collapse (`.desktop-collapsed`), sidebar menyusut secara elegan ke lebar 76px (`4.75rem`) tanpa hilang sepenuhnya.
+  - Tetap menampilkan logo Labschool, tombol `+` ringkas, dan seluruh deretan ikon menu yang terpusat rapi (*centered*).
+  - Dilengkapi *native tooltip* pada setiap ikon menu saat di-hover.
+  - Tombol toggle di header atas (`#sidebarToggleIcon`) beradaptasi dinamis (`menu` &harr; `menu_open`).
+  - Status collapse tersimpan di `localStorage` peramban.
+
+### 4. 👥 Manajemen User, Organisasi, dan Super Admin
+- [x] **Pemisahan Hak Akses User vs Admin**:
+  - Halaman `admin.php` terisolasi ketat untuk super admin mengelola seluruh data platform.
+  - Halaman `settings.php?tab=users` difokuskan untuk mengundang kolaborator dalam lingkup organisasi user.
+- [x] **Grup Pembatas Scope (`settings.php?tab=groups`)**:
+  - Pengguna dapat membuat grup untuk membatasi hak akses tautan/pages (maksimal 10 grup per akun).
+- [x] **Tab Baru & Penonaktifan Tab Obsolet**:
+  - Tab baru `bulk-upload` (dengan riwayat logs) dan tab `activity-log` di `settings.php`.
+  - Menonaktifkan tab yang belum diimplementasikan (`sso`, `mobile-deep-links`, `webhooks`, `billing`).
+
+---
+
+## 🚀 Rencana Fitur Mendatang (Upcoming Backlog)
+
+### 1. 🔐 Login OAuth2 Google Workspace Labschool (Sprint 1)
+Mengintegrasikan Single Sign-On (SSO) Google Identity Platform khusus akun sekolah.
+
+- [ ] **Google Cloud Console Credentials**:
+  - OAuth 2.0 Client ID & Secret untuk `s.labschool.xyz`.
   - Authorized Redirect URI: `https://s.labschool.xyz/auth/google/callback.php`.
 - [ ] **Restriksi Ketat Domain Akun**:
-  - Validasi domain hosted Google Workspace (`hd` parameter dan verifikasi server-side):
+  - Pembatasan domain hosted (`hd` parameter dan verifikasi server-side):
     - `@labschool.xyz`
     - `@elabschool.sch.id`
-  - Penolakan otomatis (HTTP 403 / Error Notice) jika pengguna mencoba login dengan akun publik (`@gmail.com`) atau domain institusi di luar Labschool.
-- [ ] **Sinkronisasi Profil Otomatis**:
-  - Auto-create user jika baru pertama kali login dengan data resmi dari Google:
-    - Nama Lengkap (`name` / `given_name` + `family_name`)
-    - Email resmi
-    - Foto Profil (`picture` HD disimpan / di-link ke `avatar_url`)
+  - Penolakan otomatis (HTTP 403) jika login dengan email publik (`@gmail.com`).
+- [ ] **Sinkronisasi Profil & Auto-Provisioning**:
+  - Auto-create user jika baru pertama kali login: nama lengkap, email resmi, avatar Google HD.
   - Auto-assign API Key unik (`labs_...`).
-  - Penentuan role awal cerdas: guru/staf atau siswa berdasarkan pola email / OU.
 - [ ] **UI Tombol Login**:
-  - Penambahan tombol resmi *"Masuk dengan Google Workspace Labschool"* dengan ikon Google berwarna dan styling brand Labschool di `login.php` dan `register.php`.
+  - Tombol *"Masuk dengan Google Workspace Labschool"* di `login.php` dan `register.php`.
 
 ---
 
-### 2. ⚡ Redis Session Management
-Menggantikan penyimpanan sesi berbasis file PHP tradisional (`/var/lib/php/sessions`) dengan in-memory cache **Redis** untuk performa tinggi, atomisitas, dan skalabilitas horizontal.
+### 2. ⚡ Redis Session Management (Sprint 1)
+Menggantikan sesi berbasis berkas PHP (`/var/lib/php/sessions`) dengan cache in-memory **Redis**.
 
-- [ ] **Instalasi & Konfigurasi Ekstensi `php-redis`**:
-  - Konfigurasi `php.ini` atau handler runtime:
-    ```ini
-    session.save_handler = redis
-    session.save_path = "tcp://127.0.0.1:6379?prefix=labs_sess:&timeout=2.0"
-    ```
-- [ ] **Konfigurasi Keamanan & TTL**:
-  - Session TTL dinamis: 7 hari untuk Remember Me, 24 jam untuk sesi standar.
-  - Sesi otomatis terhapus saat pengguna memilih `logout.php`.
-- [ ] **Manajemen Sesi Terdistribusi**:
-  - Kemampuan mencabut (revoke) sesi dari jarak jauh jika akun dicurigai disusupi (Remote Logout).
-  - Monitoring koneksi Redis dan graceful fallback jika Redis tidak merespons (fail-safe ke database atau file).
+- [ ] **Handler Konfigurasi `php-redis`**:
+  - `session.save_handler = redis`
+  - `session.save_path = "tcp://127.0.0.1:6379?prefix=labs_sess:&timeout=2.0"`
+- [ ] **TTL & Keamanan**:
+  - Session TTL dinamis: 7 hari untuk *Remember Me*, 24 jam untuk sesi standar.
+  - Sesi otomatis dibersihkan saat `logout.php`.
+- [ ] **Fail-Safe Mechanism**:
+  - Fallback otomatis ke basis data/file jika daemon Redis mengalami *downtime*.
 
 ---
 
-### 3. 📊 Metrics Usage pada Admin Panel
-Menyediakan visibilitas mendalam bagi Super Admin mengenai kapasitas dan utilisasi sumber daya platform di `admin.php`.
+### 3. 📊 Metrics Usage pada Admin Panel (Sprint 2)
+Visibilitas kapasitas dan beban sumber daya platform di `admin.php`.
 
-- [ ] **Storage Usage (Penggunaan Penyimpanan)**:
-  - Total ukuran direktori upload aset (`/assets/img/`, custom avatars, logo QR, favicon microsite).
-  - Rata-rata ukuran file per pengguna.
-  - Indikator sisa kapasitas partisi disk server (`df -h` metrik via PHP runtime).
+- [ ] **Storage Usage**:
+  - Ukuran direktori upload aset (`/assets/img/`, avatar kustom, logo QR).
+  - Indikator sisa kapasitas partisi disk server (`df -h`).
 - [ ] **Data Usage & Bandwidth**:
-  - Volume trafik / data transfer keluar masuk (Egress Bandwidth) bulanan.
-  - Total hit / request redirect link per hari/minggu/bulan.
-  - Estimasi penghematan beban data melalui caching headers.
-- [ ] **User Usage (Aktivitas & Utilisasi Pengguna)**:
-  - Jumlah total pengguna terdaftar vs pengguna aktif (DAU / WAU / MAU).
-  - Distribusi pengguna berdasarkan domain (`@labschool.xyz` vs `@elabschool.sch.id`).
-  - Top 10 kreator tautan & microsite paling produktif.
-- [ ] **Database Usage (Statistik Basis Data MariaDB)**:
-  - Ukuran tabel individu: `short_urls`, `click_logs`, `microsites`, `activity_logs`, `bulk_upload_logs`.
-  - Total overhead index dan ukuran buffer pool.
-  - Rekomendasi otomatis optimasi tabel / partisi jika `click_logs` melebihi 1.000.000 baris.
+  - Estimasi volume transfer data keluar (Egress Bandwidth) bulanan.
+  - Grafik hit redirect link per hari/minggu/bulan.
+- [ ] **User Activity Metrics**:
+  - Rasio pengguna aktif (DAU / WAU / MAU).
+  - Distribusi domain (`@labschool.xyz` vs `@elabschool.sch.id`).
+- [ ] **Database Analytics (MariaDB)**:
+  - Ukuran tabel individu: `short_urls`, `click_logs`, `microsites`, `activity_logs`.
+  - Overhead index & ukuran buffer pool.
 
 ---
 
-### 4. 🎨 Advance Page Builder (Microsite / Link in Bio)
-Meningkatkan kemampuan pembuat halaman interaktif di `bio_editor.php` dan tampilan publik di `bio.php` agar setara dengan standar modern (Genially & Linktree Enterprise).
+### 4. 🎨 Advance Page Builder Phase 2 (Sprint 3)
+Fitur tingkat lanjut untuk `page_builder.php` dan `bio.php`.
 
-- [ ] **Koleksi Tema Baru (Themes Collection)**:
-  - `genially-showcase`: Tampilan portofolio interaktif dengan animasi fade-in dan card modern.
-  - `notion-clean`: Tampilan minimalis monokrom bersih dengan tipografi rapi ala Notion.
-  - `glassmorphism-aurora`: Efek kaca transparan blur (*backdrop-filter*) dengan pencahayaan gradien warna-warni dinamis.
-  - `labs-cyber`: Tema gelap aksen neon biru-amber untuk kegiatan IT, robotik, dan kompetisi siswa.
-  - `academic-classic`: Tema elegan resmi dengan ornamen emas dan navy untuk profil institusi / guru.
-- [ ] **Page Background Kustom**:
-  - Dukungan warna solid kustom (`hex / rgb`).
-  - Animated CSS Gradient Mesh (bergerak halus di latar belakang).
-  - Pola geometris / patterns (dots grid, diagonal lines, isometric shapes).
-  - Upload gambar latar belakang dengan pengatur opacity, blur, dan dark overlay.
+- [ ] **Background Kustom Tingkat Lanjut**:
+  - Animated CSS Gradient Mesh.
+  - Pola geometris / pattern (dots grid, diagonal lines).
+  - Unggah gambar background dengan slider blur dan dark overlay.
 - [ ] **Color Palette Selector**:
-  - Color picker modern untuk warna teks, tombol, border, dan aksen.
-  - Presets warna resmi identitas Labschool (Labs Blue `#1E40AF`, Amber `#F59E0B`, Sky `#0EA5E9`, Emerald `#10B981`).
-- [ ] **Tambahan Tipe Button / Card / Konten**:
-  - **Tipe Button Standar**: Solid, Outline, Soft Glow, 3D Shadow, Pill Rounded.
-  - **Interactive Media Card**:
-    - *YouTube Video Embed* (pemutaran video langsung di dalam microsite).
-    - *Spotify / Apple Music Embed* (podcast sekolah atau mars Labschool).
-    - *Google Drive / PDF Viewer* (pratinjau dokumen brosur / materi pelajaran).
-  - **Contact & Social Cards**:
-    - Tombol WhatsApp Interaktif (dengan template pesan otomatis).
-    - Tombol Unduh Kartu Nama Digital (vCard / `.vcf`).
-    - Media sosial terpadu (Instagram, TikTok, YouTube, LinkedIn, X).
-  - **Event & Announcement Cards**:
-    - Widget hitung mundur kegiatan (*Countdown Timer*).
-    - Banner pengumuman penting (*Highlighted Notification Bar*).
+  - Color picker kustom untuk teks, tombol, dan border.
+  - Preset warna resmi Labschool (Royal Blue `#1E40AF`, Amber `#F59E0B`, Emerald `#10B981`).
+- [ ] **Widget Tambahan**:
+  - Audio Player Card (Spotify embed / Mars Labschool).
+  - Google Drive Folder Embed / PDF Viewer interaktif.
 
 ---
 
-### 5. 📱 Fix Mobile View yang Masih Terbatas
-Menyempurnakan antarmuka pengguna agar 100% responsif, nyaman, dan intuitif saat diakses dari perangkat ponsel (smartphone iOS & Android).
-
-- [ ] **Drawer Detail Tautan (Mobile Bottom-Sheet)**:
-  - Mengubah sliding drawer desktop di `dashboard.php` menjadi *bottom-sheet drawer* pada layar seluler (`< 768px`) dengan drag-handle dan scroll internal yang mulus.
-- [ ] **Bottom Navigation Bar untuk Seluler**:
-  - Menyediakan navigasi bawah tetap (*fixed bottom bar*) untuk menu cepat: *Tautan*, *Microsite*, *Buat (+)*, *Grup*, *Profil/Pengaturan*.
-- [ ] **Transformasi Tabel Responsif (Card View on Mobile)**:
-  - Mengonversi tampilan tabel horizontal yang memicu scrollbar samping di `dashboard.php`, `settings.php?tab=activity-log`, dan `settings.php?tab=bulk-upload` menjadi kartu vertikal yang rapi di layar kecil.
-- [ ] **Perbaikan Form & Modal di Layar Ponsel**:
-  - Penyesuaian padding, ukuran font input, dan tombol aksi di modal pembuat QR, modal pembuat grup, dan modal invite user agar tidak terpotong atau tertutup keyboard virtual.
-- [ ] **Mobile Editor untuk Microsite**:
-  - Memisahkan panel preview dan panel kontrol pada `bio_editor.php` dengan mekanisme tab *Edit* vs *Pratinjau Live* pada layar smartphone.
+### 5. 📱 UI/UX Mobile Refinements (Sprint 3)
+- [ ] **Mobile Bottom-Sheet untuk Detail Tautan**:
+  - Mengubah sliding drawer kanan menjadi bottom-sheet drawer pada layar seluler (`< 768px`) dengan drag handle.
+- [ ] **Card View Tables di Mobile**:
+  - Mengonversi tabel horizontal lebar di `dashboard.php` dan `settings.php` menjadi tampilan kartu vertikal pada smartphone.
 
 ---
 
-### 6. 🖼️ Tambahan QR Style pada Pembuatan QR Code (Logo/Badge/Border)
-Menghadirkan kustomisasi kode QR terlengkap di `api/qr.php` dan antarmuka modal QR di `dashboard.php`.
+### 6. 🖼️ Tambahan QR Style (Sprint 4)
+Kustomisasi kode QR terlengkap di `api/qr.php` dan modal QR di `dashboard.php`.
 
-- [ ] **Kustomisasi Logo Tengah (Center Logo)**:
-  - Preset logo resmi:
-    - Logo SMP Labschool Jakarta
-    - Logo SMA Labschool Jakarta
-    - Logo KB-TK Labschool
-    - Logo BPS Labschool UNJ
-  - Fitur upload logo kustom pengguna dengan kompresi otomatis dan *safe-margin white boundary* agar keterbacaan scanner tetap 100%.
-- [ ] **Koleksi Badge & Frame Call-to-Action (CTA)**:
-  - Bingkai badge bawah: *"PINDAI SAYA"*, *"DAFTAR DI SINI"*, *"MATERI KELAS"*, *"INFO KEGIATAN"*.
-  - Bingkai badge atas: *"LABSCHOOL OFFICIAL"*, *"SCAN ME"*.
-  - Desain kartu lengkap (*QR Card Stand*) dengan header judul acara dan border tepi melengkung.
-- [ ] **Gaya Titik & Sudut QR (Matrix & Eye Styles)**:
-  - Gaya titik matriks: *Square (Standar)*, *Rounded Dots*, *Extra-rounded Smooth*, *Hexagon*.
-  - Gaya mata sudut (*Corner Eyes*): *Square*, *Circle Ring*, *Leaf Shape*.
-  - Pemilihan warna gradien untuk pola QR (Gradien Biru Labschool ke Biru Langit).
-- [ ] **Format Ekspor Multi-Resolusi**:
-  - Format PNG Ultra HD (Resolusi tinggi hingga 2000x2000 px, 300 DPI untuk cetak banner/brosur).
-  - Format SVG Vektor murni (resolusi tak terbatas untuk desainer grafis).
-  - Opsi unduh langsung PDF lembar siap cetak ukuran A4 / A5.
+- [ ] **Logo Tengah (Center Logo)**:
+  - Preset logo resmi: SMP Labschool Jakarta, SMA Labschool Jakarta, KB-TK Labschool, BPS Labschool UNJ.
+  - Fitur unggah logo kustom pengguna dengan *safe white margin*.
+- [ ] **Badge & Frame CTA**:
+  - Bingkai badge: *"PINDAI SAYA"*, *"DAFTAR DI SINI"*, *"MATERI KELAS"*.
+- [ ] **Gaya Titik & Sudut QR**:
+  - Matriks titik: *Square*, *Rounded Dots*, *Smooth*.
+  - Mata sudut (*Corner Eyes*): *Square*, *Circle Ring*.
+- [ ] **Format Ekspor**:
+  - PNG Ultra HD (resolusi tinggi untuk cetak spanduk).
+  - SVG Vektor murni.
 
 ---
 
 ## 📅 Rencana Tahapan Rilis (Milestones)
 
 ```
-[Sprint 1] ───> Login OAuth2 Google Labschool + Redis Session Management
-[Sprint 2] ───> Mobile View Optimization + Bottom Navigation & Card Layouts
-[Sprint 3] ───> Tambahan QR Style (Logo Presets, Frame Badges, Eye Customization)
-[Sprint 4] ───> Advance Page Builder (Themes, Background Video/Mesh, Media Cards)
-[Sprint 5] ───> Metrics Usage (Storage, Bandwidth, Database Analytics on Admin Panel)
+[Release v1.2] ✅ Hardening Keamanan, Bitly-Style Pages, Mini-Rail Left Drawer, User Groups
+[Sprint 1]     ───> Login OAuth2 Google Workspace Labschool + Redis Session Management
+[Sprint 2]     ───> Metrics Usage pada Admin Panel (Storage, Data, DB Analytics)
+[Sprint 3]     ───> Mobile View Refinement (Bottom-Sheet & Cards) + Advance Page Builder Phase 2
+[Sprint 4]     ───> Tambahan QR Style (Logo Presets, Frame Badges, Vector Export)
 ```
 
 ---
-*Dokumen ini diperbarui secara berkala sesuai perkembangan kebutuhan pengembang dan pengguna s.labschool.xyz.*
+*Dokumen ini diperbarui secara berkala sesuai perkembangan kode dan kebutuhan operasional s.labschool.xyz.*
