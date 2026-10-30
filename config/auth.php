@@ -307,7 +307,9 @@ function login_user(string $email, string $password): array {
     }
 
     // Cegah serangan Session Fixation dengan regenerasi ID sesi
-    session_regenerate_id(true);
+    if (!headers_sent() && session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+    }
     $_SESSION['user_id'] = (int)$user['id'];
     unset($user['password_hash']);
     $_SESSION['cached_user'] = $user;
