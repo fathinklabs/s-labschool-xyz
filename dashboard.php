@@ -130,9 +130,9 @@ foreach ($urls as $u) {
             font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        /* Dynamic Left Sidebar Drawer Styles */
+        /* Dynamic Left Sidebar Drawer & Mini-Rail Styles */
         #leftSidebar {
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, box-shadow 0.3s ease;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
         }
 
         /* Mobile drawer behavior (< 768px) */
@@ -148,27 +148,50 @@ foreach ($urls as $u) {
             }
             #leftSidebar.drawer-open {
                 transform: translateX(0);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             }
         }
 
-        /* Desktop collapsible behavior (>= 768px) */
+        /* Desktop collapsible mini-rail behavior (>= 768px) */
         @media (min-width: 768px) {
             #leftSidebar {
                 position: sticky;
                 top: 0;
                 height: 100vh;
-                width: 16rem; /* 256px */
-                margin-left: 0;
+                width: 16rem; /* 256px expanded */
                 transform: translateX(0);
                 z-index: 30;
             }
             #leftSidebar.desktop-collapsed {
-                margin-left: -16rem;
-                transform: translateX(-100%);
-                opacity: 0;
-                pointer-events: none;
+                width: 4.75rem; /* 76px compact icon rail */
             }
+            #leftSidebar.desktop-collapsed .sidebar-text {
+                display: none !important;
+            }
+            #leftSidebar.desktop-collapsed .sidebar-expand-only {
+                display: none !important;
+            }
+            #leftSidebar.desktop-collapsed .sidebar-collapsed-only {
+                display: flex !important;
+            }
+            #leftSidebar.desktop-collapsed .sidebar-box-pad {
+                padding-left: 0.6rem !important;
+                padding-right: 0.6rem !important;
+            }
+            #leftSidebar.desktop-collapsed .sidebar-nav-btn {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                gap: 0 !important;
+            }
+            #leftSidebar.desktop-collapsed .sidebar-brand-wrapper {
+                justify-content: center !important;
+            }
+        }
+
+        /* Default hidden for collapsed-only elements */
+        .sidebar-collapsed-only {
+            display: none !important;
         }
     </style>
 </head>
@@ -177,27 +200,28 @@ foreach ($urls as $u) {
     <!-- 0. LEFT SIDEBAR BACKDROP (For Mobile / Drawer Overlay) -->
     <div id="sidebarBackdrop" onclick="closeSidebarDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300"></div>
 
-    <!-- 1. LEFT SIDEBAR (Enterprise Navigation - Dynamic Drawer) -->
+    <!-- 1. LEFT SIDEBAR (Enterprise Navigation - Dynamic Drawer & Mini-Rail) -->
     <aside id="leftSidebar" class="bg-slate-900 text-white shrink-0 flex flex-col justify-between overflow-y-auto">
-        <div class="p-5 space-y-6">
+        <div class="p-5 space-y-6 sidebar-box-pad">
             <!-- Brand Logo & Collapse / Close Button -->
-            <div class="flex items-center justify-between">
-                <a href="/" class="flex items-center gap-3">
-                    <img src="/assets/img/logo-smp-labschool.png" alt="Labschool" class="h-9 w-auto">
-                    <div>
+            <div class="sidebar-brand-wrapper flex items-center justify-between">
+                <a href="/" class="flex items-center gap-3" title="s.labschool.xyz Enterprise Shortener">
+                    <img src="/assets/img/logo-smp-labschool.png" alt="Labschool" class="h-9 w-auto shrink-0">
+                    <div class="sidebar-text">
                         <div class="text-base font-black tracking-tight text-white leading-tight">s.labschool.xyz</div>
                         <div class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Enterprise Shortener</div>
                     </div>
                 </a>
-                <button type="button" onclick="closeSidebarDrawer()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Sembunyikan Menu Navigasi">
+                <button type="button" onclick="closeSidebarDrawer()" class="sidebar-expand-only p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Ciutkan Menu ke Pita Baris Ikon">
                     <span class="material-symbols-rounded text-xl">menu_open</span>
                 </button>
             </div>
 
             <!-- + Create New Dropdown Button -->
             <div class="relative">
+                <!-- Expanded Button -->
                 <button type="button" onclick="toggleCreateDropdown()" id="btnCreateDropdown"
-                    class="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-lg shadow-blue-600/30 transition flex items-center justify-between">
+                    class="sidebar-expand-only w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-lg shadow-blue-600/30 transition flex items-center justify-between">
                     <span class="flex items-center gap-2">
                         <span class="material-symbols-rounded text-xl">add</span>
                         <span>Buat Baru</span>
@@ -205,8 +229,14 @@ foreach ($urls as $u) {
                     <span class="material-symbols-rounded text-lg">arrow_drop_down</span>
                 </button>
 
+                <!-- Collapsed Icon-only Button -->
+                <button type="button" onclick="toggleCreateDropdown()" id="btnCreateDropdownMini"
+                    class="sidebar-collapsed-only w-11 h-11 mx-auto rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl shadow-lg shadow-blue-600/30 transition items-center justify-center" title="Buat Baru (Tautan / QR / Page)">
+                    <span class="material-symbols-rounded text-2xl">add</span>
+                </button>
+
                 <!-- Dropdown Menu -->
-                <div id="createDropdownMenu" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 text-slate-800">
+                <div id="createDropdownMenu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 text-slate-800">
                     <button type="button" onclick="openCreateModal(); closeCreateDropdown();" class="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2.5">
                         <span class="material-symbols-rounded text-blue-600 text-lg">link</span>
                         <span>Tautan Singkat</span>
@@ -226,64 +256,64 @@ foreach ($urls as $u) {
                 </div>
             </div>
 
-            <!-- Navigation Links -->
+            <!-- Navigation Links (With Icons & Tooltips) -->
             <nav class="space-y-1.5 text-xs font-bold">
-                <button onclick="switchTab('links')" id="navLinkLinks" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-blue-600 text-white transition">
-                    <span class="material-symbols-rounded text-xl">link</span>
-                    <span>Tautan (Links)</span>
-                    <span class="ml-auto bg-blue-700/80 px-2 py-0.5 rounded-full text-[10px]"><?= $totalLinks ?></span>
+                <button onclick="switchTab('links')" id="navLinkLinks" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-blue-600 text-white transition" title="Tautan (Links)">
+                    <span class="material-symbols-rounded text-xl shrink-0">link</span>
+                    <span class="sidebar-text truncate">Tautan (Links)</span>
+                    <span class="sidebar-text ml-auto bg-blue-700/80 px-2 py-0.5 rounded-full text-[10px]"><?= $totalLinks ?></span>
                 </button>
-                <button onclick="switchTab('qr')" id="navLinkQr" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">qr_code</span>
-                    <span>QR Codes</span>
+                <button onclick="switchTab('qr')" id="navLinkQr" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="QR Codes">
+                    <span class="material-symbols-rounded text-xl shrink-0">qr_code</span>
+                    <span class="sidebar-text truncate">QR Codes</span>
                 </button>
-                <button onclick="switchTab('bios')" id="navLinkBios" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">view_stream</span>
-                    <span>Pages</span>
-                    <span class="ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= $totalBios ?></span>
+                <button onclick="switchTab('bios')" id="navLinkBios" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Pages">
+                    <span class="material-symbols-rounded text-xl shrink-0">view_stream</span>
+                    <span class="sidebar-text truncate">Pages</span>
+                    <span class="sidebar-text ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= $totalBios ?></span>
                 </button>
-                <a href="/analytics.php" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">bar_chart</span>
-                    <span>Analitik</span>
+                <a href="/analytics.php" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Analitik">
+                    <span class="material-symbols-rounded text-xl shrink-0">bar_chart</span>
+                    <span class="sidebar-text truncate">Analitik</span>
                 </a>
-                <button onclick="switchTab('campaigns')" id="navLinkCampaigns" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">label</span>
-                    <span>Tag & Kampanye</span>
-                    <span class="ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= count($allTags) ?></span>
+                <button onclick="switchTab('campaigns')" id="navLinkCampaigns" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Tag & Kampanye">
+                    <span class="material-symbols-rounded text-xl shrink-0">label</span>
+                    <span class="sidebar-text truncate">Tag & Kampanye</span>
+                    <span class="sidebar-text ml-auto bg-slate-800 px-2 py-0.5 rounded-full text-[10px]"><?= count($allTags) ?></span>
                 </button>
-                <a href="/settings.php?tab=integrations" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">widgets</span>
-                    <span>Integrasi</span>
+                <a href="/settings.php?tab=integrations" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Integrasi">
+                    <span class="material-symbols-rounded text-xl shrink-0">widgets</span>
+                    <span class="sidebar-text truncate">Integrasi</span>
                 </a>
-                <a href="/settings.php?tab=account-details" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">settings</span>
-                    <span>Pengaturan</span>
+                <a href="/settings.php?tab=account-details" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Pengaturan">
+                    <span class="material-symbols-rounded text-xl shrink-0">settings</span>
+                    <span class="sidebar-text truncate">Pengaturan</span>
                 </a>
-                <button onclick="switchTab('api')" id="navLinkApi" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition">
-                    <span class="material-symbols-rounded text-xl">data_object</span>
-                    <span>Developer REST API</span>
+                <button onclick="switchTab('api')" id="navLinkApi" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition" title="Developer REST API">
+                    <span class="material-symbols-rounded text-xl shrink-0">data_object</span>
+                    <span class="sidebar-text truncate">Developer REST API</span>
                 </button>
                 <?php if ($user['role'] === 'superadmin'): ?>
-                    <a href="/admin.php" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-red-400 hover:text-white hover:bg-red-950/40 transition">
-                        <span class="material-symbols-rounded text-xl">verified_user</span>
-                        <span>Superadmin Panel</span>
+                    <a href="/admin.php" class="sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-red-400 hover:text-white hover:bg-red-950/40 transition" title="Superadmin Panel">
+                        <span class="material-symbols-rounded text-xl shrink-0">verified_user</span>
+                        <span class="sidebar-text truncate">Superadmin Panel</span>
                     </a>
                 <?php endif; ?>
             </nav>
         </div>
 
         <!-- User Profile Card -->
-        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
-            <div class="flex items-center gap-3 truncate">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-black text-xs text-white uppercase shrink-0">
+        <div class="p-3 border-t border-slate-800 flex items-center justify-between sidebar-box-pad">
+            <div class="flex items-center gap-2.5 truncate mx-auto md:mx-0">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-black text-xs text-white uppercase shrink-0" title="<?= htmlspecialchars($user['full_name']) ?> (<?= htmlspecialchars($user['email']) ?>)">
                     <?= substr($user['full_name'], 0, 2) ?>
                 </div>
-                <div class="truncate">
+                <div class="truncate sidebar-text">
                     <div class="text-xs font-bold text-white truncate"><?= htmlspecialchars($user['full_name']) ?></div>
                     <div class="text-[10px] text-slate-400 font-mono truncate"><?= htmlspecialchars($user['email']) ?></div>
                 </div>
             </div>
-            <a href="/logout.php" class="p-2 text-slate-400 hover:text-red-400 transition" title="Logout">
+            <a href="/logout.php" class="p-2 text-slate-400 hover:text-red-400 transition sidebar-expand-only" title="Logout">
                 <span class="material-symbols-rounded text-lg">logout</span>
             </a>
         </div>
@@ -1646,9 +1676,12 @@ foreach ($urls as $u) {
 
         document.addEventListener('click', function(e) {
             const btn = document.getElementById('btnCreateDropdown');
+            const btnMini = document.getElementById('btnCreateDropdownMini');
             const menu = document.getElementById('createDropdownMenu');
-            if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                closeCreateDropdown();
+            if (menu && !menu.contains(e.target)) {
+                if ((!btn || !btn.contains(e.target)) && (!btnMini || !btnMini.contains(e.target))) {
+                    closeCreateDropdown();
+                }
             }
         });
 
@@ -1659,7 +1692,7 @@ foreach ($urls as $u) {
                 document.getElementById('section' + s).classList.add('hidden');
                 const nav = document.getElementById('navLink' + s);
                 if (nav) {
-                    nav.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition';
+                    nav.className = 'sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition';
                 }
             });
 
@@ -1667,7 +1700,7 @@ foreach ($urls as $u) {
             const activeNav = document.getElementById('navLink' + tab.charAt(0).toUpperCase() + tab.slice(1));
             
             if (activeSection) activeSection.classList.remove('hidden');
-            if (activeNav) activeNav.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-blue-600 text-white transition';
+            if (activeNav) activeNav.className = 'sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-blue-600 text-white transition';
 
             const titleMap = {
                 links: 'Tautan Singkat',
