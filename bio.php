@@ -38,44 +38,110 @@ $templateStyle = $site['template_style'] ?? 'genially-showcase';
 
 $themeClasses = [
     'labs-navy' => [
-        'bg'       => 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white',
-        'card'     => 'bg-white/[0.08] hover:bg-white/[0.14] border-white/10 text-white backdrop-blur-xl hover:border-blue-400/40 shadow-xl shadow-blue-950/40',
-        'btn_prim' => 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30',
-        'badge'    => 'bg-blue-500/20 text-blue-300 border-blue-400/30',
-        'accent'   => 'text-blue-400',
-        'glow'     => 'rgba(37, 99, 235, 0.25)'
+        'id'         => 'labs-navy',
+        'name'       => 'Labs Navy',
+        'bg'         => 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white',
+        'card'       => 'bg-white/[0.08] hover:bg-white/[0.14] border-white/10 text-white backdrop-blur-xl hover:border-blue-400/40 shadow-xl shadow-blue-950/40',
+        'btn_prim'   => 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30',
+        'badge'      => 'bg-blue-500/20 text-blue-300 border-blue-400/30',
+        'accent'     => 'text-blue-400',
+        'glow'       => 'rgba(37, 99, 235, 0.25)',
+        'font'       => 'font-sans',
+        'title_font' => 'font-black'
     ],
     'genially-cosmic' => [
-        'bg'       => 'bg-gradient-to-br from-[#0B0F19] via-[#1E1B4B] to-[#0A051E] text-white',
-        'card'     => 'bg-white/[0.06] hover:bg-white/[0.12] border-purple-500/20 text-white backdrop-blur-xl hover:border-cyan-400/50 shadow-xl shadow-purple-950/50',
-        'btn_prim' => 'bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg shadow-purple-500/30',
-        'badge'    => 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30',
-        'accent'   => 'text-cyan-400',
-        'glow'     => 'rgba(6, 182, 212, 0.25)'
+        'id'         => 'genially-cosmic',
+        'name'       => 'Cosmic Neon',
+        'bg'         => 'bg-gradient-to-br from-[#0B0F19] via-[#1E1B4B] to-[#0A051E] text-white',
+        'card'       => 'bg-white/[0.06] hover:bg-white/[0.12] border-purple-500/20 text-white backdrop-blur-xl hover:border-cyan-400/50 shadow-xl shadow-purple-950/50',
+        'btn_prim'   => 'bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg shadow-purple-500/30',
+        'badge'      => 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30',
+        'accent'     => 'text-cyan-400',
+        'glow'       => 'rgba(6, 182, 212, 0.25)',
+        'font'       => 'font-sans',
+        'title_font' => 'font-black'
     ],
     'labs-gold' => [
-        'bg'       => 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white',
+        'id'         => 'labs-gold',
+        'name'       => 'Labs Gold',
+        'bg'         => 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white',
         'card'     => 'bg-amber-950/20 hover:bg-amber-900/30 border-amber-500/20 text-amber-100 backdrop-blur-xl hover:border-amber-400/40 shadow-xl shadow-amber-950/40',
         'btn_prim' => 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold shadow-lg shadow-amber-500/20',
         'badge'    => 'bg-amber-500/20 text-amber-300 border-amber-400/30',
         'accent'   => 'text-amber-400',
-        'glow'     => 'rgba(245, 158, 11, 0.25)'
+        'glow'     => 'rgba(245, 158, 11, 0.25)',
+        'font'       => 'font-sans',
+        'title_font' => 'font-black'
     ],
     'emerald' => [
-        'bg'       => 'bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white',
+        'id'         => 'emerald',
+        'name'       => 'Emerald',
+        'bg'         => 'bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white',
         'card'     => 'bg-emerald-900/20 hover:bg-emerald-900/30 border-emerald-500/20 text-emerald-100 backdrop-blur-xl hover:border-emerald-400/40 shadow-xl shadow-emerald-950/40',
         'btn_prim' => 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/30',
         'badge'    => 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
         'accent'   => 'text-emerald-400',
-        'glow'     => 'rgba(16, 185, 129, 0.25)'
+        'glow'     => 'rgba(16, 185, 129, 0.25)',
+        'font'       => 'font-sans',
+        'title_font' => 'font-black'
     ],
     'slate' => [
-        'bg'       => 'bg-slate-100 text-slate-800',
+        'id'         => 'slate',
+        'name'       => 'Clean Slate',
+        'bg'         => 'bg-slate-100 text-slate-800',
         'card'     => 'bg-white hover:bg-slate-50 border-slate-200/90 text-slate-800 shadow-md hover:border-blue-500/40',
         'btn_prim' => 'bg-slate-900 hover:bg-slate-800 text-white shadow-md',
         'badge'    => 'bg-slate-200 text-slate-700 border-slate-300',
         'accent'   => 'text-blue-600',
-        'glow'     => 'rgba(15, 23, 42, 0.1)'
+        'glow'     => 'rgba(15, 23, 42, 0.1)',
+        'font'       => 'font-sans',
+        'title_font' => 'font-black'
+    ],
+
+    // ========================================================
+    // TEMA EKSKLUSIF HASIL TEMPLATE MICROSITE KHUSUS
+    // ========================================================
+
+    // 1. Modern Web Design Studio (Catamaran + Fredoka, Ocean Blueprint Grid & Glassmorphism)
+    'web-design-studio' => [
+        'id'         => 'web-design-studio',
+        'name'       => 'Web Studio (Ocean Blueprint)',
+        'bg'         => 'theme-web-studio text-white',
+        'card'       => 'bg-white/[0.12] hover:bg-white/[0.22] border border-white/20 text-white backdrop-blur-2xl hover:border-sky-300/70 shadow-2xl shadow-blue-950/60 hover:shadow-sky-500/25 transition-all duration-300',
+        'btn_prim'   => 'bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 hover:from-blue-600 hover:to-sky-500 text-white font-extrabold shadow-lg shadow-blue-600/35 transition',
+        'badge'      => 'bg-sky-400/20 text-sky-200 border-sky-300/40',
+        'accent'     => 'text-sky-300',
+        'glow'       => 'rgba(56, 189, 248, 0.35)',
+        'font'       => 'font-catamaran',
+        'title_font' => 'font-fredoka'
+    ],
+
+    // 2. Awesome UI/UX & Creative Agency (Nexa/Roboto, High-Tech Studio Canvas, Laptop Mockup)
+    'creative-agency' => [
+        'id'         => 'creative-agency',
+        'name'       => 'Creative Agency (Light Tech)',
+        'bg'         => 'theme-creative-agency text-slate-800',
+        'card'       => 'bg-white/95 hover:bg-white border border-slate-200/90 text-slate-800 backdrop-blur-xl shadow-xl shadow-indigo-500/10 hover:shadow-2xl hover:border-indigo-400/60 hover:shadow-indigo-500/20 transition-all duration-300',
+        'btn_prim'   => 'bg-gradient-to-r from-[#1873fb] to-[#664cf0] hover:from-[#1565e6] hover:to-[#573ed9] text-white font-extrabold shadow-lg shadow-indigo-500/30 transition',
+        'badge'      => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        'accent'     => 'text-[#664cf0]',
+        'glow'       => 'rgba(102, 76, 240, 0.25)',
+        'font'       => 'font-roboto',
+        'title_font' => 'font-jakarta font-black'
+    ],
+
+    // 3. Hand-Drawn Graphic Designer (Gasoek One + Poppins, Neo-Pop Sky Blue & Comic Shadows)
+    'artist-doodle' => [
+        'id'         => 'artist-doodle',
+        'name'       => 'Artist Doodle (Pop Sky Blue)',
+        'bg'         => 'theme-artist-doodle text-slate-900',
+        'card'       => 'bg-white border-2 border-slate-900 text-slate-900 shadow-[4px_4px_0px_#0f0e0e] hover:shadow-[6px_6px_0px_#0f0e0e] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200',
+        'btn_prim'   => 'bg-[#fdb849] hover:bg-[#e09e36] border-2 border-slate-900 text-slate-950 font-black shadow-[3px_3px_0px_#0f0e0e] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all',
+        'badge'      => 'bg-[#fdb849] text-slate-950 border-2 border-slate-900 shadow-[2px_2px_0px_#0f0e0e] rotate-[-1deg]',
+        'accent'     => 'text-amber-300',
+        'glow'       => 'rgba(253, 184, 73, 0.35)',
+        'font'       => 'font-poppins',
+        'title_font' => 'font-gasoek'
     ]
 ];
 
@@ -101,7 +167,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;600;700;800;900&family=Fredoka:wght@500;600;700&family=Gasoek+One&family=Nunito+Sans:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;800;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" />
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -111,6 +177,12 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                 extend: {
                     fontFamily: { 
                         sans: ['"Plus Jakarta Sans"', '"Nunito Sans"', 'sans-serif'],
+                        fredoka: ['"Fredoka"', 'cursive', 'sans-serif'],
+                        catamaran: ['"Catamaran"', 'sans-serif'],
+                        gasoek: ['"Gasoek One"', 'cursive', 'sans-serif'],
+                        poppins: ['"Poppins"', 'sans-serif'],
+                        roboto: ['"Roboto"', 'sans-serif'],
+                        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
                         symbols: ['"Material Symbols Rounded"', 'sans-serif']
                     },
                     keyframes: {
@@ -146,37 +218,112 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
+
+        /* 1. Theme: Web Design Studio */
+        .theme-web-studio {
+            background-color: #1a2e56;
+            background-image: 
+                radial-gradient(circle at 12% 18%, rgba(89, 154, 217, 0.40) 0%, transparent 40%),
+                radial-gradient(circle at 88% 82%, rgba(46, 83, 148, 0.50) 0%, transparent 45%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(135deg, #152548 0%, #1e3a75 50%, #2e5495 100%);
+            background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px, 100% 100%;
+            background-attachment: fixed;
+        }
+
+        /* 2. Theme: Creative Agency */
+        .theme-creative-agency {
+            background-color: #f1f2f7;
+            background-image: 
+                radial-gradient(circle at 85% 15%, rgba(102, 76, 240, 0.16) 0%, transparent 40%),
+                radial-gradient(circle at 15% 85%, rgba(24, 115, 251, 0.14) 0%, transparent 40%),
+                radial-gradient(rgba(102, 76, 240, 0.12) 1.5px, transparent 1.5px),
+                linear-gradient(135deg, #f8f9fd 0%, #edf0f9 50%, #e2e6f4 100%);
+            background-size: 100% 100%, 100% 100%, 22px 22px, 100% 100%;
+            background-attachment: fixed;
+        }
+
+        /* 3. Theme: Artist Doodle */
+        .theme-artist-doodle {
+            background-color: #4aa5fd;
+            background-image: 
+                radial-gradient(rgba(255, 255, 255, 0.45) 2px, transparent 2px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.20) 1.5px, transparent 1.5px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.20) 1.5px, transparent 1.5px);
+            background-size: 24px 24px, 48px 48px, 48px 48px;
+            background-attachment: fixed;
+        }
+
+        .font-fredoka { font-family: 'Fredoka', cursive, sans-serif; }
+        .font-catamaran { font-family: 'Catamaran', sans-serif; }
+        .font-roboto { font-family: 'Roboto', sans-serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-gasoek { font-family: 'Gasoek One', cursive, sans-serif; }
+        .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="<?= $activeTheme['bg'] ?> min-h-screen py-10 px-4 flex flex-col items-center justify-between font-sans selection:bg-blue-600 selection:text-white transition-colors duration-500 relative overflow-x-hidden">
+<body class="<?= $activeTheme['bg'] ?> <?= $activeTheme['font'] ?? 'font-sans' ?> min-h-screen py-10 px-4 flex flex-col items-center justify-between selection:bg-blue-600 selection:text-white transition-colors duration-500 relative overflow-x-hidden">
 
-    <!-- Ambient Glowing Background Aura (Genially Signature) -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-    <div class="fixed bottom-0 right-0 w-[400px] h-[300px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+    <!-- Ambient Glowing Background Aura (Dinamis Sesuai Tema) -->
+    <?php if ($theme === 'web-design-studio'): ?>
+        <div class="fixed top-0 left-1/4 -translate-x-1/2 w-[550px] h-[350px] bg-sky-400/25 rounded-full blur-[130px] pointer-events-none -z-10"></div>
+        <div class="fixed bottom-0 right-10 w-[450px] h-[350px] bg-pink-400/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+    <?php elseif ($theme === 'creative-agency'): ?>
+        <div class="fixed top-10 left-10 w-[500px] h-[350px] bg-[#664cf0]/18 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+        <div class="fixed bottom-10 right-10 w-[500px] h-[350px] bg-[#1873fb]/18 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+    <?php elseif ($theme === 'artist-doodle'): ?>
+        <div class="fixed top-0 right-1/4 w-[450px] h-[350px] bg-[#fdb849]/30 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+        <div class="fixed bottom-0 left-10 w-[450px] h-[300px] bg-[#fdb5d1]/30 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+    <?php else: ?>
+        <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+        <div class="fixed bottom-0 right-0 w-[400px] h-[300px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+    <?php endif; ?>
 
     <main class="w-full max-w-xl mx-auto flex flex-col items-center z-10">
         
-        <!-- Top Verified Bar -->
-        <div class="flex items-center gap-2 mb-6 px-3.5 py-1.5 rounded-full border <?= $activeTheme['badge'] ?> text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Official Labschool Microsite</span>
-        </div>
+        <!-- Top Verified Bar Sesuai Karakter Tema -->
+        <?php if ($theme === 'web-design-studio'): ?>
+            <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs text-sky-200 font-extrabold tracking-wide shadow-lg">
+                <span class="flex items-center gap-1.5 mr-1">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
+                </span>
+                <span>⚡ WEB DESIGN &amp; DEVELOPMENT STUDIO</span>
+            </div>
+        <?php elseif ($theme === 'creative-agency'): ?>
+            <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-white border border-slate-200/90 text-xs font-black tracking-wide text-slate-800 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-[#664cf0] animate-pulse"></span>
+                <span>NEXTGEN UI/UX &bull; DIGITAL CREATIVE LAB</span>
+                <span class="ml-1 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-extrabold text-[10px]">⭐ 99.8% Satisfaction</span>
+            </div>
+        <?php elseif ($theme === 'artist-doodle'): ?>
+            <div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-2xl bg-[#fdb849] border-2 border-slate-900 shadow-[3px_3px_0px_#0f0e0e] text-xs font-black tracking-wide text-slate-950 rotate-[-1.5deg]">
+                <span>✦ HAND-DRAWN GRAPHIC DESIGNER &amp; ARTIST ✦</span>
+            </div>
+        <?php else: ?>
+            <div class="flex items-center gap-2 mb-6 px-3.5 py-1.5 rounded-full border <?= $activeTheme['badge'] ?> text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Official Labschool Microsite</span>
+            </div>
+        <?php endif; ?>
 
-        <!-- Avatar Profil with Genially Halo Glow -->
+        <!-- Avatar Profil with Theme-Specific Framing -->
         <div class="relative mb-5 group animate-float-soft">
-            <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl bg-white/10 p-1.5 transition-transform duration-300 group-hover:scale-105">
+            <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden <?= $theme === 'artist-doodle' ? 'border-3 border-slate-900 shadow-[6px_6px_0px_#0f0e0e] rotate-[-2deg] bg-white p-2' : ($theme === 'creative-agency' ? 'border-2 border-indigo-200 shadow-2xl bg-white p-2.5' : ($theme === 'web-design-studio' ? 'border-2 border-sky-400/50 shadow-2xl shadow-sky-500/20 bg-white/10 backdrop-blur-md p-2' : 'border-2 border-white/20 shadow-2xl bg-white/10 p-1.5')) ?> transition-transform duration-300 group-hover:scale-105">
                 <img src="<?= htmlspecialchars(sanitize_safe_url($site['avatar_url'] ?: '/assets/img/logo-smp-labschool.png')) ?>" 
                      alt="<?= htmlspecialchars($site['title']) ?>" 
                      class="w-full h-full object-contain rounded-2xl bg-white/5">
             </div>
             <!-- Verified School Badge -->
-            <div class="absolute -bottom-2 -right-2 bg-blue-600 text-white rounded-2xl p-2 shadow-xl border-2 border-slate-900 flex items-center justify-center" title="Terverifikasi SMP Labschool Jakarta">
+            <div class="absolute -bottom-2 -right-2 <?= $theme === 'artist-doodle' ? 'bg-[#fdb849] text-slate-950 border-2 border-slate-900 shadow-[2px_2px_0px_#0f0e0e]' : ($theme === 'creative-agency' ? 'bg-[#1873fb] text-white border-2 border-white shadow-lg' : 'bg-blue-600 text-white border-2 border-slate-900 shadow-xl') ?> rounded-2xl p-2 flex items-center justify-center" title="Terverifikasi SMP Labschool Jakarta">
                 <span class="material-symbols-rounded text-base fill">verified</span>
             </div>
         </div>
 
         <!-- Nama & Gelar -->
-        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-center mb-1.5 px-2">
+        <h1 class="text-2xl sm:text-3xl tracking-tight text-center mb-1.5 px-2 <?= $activeTheme['title_font'] ?? 'font-black' ?> <?= $theme === 'artist-doodle' ? 'text-slate-950 drop-shadow-sm rotate-[-0.5deg]' : ($theme === 'creative-agency' ? 'text-slate-900' : 'text-white') ?>">
             <?= htmlspecialchars($site['title']) ?>
         </h1>
         <div class="inline-flex items-center gap-1.5 text-xs font-bold mb-3 <?= $activeTheme['accent'] ?>">
@@ -187,9 +334,30 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
 
         <!-- Bio / Deskripsi -->
         <?php if (!empty($site['bio'])): ?>
-            <p class="text-xs sm:text-sm opacity-85 text-center max-w-md mb-6 leading-relaxed px-4">
+            <p class="text-xs sm:text-sm text-center max-w-md mb-4 leading-relaxed px-4 <?= $theme === 'artist-doodle' ? 'text-slate-900 font-semibold' : ($theme === 'creative-agency' ? 'text-slate-600 font-normal' : 'text-white/85') ?>">
                 <?= nl2br(htmlspecialchars($site['bio'])) ?>
             </p>
+        <?php endif; ?>
+
+        <!-- Feature Chips Sesuai Tema Template -->
+        <?php if ($theme === 'web-design-studio'): ?>
+            <div class="flex items-center justify-center gap-2 mb-6 flex-wrap">
+                <span class="px-3 py-1 rounded-full bg-sky-400/20 border border-sky-300/30 text-sky-200 text-[11px] font-bold">💻 Responsive Web</span>
+                <span class="px-3 py-1 rounded-full bg-pink-400/20 border border-pink-300/30 text-pink-200 text-[11px] font-bold">🎨 Modern UI/UX</span>
+                <span class="px-3 py-1 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-200 text-[11px] font-bold">⚡ Fast &amp; SEO-Ready</span>
+            </div>
+        <?php elseif ($theme === 'creative-agency'): ?>
+            <div class="flex items-center justify-center gap-2 mb-6 flex-wrap">
+                <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-indigo-700 text-[11px] font-extrabold shadow-sm">🖥️ Interactive Mockups</span>
+                <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-blue-700 text-[11px] font-extrabold shadow-sm">📐 Design Systems</span>
+                <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-purple-700 text-[11px] font-extrabold shadow-sm">🚀 Digital Branding</span>
+            </div>
+        <?php elseif ($theme === 'artist-doodle'): ?>
+            <div class="flex items-center justify-center gap-2 mb-6 flex-wrap">
+                <span class="px-3.5 py-1 rounded-xl bg-white border-2 border-slate-900 text-slate-950 shadow-[2px_2px_0px_#0f0e0e] text-[11px] font-extrabold rotate-[1deg]">🎨 Character Design</span>
+                <span class="px-3.5 py-1 rounded-xl bg-[#fdb5d1] border-2 border-slate-900 text-slate-950 shadow-[2px_2px_0px_#0f0e0e] text-[11px] font-extrabold rotate-[-1.5deg]">✨ Comic &amp; Doodles</span>
+                <span class="px-3.5 py-1 rounded-xl bg-[#fdb849] border-2 border-slate-900 text-slate-950 shadow-[2px_2px_0px_#0f0e0e] text-[11px] font-extrabold rotate-[2deg]">🖌️ Vector Art</span>
+            </div>
         <?php endif; ?>
 
         <!-- Genially Interactive Countdown Timer (Jika Disetel) -->

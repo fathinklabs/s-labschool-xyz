@@ -71,7 +71,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
     <link rel="icon" href="/assets/img/logo-smp-labschool.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;600;700;800;900&family=Fredoka:wght@500;600;700&family=Gasoek+One&family=Nunito+Sans:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;800;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -283,12 +283,13 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                     <span>4. Tema Tampilan Visual</span>
                 </h2>
 
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="themeSelector">
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5" id="themeSelector">
+                    <!-- Tema Standar Labs & Genially -->
                     <label class="cursor-pointer">
                         <input type="radio" name="theme" value="labs-navy" <?= $activeTheme === 'labs-navy' ? 'checked' : '' ?> class="sr-only peer">
                         <div class="p-2.5 rounded-2xl border-2 peer-checked:border-blue-600 peer-checked:ring-2 peer-checked:ring-blue-100 bg-slate-900 text-white text-center transition">
                             <div class="w-5 h-5 rounded-full bg-blue-600 mx-auto mb-1"></div>
-                            <span class="text-[11px] font-bold block">Labs Navy</span>
+                            <span class="text-[10px] font-bold block truncate">Labs Navy</span>
                         </div>
                     </label>
 
@@ -296,7 +297,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         <input type="radio" name="theme" value="genially-cosmic" <?= $activeTheme === 'genially-cosmic' ? 'checked' : '' ?> class="sr-only peer">
                         <div class="p-2.5 rounded-2xl border-2 peer-checked:border-cyan-400 peer-checked:ring-2 peer-checked:ring-cyan-100 bg-[#0B0F19] text-cyan-300 text-center transition">
                             <div class="w-5 h-5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mb-1"></div>
-                            <span class="text-[11px] font-bold block">Cosmic Neon</span>
+                            <span class="text-[10px] font-bold block truncate">Cosmic Neon</span>
                         </div>
                     </label>
 
@@ -304,7 +305,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         <input type="radio" name="theme" value="labs-gold" <?= $activeTheme === 'labs-gold' ? 'checked' : '' ?> class="sr-only peer">
                         <div class="p-2.5 rounded-2xl border-2 peer-checked:border-amber-500 peer-checked:ring-2 peer-checked:ring-amber-100 bg-slate-950 text-amber-400 text-center transition">
                             <div class="w-5 h-5 rounded-full bg-amber-500 mx-auto mb-1"></div>
-                            <span class="text-[11px] font-bold block">Labs Gold</span>
+                            <span class="text-[10px] font-bold block truncate">Labs Gold</span>
                         </div>
                     </label>
 
@@ -312,7 +313,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         <input type="radio" name="theme" value="emerald" <?= $activeTheme === 'emerald' ? 'checked' : '' ?> class="sr-only peer">
                         <div class="p-2.5 rounded-2xl border-2 peer-checked:border-emerald-600 peer-checked:ring-2 peer-checked:ring-emerald-100 bg-slate-900 text-emerald-400 text-center transition">
                             <div class="w-5 h-5 rounded-full bg-emerald-600 mx-auto mb-1"></div>
-                            <span class="text-[11px] font-bold block">Emerald</span>
+                            <span class="text-[10px] font-bold block truncate">Emerald</span>
                         </div>
                     </label>
 
@@ -320,7 +321,32 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         <input type="radio" name="theme" value="slate" <?= $activeTheme === 'slate' ? 'checked' : '' ?> class="sr-only peer">
                         <div class="p-2.5 rounded-2xl border-2 peer-checked:border-slate-800 peer-checked:ring-2 peer-checked:ring-slate-200 bg-slate-100 text-slate-800 text-center transition">
                             <div class="w-5 h-5 rounded-full bg-slate-800 mx-auto mb-1"></div>
-                            <span class="text-[11px] font-bold block">Clean Slate</span>
+                            <span class="text-[10px] font-bold block truncate">Clean Slate</span>
+                        </div>
+                    </label>
+
+                    <!-- Tema Eksklusif Berbasis Template Desain -->
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="web-design-studio" <?= $activeTheme === 'web-design-studio' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-sky-400 peer-checked:ring-2 peer-checked:ring-sky-100 bg-[#1e3a75] text-sky-200 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-sky-400 mx-auto mb-1"></div>
+                            <span class="text-[10px] font-bold block truncate">Web Studio</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="creative-agency" <?= $activeTheme === 'creative-agency' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-indigo-600 peer-checked:ring-2 peer-checked:ring-indigo-100 bg-[#f1f2f7] text-slate-800 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-r from-[#1873fb] to-[#664cf0] mx-auto mb-1"></div>
+                            <span class="text-[10px] font-bold block truncate">Agency UI</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="theme" value="artist-doodle" <?= $activeTheme === 'artist-doodle' ? 'checked' : '' ?> class="sr-only peer">
+                        <div class="p-2.5 rounded-2xl border-2 peer-checked:border-slate-900 peer-checked:ring-2 peer-checked:ring-amber-200 bg-[#4aa5fd] text-slate-900 text-center transition">
+                            <div class="w-5 h-5 rounded-full bg-[#fdb849] border border-slate-900 mx-auto mb-1"></div>
+                            <span class="text-[10px] font-black block truncate">Artist Pop</span>
                         </div>
                     </label>
                 </div>

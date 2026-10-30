@@ -187,38 +187,45 @@ $templatePresets = [
         'name'           => 'Modern Web Design Studio',
         'category'       => 'Link-in-bio',
         'template_style' => 'genially-showcase',
-        'theme'          => 'genially-cosmic',
+        'theme'          => 'web-design-studio',
         'thumbnail'      => '/assets/img/templates/web-design-template.jpg',
         'title'          => 'Labs Digital Studio & Web Agency',
-        'bio'            => 'Crafting clean, responsive websites, creative school landing pages, and interactive digital experiences with Catamaran & Fredoka fonts.',
+        'bio'            => 'Crafting clean, responsive websites, creative school landing pages, and interactive digital experiences with Catamaran & Fredoka UI.',
         'countdown_title'=> '',
         'countdown_date' => '',
         'blocks'         => [
             [
                 'block_type' => 'link',
-                'title'      => 'Lihat Portofolio Web & Landing Pages',
-                'subtitle'   => 'Showcase karya web interaktif dengan Catamaran & Fredoka UI',
+                'title'      => 'Lihat Portofolio Web & Interactive Demos',
+                'subtitle'   => 'Koleksi web apps, dynamic landing pages & UI/UX design showcase',
                 'target_url' => 'https://s.labschool.xyz/portfolio-web',
                 'animation'  => 'pulse'
             ],
             [
                 'block_type' => 'text',
                 'title'      => 'Layanan Desain & Pengembangan Web',
-                'subtitle'   => "Desain responsif mobile-first, integrasi CMS, optimasi SEO, dan animasi visual modern.",
+                'subtitle'   => "Desain responsif mobile-first, integrasi CMS modern, optimasi kecepatan SEO, dan animasi mikro interaktif untuk ekosistem sekolah.",
                 'target_url' => '',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'link',
                 'title'      => 'Konsultasikan Proyek Website Sekolah',
-                'subtitle'   => 'Diskusi kebutuhan antarmuka & estimasi pengerjaan',
+                'subtitle'   => 'Diskusi kebutuhan antarmuka, arsitektur sistem & estimasi pengerjaan',
                 'target_url' => 'https://wa.me/6281200000000',
                 'animation'  => 'none'
             ],
             [
+                'block_type' => 'pdf',
+                'title'      => 'Unduh Proposal & Standar Spesifikasi Web (PDF)',
+                'subtitle'   => 'Panduan-Desain-Web-Labschool-2026.pdf',
+                'target_url' => 'https://s.labschool.xyz/panduan-web.pdf',
+                'animation'  => 'none'
+            ],
+            [
                 'block_type' => 'faq',
-                'title'      => 'Proses Kerja & Timeline Studio',
-                'subtitle'   => 'Mulai dari wireframing, prototipe Figma, coding frontend, hingga deployment server produksi.',
+                'title'      => 'Proses Kerja & Timeline Studio Web',
+                'subtitle'   => 'Mulai dari riset civitas, wireframing Figma, coding frontend responsif, hingga deployment performa tinggi di server sekolah.',
                 'target_url' => '',
                 'animation'  => 'none'
             ]
@@ -232,7 +239,7 @@ $templatePresets = [
         'name'           => 'Awesome UI/UX & Creative Agency',
         'category'       => 'Product and services',
         'template_style' => 'genially-showcase',
-        'theme'          => 'labs-navy',
+        'theme'          => 'creative-agency',
         'thumbnail'      => '/assets/img/templates/laptop-landing-page.jpg',
         'title'          => 'NextGen UI/UX & Digital Creative Lab',
         'bio'            => 'Awesome and stunning design solutions for educational platforms, interactive portfolios, and digital branding with Nexa & Roboto.',
@@ -241,36 +248,36 @@ $templatePresets = [
         'blocks'         => [
             [
                 'block_type' => 'text',
-                'title'      => 'Paket Jasa Desain Grafis & Aplikasi Web',
-                'subtitle'   => "Solusi desain antarmuka modern dengan tipografi Nexa & Roboto, tata letak dinamis, dan aset vektor resolusi tinggi.",
+                'title'      => 'Solusi Desain Antarmuka & Produk Digital',
+                'subtitle'   => "Desain sistem modern dengan tipografi Nexa & Roboto, tata letak dinamis, mockup laptop resolusi tinggi, dan pengalaman pengguna tingkat lanjut.",
                 'target_url' => '',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'link',
                 'title'      => 'Jelajahi Mockup Laptop & Tampilan Aplikasi',
-                'subtitle'   => 'Pratinjau antarmuka interaktif kelas dunia',
+                'subtitle'   => 'Pratinjau antarmuka interaktif kelas dunia dan prototipe langsung',
                 'target_url' => 'https://s.labschool.xyz/mockup-agency',
                 'animation'  => 'pulse'
             ],
             [
                 'block_type' => 'pdf',
-                'title'      => 'Unduh Portofolio Karya & Pricelist (PDF)',
-                'subtitle'   => 'Katalog-Layanan-Desain-2026.pdf',
+                'title'      => 'Unduh Portofolio Karya & Pricelist Layanan (PDF)',
+                'subtitle'   => 'Katalog-Layanan-Desain-Creative-2026.pdf',
                 'target_url' => 'https://s.labschool.xyz/katalog-layanan.pdf',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'link',
-                'title'      => 'Jadwalkan Sesi Discovery Call Gratis',
-                'subtitle'   => 'Konsultasi 30 menit mengenai strategi produk Anda',
+                'title'      => 'Jadwalkan Sesi Discovery Call Gratis (30 Menit)',
+                'subtitle'   => 'Konsultasi gratis mengenai strategi visual dan produk digital Anda',
                 'target_url' => 'https://s.labschool.xyz/jadwal-call',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'faq',
-                'title'      => 'FAQ Kemitraan & Lisensi Desain',
-                'subtitle'   => 'Semua karya dilengkapi hak cipta komersial penuh, berkas master sumber (AI/EPS/Figma), dan garansi revisi.',
+                'title'      => 'Kemitraan, Garansi & Lisensi Aset Desain',
+                'subtitle'   => 'Semua karya dilengkapi hak komersial penuh, berkas master sumber (Figma/AI/EPS), panduan token warna, dan garansi revisi terstruktur.',
                 'target_url' => '',
                 'animation'  => 'none'
             ]
@@ -455,38 +462,38 @@ $templatePresets = [
         'name'           => 'Hand-Drawn Graphic Designer & Artist',
         'category'       => 'Digital business card',
         'template_style' => 'genially-cards',
-        'theme'          => 'genially-cosmic',
+        'theme'          => 'artist-doodle',
         'thumbnail'      => '/assets/img/templates/graphic-designer-landing-page.jpg',
         'title'          => 'Creative Graphic Designer & Illustrator',
-        'bio'            => 'Hand-drawn illustrations, character design, and creative educational media with Poppins & Gasoek One fonts.',
+        'bio'            => 'Hand-drawn illustrations, playful character design, and creative educational media with Poppins & Gasoek One fonts.',
         'countdown_title'=> '',
         'countdown_date' => '',
         'blocks'         => [
             [
                 'block_type' => 'vcard',
-                'title'      => 'Simpan Kontak Desainer ke Ponsel (vCard)',
-                'subtitle'   => 'Satu klik untuk simpan nomor WA, surel, & profil',
+                'title'      => 'Simpan Kontak Desainer (vCard)',
+                'subtitle'   => 'Satu klik untuk simpan nomor WA, surel & portofolio',
                 'target_url' => '/vcard.php',
                 'animation'  => 'pulse'
             ],
             [
                 'block_type' => 'link',
-                'title'      => 'Portofolio Desain di Behance / Dribbble',
-                'subtitle'   => 'Koleksi ilustrasi vektor, maskot, dan layout buku',
+                'title'      => 'Portofolio Desain di Behance & Dribbble',
+                'subtitle'   => 'Koleksi ilustrasi vektor, maskot, & sampul buku',
                 'target_url' => 'https://behance.net',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'pdf',
-                'title'      => 'Unduh Curriculum Vitae & Portofolio (PDF)',
-                'subtitle'   => 'Resume-Desainer-Kreatif.pdf',
+                'title'      => 'Unduh CV & Katalog Ilustrasi (PDF)',
+                'subtitle'   => 'Portfolio-Ilustrator-Kreatif-2026.pdf',
                 'target_url' => 'https://s.labschool.xyz/cv-designer.pdf',
                 'animation'  => 'none'
             ],
             [
                 'block_type' => 'link',
                 'title'      => 'Chat WhatsApp untuk Kolaborasi Seni',
-                'subtitle'   => 'Diskusikan proyek ilustrasi & komik edukasi',
+                'subtitle'   => 'Diskusikan proyek ilustrasi komik & maskot',
                 'target_url' => 'https://wa.me/6281200000000',
                 'animation'  => 'none'
             ]
