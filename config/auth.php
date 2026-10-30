@@ -198,6 +198,14 @@ function register_user(string $email, string $password, string $full_name): arra
             'api_key'   => null
         ];
 
+        // Kirim email konfirmasi pendaftaran secara resmi via XOAUTH2 Google Workspace
+        try {
+            require_once __DIR__ . '/mail.php';
+            send_registration_confirmation_email($email, $full_name);
+        } catch (\Throwable $e) {
+            error_log("Gagal mengirim email konfirmasi registrasi ({$email}): " . $e->getMessage());
+        }
+
         return ['success' => true, 'message' => 'Pendaftaran berhasil! Selamat datang di s.labschool.xyz.'];
     } catch (Exception $e) {
         return ['success' => false, 'message' => 'Gagal menyimpan akun: ' . $e->getMessage()];

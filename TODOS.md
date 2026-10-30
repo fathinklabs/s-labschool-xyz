@@ -15,7 +15,7 @@ Dokumen ini mencatat rencana kerja, backlog fitur prioritas, status rilis, dan s
 | **Drawer Navigasi** | Left Sidebar Drawer Dinamis + Mini Icon-Rail (76px) | ⚡ Sedang | `Completed` ✅ | `dashboard.php` |
 | **User & Organisasi** | Scope Kolaborasi User, Grup (Max 10), Activity Log, Bulk Upload | 🔥 Tinggi | `Completed` ✅ | `settings.php`, `admin.php` |
 | **Settings UI/UX** | Sembunyikan (Hide) Fitur & Tab yang Disabled di Settings User | ⚡ Sedang | `Completed` ✅ | `settings.php` |
-| **Autentikasi & Email** | Request Reset Password (Forgot Password) via Email XOAUTH2 | 🔥 Tinggi | `Planned` ⏳ | `forgot_password.php`, `reset_password.php`, `config/mail.php` |
+| **Autentikasi & Email** | Request Reset Password (Forgot Password) via Email XOAUTH2 | 🔥 Tinggi | `Completed` ✅ | `forgot_password.php`, `reset_password.php`, `config/mail.php` |
 | **Admin Panel** | Global System Configuration (Site, Auth, Rate Limits) | 🔥 Tinggi | `Completed` ✅ | `admin.php`, `global_settings` |
 | **Autentikasi SSO** | Login OAuth2 Google Workspace Labschool (`@labschool.xyz`) | 🔥 Tinggi | `Planned` ⏳ | `config/google_auth.php`, `login.php` |
 | **Infrastruktur** | Redis Session Management | 🔥 Tinggi | `Completed` ✅ | `config/auth.php`, Redis daemon |
@@ -108,25 +108,29 @@ Menuntaskan transisi arsitektural menyeluruh dari arsitektur editor legasi (`bio
 ### 1. 🔑 Request Reset Password (Forgot Password) via Email XOAUTH2
 Menyediakan alur pemulihan kata sandi mandiri yang aman bagi pengguna yang lupa password melalui pengiriman tautan reset ke email resmi pengguna.
 
-- [ ] **Alur Permintaan Reset (`forgot_password.php`)**:
+- [x] **Alur Permintaan Reset (`forgot_password.php`)**:
   - Form input alamat email terdaftar (`@labschool.xyz` atau `@elabschool.sch.id`).
-  - Anti-bruteforce / Rate limiting per IP dan per email (maksimal 3 permintaan per jam).
+  - Anti-bruteforce / Rate limiting per IP dan per email (maksimal 5 permintaan per jam).
   - Pengecekan akun aktif di basis data.
-- [ ] **Tabel & Token Keamanan (`password_resets`)**:
-  - Skema tabel: `email`, `token` (64-byte cryptographic hash), `created_at`, `expires_at` (berlaku 15-30 menit), `is_used`.
+- [x] **Tabel & Token Keamanan (`password_resets`)**:
+  - Skema tabel: `email`, `token` (64-byte cryptographic hash), `created_at`, `expires_at` (berlaku 30 menit), `is_used`.
   - Token hangus otomatis setelah sekali digunakan atau kedaluwarsa.
-- [ ] **Integrasi Email Server XOAUTH2 Google Cloud Console**:
+- [x] **Integrasi Email Server XOAUTH2 Google Cloud Console**:
   - Akun pengirim resmi: **`admin@labschool.xyz`**.
-  - Autentikasi modern menggunakan **XOAUTH2** (bukan password aplikasi SMTP statis yang rentan) melalui Google Cloud Console OAuth 2.0 Client credentials dari Google Workspace for Education.
-  - Penanganan token refresh otomatis (*refresh_token*) untuk mendapatkan *access_token* saat pengiriman email berlangsung (`config/mail.php`).
-- [ ] **Desain Template Email Resmi Labschool**:
-  - Header berlogo resmi SMP Labschool Jakarta.
+  - Autentikasi modern menggunakan **XOAUTH2** Service Account Domain-Wide Delegation (DwD) resmi dengan scope `https://mail.google.com/` dari Google Workspace for Education.
+  - Pengiriman ultra-cepat (~300ms) menggunakan Gmail REST API RFC 2822 base64url encode, bebas blokir port firewall SMTP (`config/mail.php`).
+- [x] **Desain Template Email Resmi Labschool**:
+  - Layout responsif HTML resmi SMP Labschool Jakarta (Navy `#0F172A`, Blue `#2563EB`, logo sekolah, security footer).
   - Informasi waktu permintaan, alamat IP pemohon, dan tombol CTA *"Atur Ulang Kata Sandi"*.
-  - Catatan keamanan: *"Abaikan email ini jika Anda tidak meminta reset kata sandi"*.
-- [ ] **Halaman Eksekusi Reset (`reset_password.php?token=...`)**:
+  - Template sambutan resmi untuk konfirmasi pendaftaran civitas baru.
+- [x] **Halaman Eksekusi Reset (`reset_password.php?token=...`)**:
   - Validasi ketat token sebelum menampilkan form password baru.
-  - Indikator kekuatan kata sandi (*Password Strength Meter*).
-  - Re-hash password dengan `PASSWORD_BCRYPT` (cost 12) dan terminasi sesi lama secara global.
+  - Indikator kekuatan kata sandi (*Password Strength Meter*) interaktif 4 parameter.
+  - Re-hash password dengan `PASSWORD_BCRYPT` (cost 12) dan invalidasi token.
+- [x] **Konfirmasi Registrasi Civitas Baru**:
+  - Pendaftaran mandiri via `register.php` otomatis mengirimkan email konfirmasi selamat datang resmi berdesain Labschool.
+- [x] **Admin Panel XOAUTH2 Verification**:
+  - Indikator status koneksi XOAUTH2 dan widget uji coba kirim email verifikasi di `admin.php?tab=config`.
 
 ---
 

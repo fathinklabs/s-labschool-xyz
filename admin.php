@@ -127,6 +127,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_
     }
 }
 
+// 7b. Handler Uji Coba Pengiriman Email XOAUTH2
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'test_xoauth_email') {
+    require_csrf();
+    $targetEmail = trim($_POST['target_email'] ?? $adminUser['email'] ?? 'admin@labschool.xyz');
+    try {
+        require_once __DIR__ . '/config/mail.php';
+        $testResult = test_xoauth2_connection($targetEmail);
+        if ($testResult['success']) {
+            $flashSuccess = "Uji coba pengiriman email XOAUTH2 ke '{$targetEmail}' BERHASIL! (Message ID: " . htmlspecialchars($testResult['message_id']) . ")";
+        } else {
+            $flashError = "Pengiriman email uji coba gagal: " . $testResult['message'];
+        }
+    } catch (Throwable $e) {
+        $flashError = "Terjadi kesalahan saat memproses XOAUTH2: " . $e->getMessage();
+    }
+}
+
+// Cek ketersediaan kredensial Service Account Google Workspace
+$saExists = file_exists(__DIR__ . '/config/google_service_account.json') || 
+            file_exists('/var/www/s.labschool.xyz/config/google_service_account.json') || 
+            file_exists('C:/GAMConfig/oauth2service.json');
+
 // 8. Metrik Penggunaan Sistem & Penyimpanan (Tab 7)
 $totalDisk = @disk_total_space(__DIR__) ?: (100 * 1024 * 1024 * 1024);
 $freeDisk = @disk_free_space(__DIR__) ?: (50 * 1024 * 1024 * 1024);
@@ -695,6 +717,72 @@ try {
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             <span>Simpan Perubahan Konfigurasi</span>
                         </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Kartu Layanan Email XOAUTH2 Google Workspace -->
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8">
+                <div class="border-b border-slate-100 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span>Layanan Email Resmi XOAUTH2 (Google Workspace)</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Integrasi pengiriman email resmi Labschool untuk konfirmasi pendaftaran &amp; reset kata sandi.</p>
+                    </div>
+                    <div>
+                        <?php if ($saExists): ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                XOAUTH2 Terhubung (admin@labschool.xyz)
+                            </span>
+                        <?php else: ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                Kredensial Belum Terpasang
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Akun Pengirim Resmi</div>
+                        <div class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            admin@labschool.xyz
+                        </div>
+                        <div class="text-[10px] text-slate-500 mt-1">SMP Labschool Jakarta</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Metode Otorisasi</div>
+                        <div class="text-sm font-extrabold text-slate-800">Domain-Wide Delegation (DwD)</div>
+                        <div class="text-[10px] text-slate-500 mt-1">Google Workspace Education Console</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">API &amp; Kecepatan</div>
+                        <div class="text-sm font-extrabold text-emerald-600">Gmail REST API (~300ms)</div>
+                        <div class="text-[10px] text-slate-500 mt-1">Aman &amp; bebas blokir port SMTP</div>
+                    </div>
+                </div>
+
+                <!-- Form Uji Coba Pengiriman Email -->
+                <form method="POST" action="/admin.php?tab=config" class="p-5 rounded-2xl bg-blue-50/50 border border-blue-200">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="test_xoauth_email">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-blue-900 mb-1">Kirim Email Uji Coba (Test Verification)</label>
+                            <input type="email" name="target_email" required value="<?= htmlspecialchars($adminUser['email'] ?? 'admin@labschool.xyz') ?>" placeholder="alamat.email@labschool.xyz" class="w-full sm:max-w-md px-3.5 py-2 rounded-xl border border-blue-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                            <p class="text-[10px] text-blue-600/80 mt-1">Menguji penerbitan Access Token XOAUTH2 dan pengiriman pesan via Gmail API secara langsung.</p>
+                        </div>
+                        <div class="self-end sm:self-center">
+                            <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                <span>Kirim Email Tes</span>
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

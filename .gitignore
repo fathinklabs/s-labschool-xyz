@@ -2,6 +2,10 @@
 .env
 config.local.php
 *.log
+config/google_service_account*.json
+config/*.key
+config/*.pem
+*.key.json
 
 # OS & Editor
 .DS_Store
