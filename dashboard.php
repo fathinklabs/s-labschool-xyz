@@ -129,21 +129,70 @@ foreach ($urls as $u) {
         .material-symbols-rounded.fill {
             font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
+        /* Dynamic Left Sidebar Drawer Styles */
+        #leftSidebar {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, box-shadow 0.3s ease;
+        }
+
+        /* Mobile drawer behavior (< 768px) */
+        @media (max-width: 767px) {
+            #leftSidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 18rem; /* 288px */
+                transform: translateX(-100%);
+                z-index: 50;
+            }
+            #leftSidebar.drawer-open {
+                transform: translateX(0);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        /* Desktop collapsible behavior (>= 768px) */
+        @media (min-width: 768px) {
+            #leftSidebar {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                width: 16rem; /* 256px */
+                margin-left: 0;
+                transform: translateX(0);
+                z-index: 30;
+            }
+            #leftSidebar.desktop-collapsed {
+                margin-left: -16rem;
+                transform: translateX(-100%);
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex font-sans overflow-x-hidden">
 
-    <!-- 1. LEFT SIDEBAR (Enterprise Navigation) -->
-    <aside class="w-64 bg-slate-900 text-white shrink-0 flex flex-col justify-between hidden md:flex min-h-screen sticky top-0 z-30">
+    <!-- 0. LEFT SIDEBAR BACKDROP (For Mobile / Drawer Overlay) -->
+    <div id="sidebarBackdrop" onclick="closeSidebarDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300"></div>
+
+    <!-- 1. LEFT SIDEBAR (Enterprise Navigation - Dynamic Drawer) -->
+    <aside id="leftSidebar" class="bg-slate-900 text-white shrink-0 flex flex-col justify-between overflow-y-auto">
         <div class="p-5 space-y-6">
-            <!-- Brand Logo -->
-            <a href="/" class="flex items-center gap-3">
-                <img src="/assets/img/logo-smp-labschool.png" alt="Labschool" class="h-9 w-auto">
-                <div>
-                    <div class="text-base font-black tracking-tight text-white leading-tight">s.labschool.xyz</div>
-                    <div class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Enterprise Shortener</div>
-                </div>
-            </a>
+            <!-- Brand Logo & Collapse / Close Button -->
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center gap-3">
+                    <img src="/assets/img/logo-smp-labschool.png" alt="Labschool" class="h-9 w-auto">
+                    <div>
+                        <div class="text-base font-black tracking-tight text-white leading-tight">s.labschool.xyz</div>
+                        <div class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Enterprise Shortener</div>
+                    </div>
+                </a>
+                <button type="button" onclick="closeSidebarDrawer()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Sembunyikan Menu Navigasi">
+                    <span class="material-symbols-rounded text-xl">menu_open</span>
+                </button>
+            </div>
 
             <!-- + Create New Dropdown Button -->
             <div class="relative">
@@ -245,15 +294,18 @@ foreach ($urls as $u) {
         
         <!-- Top App Bar -->
         <header class="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
-            <!-- Mobile Menu Toggle & Title -->
-            <div class="flex items-center gap-3">
-                <button type="button" onclick="openCreateModal()" class="md:hidden p-2 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center gap-1">
+            <!-- Sidebar Drawer Toggle & Section Title -->
+            <div class="flex items-center gap-2.5">
+                <button type="button" onclick="toggleSidebarDrawer()" class="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center shrink-0" title="Buka / Sembunyikan Menu Navigasi (Drawer)">
+                    <span class="material-symbols-rounded text-2xl" id="sidebarToggleIcon">menu_open</span>
+                </button>
+                <button type="button" onclick="openCreateModal()" class="md:hidden p-2 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center gap-1 shrink-0">
                     <span class="material-symbols-rounded text-sm">add</span>
                     <span>Buat</span>
                 </button>
-                <div class="flex items-center gap-2">
-                    <h1 class="text-base font-extrabold text-slate-900" id="currentSectionTitle">Tautan Singkat</h1>
-                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600"><?= $totalLinks ?> Tautan</span>
+                <div class="flex items-center gap-2 min-w-0">
+                    <h1 class="text-base font-extrabold text-slate-900 truncate" id="currentSectionTitle">Tautan Singkat</h1>
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 shrink-0"><?= $totalLinks ?> Tautan</span>
                 </div>
             </div>
 
@@ -1601,6 +1653,7 @@ foreach ($urls as $u) {
         });
 
         function switchTab(tab) {
+            closeSidebarOnMobile();
             const sections = ['Links', 'Qr', 'Bios', 'Campaigns', 'Api'];
             sections.forEach(s => {
                 document.getElementById('section' + s).classList.add('hidden');
@@ -1619,7 +1672,7 @@ foreach ($urls as $u) {
             const titleMap = {
                 links: 'Tautan Singkat',
                 qr: 'Kode QR',
-                bios: 'Halaman Microsite (Bio Link)',
+                bios: 'Pages',
                 campaigns: 'Tag & Kampanye Sekolah',
                 api: 'Developer REST API'
             };
@@ -2013,6 +2066,107 @@ foreach ($urls as $u) {
             window.location.reload();
         }
     
+        
+        // ========================================================
+        // DYNAMIC LEFT SIDEBAR DRAWER CONTROLS
+        // ========================================================
+        function isMobileView() {
+            return window.innerWidth < 768;
+        }
+
+        function updateSidebarToggleIcon() {
+            const sidebar = document.getElementById('leftSidebar');
+            const icon = document.getElementById('sidebarToggleIcon');
+            if (!icon || !sidebar) return;
+
+            if (isMobileView()) {
+                const isOpen = sidebar.classList.contains('drawer-open');
+                icon.innerText = isOpen ? 'close' : 'menu';
+            } else {
+                const isCollapsed = sidebar.classList.contains('desktop-collapsed');
+                icon.innerText = isCollapsed ? 'menu' : 'menu_open';
+            }
+        }
+
+        function openSidebarDrawer() {
+            const sidebar = document.getElementById('leftSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (!sidebar) return;
+
+            if (isMobileView()) {
+                sidebar.classList.add('drawer-open');
+                if (backdrop) backdrop.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                sidebar.classList.remove('desktop-collapsed');
+                localStorage.setItem('sidebar_collapsed_desktop', '0');
+            }
+            updateSidebarToggleIcon();
+        }
+
+        function closeSidebarDrawer() {
+            const sidebar = document.getElementById('leftSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (!sidebar) return;
+
+            if (isMobileView()) {
+                sidebar.classList.remove('drawer-open');
+                if (backdrop) backdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                sidebar.classList.add('desktop-collapsed');
+                localStorage.setItem('sidebar_collapsed_desktop', '1');
+            }
+            updateSidebarToggleIcon();
+        }
+
+        function toggleSidebarDrawer() {
+            const sidebar = document.getElementById('leftSidebar');
+            if (!sidebar) return;
+
+            if (isMobileView()) {
+                if (sidebar.classList.contains('drawer-open')) {
+                    closeSidebarDrawer();
+                } else {
+                    openSidebarDrawer();
+                }
+            } else {
+                if (sidebar.classList.contains('desktop-collapsed')) {
+                    openSidebarDrawer();
+                } else {
+                    closeSidebarDrawer();
+                }
+            }
+        }
+
+        function closeSidebarOnMobile() {
+            if (isMobileView()) {
+                closeSidebarDrawer();
+            }
+        }
+
+        function initSidebarState() {
+            const sidebar = document.getElementById('leftSidebar');
+            if (sidebar && !isMobileView()) {
+                const isCollapsed = localStorage.getItem('sidebar_collapsed_desktop') === '1';
+                if (isCollapsed) {
+                    sidebar.classList.add('desktop-collapsed');
+                }
+            }
+            updateSidebarToggleIcon();
+        }
+
+        // Initialize immediately & on events
+        initSidebarState();
+        window.addEventListener('resize', function() {
+            updateSidebarToggleIcon();
+            if (!isMobileView()) {
+                const backdrop = document.getElementById('sidebarBackdrop');
+                if (backdrop) backdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+
         // Bitly-Style Page Creation & Template Filter Controls
         function openSelectTemplateModal() {
             const modal = document.getElementById('modalSelectTemplate');
