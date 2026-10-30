@@ -832,6 +832,651 @@ foreach ($urls as $u) {
                     </div>
 
                     <!-- Category Filter Tabs -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none" id="bioCategoryTabs">
+                        <button type="button" onclick="filterBioTemplates('all', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
+                            All templates
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('link-in-bio', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Link-in-bio
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('products', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Products and services
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('card', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Digital business card
+                        </button>
+                        <button type="button" onclick="filterBioTemplates('promotions', this)" class="bio-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
+                            Promotions
+                        </button>
+                        <a href="/page_builder.php?template=blank" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shrink-0 flex items-center gap-1 font-extrabold">
+                            <span class="material-symbols-rounded text-sm">add</span>
+                            <span>Start from scratch</span>
+                        </a>
+                    </div>
+
+                    <!-- Template Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="bioTemplateGrid">
+                        
+                        <!-- Template 1: Link-in-Bio Official Labschool -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="link-in-bio">
+                            <div class="p-4 bg-gradient-to-b from-blue-900 to-blue-950 text-white space-y-3">
+                                <div class="w-12 h-12 rounded-xl bg-white p-1 shadow-md mx-auto">
+                                    <img src="/assets/img/logo-smp-labschool.png" alt="Logo" class="w-full h-full object-contain">
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="font-extrabold text-sm">SMP Labschool Jakarta</h3>
+                                    <p class="text-[10px] text-blue-200">Berdikari, Berprestasi, Berkarakter</p>
+                                </div>
+                                <div class="flex items-center justify-center gap-3 text-xs text-blue-200 pt-1">
+                                    <span>Instagram</span> &bull; <span>YouTube</span> &bull; <span>Website</span>
+                                </div>
+                                <div class="space-y-1.5 pt-2">
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Portal Pembelajaran LMS</div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Penerimaan Siswa Baru (PSB)</div>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Labs Official Bio</span>
+                                <a href="/page_builder.php?template=link-in-bio" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 2: Digital Business Card Guru & Pegawai -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="card">
+                            <div class="p-4 bg-gradient-to-b from-slate-900 to-slate-800 text-white space-y-3">
+                                <div class="w-12 h-12 rounded-full bg-blue-600 text-white font-black text-sm flex items-center justify-center mx-auto shadow-md">
+                                    AF
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="font-extrabold text-sm">Abdul Fathir Faruqi</h3>
+                                    <p class="text-[10px] text-slate-300">Guru Matematika & IT Labschool</p>
+                                </div>
+                                <div class="bg-white/5 rounded-xl p-2.5 space-y-1 text-[10px]">
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">call</span> <span>(021) 4786-0038</span></div>
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">mail</span> <span>fathink@gmail.com</span></div>
+                                    <div class="flex items-center gap-1.5 text-slate-300"><span class="material-symbols-rounded text-xs text-blue-400">language</span> <span>smplabschooljakarta.sch.id</span></div>
+                                </div>
+                                <div class="w-full py-1.5 rounded-lg bg-blue-600 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                    <span class="material-symbols-rounded text-xs">contact_page</span>
+                                    <span>Simpan Kontak (vCard)</span>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Digital Business Card</span>
+                                <a href="/page_builder.php?template=digital-card" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 3: Event & Promotion (Cosmic Countdown) -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="promotions">
+                            <div class="p-4 bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 text-white space-y-3">
+                                <div class="text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/30">OPEN HOUSE 2027</span>
+                                    <h3 class="font-extrabold text-sm mt-1">PSB Labschool Jakarta</h3>
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-2.5 text-center">
+                                    <div class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Hitung Mundur Acara</div>
+                                    <div class="font-mono font-black text-sm text-amber-300 mt-0.5">14 : 08 : 32 : 10</div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="w-full py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-[10px] font-black text-slate-950 text-center shadow-md">Daftar Online Sekarang</div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center">Unduh Brosur Informasi</div>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Event Countdown & Promo</span>
+                                <a href="/page_builder.php?template=school-event" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Template 4: Products & Services (Layanan Akademik) -->
+                        <div class="bio-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col justify-between" data-category="products">
+                            <div class="p-4 bg-gradient-to-b from-emerald-900 to-slate-900 text-white space-y-3">
+                                <div class="text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">Layanan Siswa</span>
+                                    <h3 class="font-extrabold text-sm mt-1">Pusat Layanan Akademik</h3>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">download</span>
+                                        <span>Modul & Bank Soal Ujian</span>
+                                    </div>
+                                    <div class="w-full py-1.5 rounded-lg bg-white/10 text-[10px] font-bold text-center flex items-center justify-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">calendar_month</span>
+                                        <span>Kalender Pendidikan 2026/2027</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-slate-800">Products & Services</span>
+                                <a href="/page_builder.php?template=portfolio-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
+                                    Use template
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Active Pages List -->
+                <div class="space-y-3 pt-2">
+                    <h2 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Halaman Pages Aktif Anda (<?= $totalBios ?>)</h2>
+                    <?php if (empty($microsites)): ?>
+                        <div class="bg-white rounded-3xl p-8 text-center border border-slate-200">
+                            <p class="text-xs text-slate-400 font-semibold mb-2">Belum ada halaman Pages yang dipublikasikan.</p>
+                            <button type="button" onclick="openSelectTemplateModal()" class="inline-block px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition">Buat Page Pertama</button>
+                        </div>
+                    <?php else: ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <?php foreach ($microsites as $m): ?>
+                                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700">
+                                                s.labschool.xyz/p/<?= htmlspecialchars($m['slug']) ?>
+                                            </span>
+                                            <span class="text-xs text-slate-400 font-bold"><?= number_format($m['clicks_count']) ?> Views</span>
+                                        </div>
+                                        <h3 class="text-base font-extrabold text-slate-900"><?= htmlspecialchars($m['title']) ?></h3>
+                                        <p class="text-xs text-slate-500 line-clamp-2 mt-1"><?= htmlspecialchars($m['bio'] ?: 'Tidak ada deskripsi bio.') ?></p>
+                                    </div>
+
+                                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                        <a href="/p/<?= htmlspecialchars($m['slug']) ?>" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">
+                                            Buka Halaman Publik &rarr;
+                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a href="/page_builder.php?id=<?= $m['id'] ?>" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-xs font-bold transition flex items-center gap-1">
+                                                <span class="material-symbols-rounded text-sm">edit</span>
+                                                <span>Edit Page</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Campaigns & Tags View -->
+            <div id="sectionCampaigns" class="hidden space-y-4">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+                    <h2 class="text-base font-extrabold text-slate-900">Tag & Agregasi Kampanye Sekolah</h2>
+                    <p class="text-xs text-slate-500">Kumpulkan dan analisis performa gabungan berbagai tautan yang memiliki tag atau kampanye sama (misal: #PPDB2026, #CBT, #OSIS).</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
+                        <?php if (empty($allTags)): ?>
+                            <div class="col-span-full py-8 text-center text-xs text-slate-400">
+                                Belum ada tag yang disematkan ke tautan. Tambahkan tag saat membuat atau mengedit tautan.
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($allTags as $tag): ?>
+                                <?php
+                                    $tagUrls = array_filter($urls, function($item) use ($tag) {
+                                        return strpos($item['tags'] ?? '', $tag) !== false;
+                                    });
+                                    $tagClicks = array_sum(array_column($tagUrls, 'clicks_count'));
+                                ?>
+                                <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-extrabold text-blue-600">#<?= htmlspecialchars($tag) ?></span>
+                                        <span class="text-xs font-bold text-slate-500"><?= count($tagUrls) ?> Tautan</span>
+                                    </div>
+                                    <div class="text-xl font-black text-slate-900"><?= number_format($tagClicks) ?> <span class="text-xs font-medium text-slate-400">Total Klik</span></div>
+                                    <button type="button" onclick="filterByTag('<?= htmlspecialchars($tag) ?>')" class="mt-3 text-xs font-bold text-blue-600 hover:underline">
+                                        Tampilkan Semua Tautan &rarr;
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5: Developer REST API -->
+            <div id="sectionApi" class="hidden space-y-6">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-900">Developer REST API (Fitur Integrasi Sistem)</h2>
+                        <p class="text-xs text-slate-500 mt-1">Gunakan API Key ini untuk membuat short link secara terprogram dari Moodle CBT, Portal SISFO, atau sistem internal Labschool.</p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Kunci API</div>
+                                <?php if (!empty($user['api_key'])): ?>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                            API Key Aktif
+                                        </span>
+                                        <span class="text-xs text-slate-400 font-mono">
+                                            <?= !empty($user['api_key_created_at']) ? 'Dibuat: ' . date('d M Y H:i', strtotime($user['api_key_created_at'])) . ' WIB' : '' ?>
+                                        </span>
+                                    </div>
+                                    <div class="font-mono text-xs text-slate-600 font-bold mt-2 tracking-wider bg-slate-200/70 px-3 py-1.5 rounded-lg inline-block select-none">
+                                        labs_••••••••••••••••••••••••••••••••••••••••
+                                    </div>
+                                <?php else: ?>
+                                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-600">
+                                        Belum Ada API Key
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1">Anda belum menerbitkan API Key. Klik tombol di samping untuk membuat kunci pertama Anda.</p>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <?php if (!empty($user['api_key'])): ?>
+                                    <button type="button" onclick="requestApiKey('reset')" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-sm">refresh</span>
+                                        <span>Reset & Buat Kunci Baru</span>
+                                    </button>
+                                    <button type="button" onclick="revokeApiKey()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-rose-50 hover:text-rose-600 text-slate-600 font-bold text-xs transition" title="Cabut Kunci">
+                                        Cabut
+                                    </button>
+                                <?php else: ?>
+                                    <button type="button" onclick="requestApiKey('generate')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-sm">key</span>
+                                        <span>Terbitkan API Key</span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-blue-50/80 border border-blue-100 flex items-start gap-2.5 text-xs text-blue-900">
+                            <span class="material-symbols-rounded text-blue-600 text-lg shrink-0 mt-0.5">info</span>
+                            <p class="leading-relaxed">
+                                <strong>Kebijakan Keamanan Kunci:</strong> Demi menjaga keamanan hak akses akun Anda, nilai rahasia API Key <strong>hanya dimunculkan sekali</strong> pada jendela dialog saat Anda meminta pembuatan atau reset kunci. Jika Anda kehilangan kunci lama, silakan gunakan tombol <em>Reset & Buat Kunci Baru</em>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Format Pemanggilan REST API:</h4>
+                        <pre class="p-4 rounded-2xl bg-slate-900 text-emerald-400 text-xs font-mono overflow-x-auto">curl -X POST https://s.labschool.xyz/api/shorten.php \
+  -H "Authorization: Bearer labs_your_secret_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{"original_url": "https://smplabschooljakarta.sch.id/pengumuman", "custom_slug": "agenda-baru", "tags": "PPDB,Pengumuman"}'</pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. RIGHT SLIDING DRAWER (Detail & Analytics Panel) -->
+    <div id="drawerOverlay" onclick="closeDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+    <aside id="detailDrawer" class="fixed top-0 right-0 w-full sm:w-[460px] h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200">
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+            <div>
+                <h3 class="text-sm font-extrabold text-slate-900" id="drawerTitle">Detail Tautan</h3>
+                <div class="text-[11px] text-blue-600 font-bold" id="drawerShortUrl">s.labschool.xyz/slug</div>
+            </div>
+            <button type="button" onclick="closeDrawer()" class="p-1.5 rounded-xl hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition">
+                <span class="material-symbols-rounded text-xl">close</span>
+            </button>
+        </div>
+
+        <!-- Drawer Body (Scrollable) -->
+        <div class="p-5 space-y-6 flex-1 overflow-y-auto text-xs">
+            
+            <!-- Quick Action Bar -->
+            <div class="flex items-center gap-2">
+                <button type="button" id="drawerCopyBtn" onclick="copyCurrentDrawerLink()" class="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                    <span class="material-symbols-rounded text-sm">content_copy</span>
+                    <span>Salin Link</span>
+                </button>
+                <a id="drawerFullAnalyticsBtn" href="#" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition flex items-center gap-1">
+                    <span class="material-symbols-rounded text-sm">query_stats</span>
+                    <span>Laporan Analitik</span>
+                </a>
+            </div>
+
+            <!-- Clicks Overview Card -->
+            <div class="p-4 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-between">
+                <div>
+                    <div class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Performa Interaksi</div>
+                    <div class="text-2xl font-black text-blue-900" id="drawerClicksCount">0 Klik</div>
+                </div>
+                <span class="material-symbols-rounded text-3xl text-blue-600">monitoring</span>
+            </div>
+
+            <!-- Destination URL & Device Routing -->
+            <div class="space-y-2">
+                <div class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Tautan Tujuan (Original URL)</div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 break-all font-mono text-[11px] text-slate-600" id="drawerOriginalUrl">
+                    https://smplabschooljakarta.sch.id/...
+                </div>
+
+                <!-- Deep Links -->
+                <div id="drawerDeepLinks" class="space-y-1 pt-1 hidden">
+                    <div class="font-bold text-indigo-700 text-[10px]">📱 Device-based Smart Routing (Deep Links)</div>
+                    <div class="p-2 rounded-lg bg-indigo-50/70 border border-indigo-100 text-[10px] space-y-0.5">
+                        <div id="drawerIosUrl" class="truncate text-indigo-900"><strong>iOS:</strong> -</div>
+                        <div id="drawerAndroidUrl" class="truncate text-indigo-900"><strong>Android:</strong> -</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Customization & Preview -->
+            <div class="space-y-3 pt-2 border-t border-slate-100">
+                <div class="flex items-center justify-between">
+                    <div class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Smart QR Code & Frames</div>
+                    <span class="text-[10px] font-bold text-amber-600">Labschool Logo Embedded</span>
+                </div>
+
+                <!-- QR Image Preview -->
+                <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center">
+                    <img id="drawerQrImage" src="" alt="QR Code" class="max-w-[200px] h-auto object-contain rounded-lg shadow-xs">
+                </div>
+
+                <!-- Frame Selectors & Logo Presets -->
+                <div class="space-y-2">
+                    <label class="block text-[11px] font-bold text-slate-600">Pilih Gaya Frame QR:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setDrawerQrFrame('none')" id="qrFrame_none" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600">
+                            Tanpa Frame
+                        </button>
+                        <button type="button" onclick="setDrawerQrFrame('badge-bottom')" id="qrFrame_badge_bottom" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Badge Bawah
+                        </button>
+                        <button type="button" onclick="setDrawerQrFrame('badge-top')" id="qrFrame_badge_top" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Badge Atas
+                        </button>
+                        <button type="button" onclick="setDrawerQrFrame('card')" id="qrFrame_card" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Card Border
+                        </button>
+                    </div>
+
+                    <label class="block text-[11px] font-bold text-slate-600 pt-1">Logo Tengah:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setDrawerQrLogo('smp')" id="qrLogo_smp" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-blue-600 bg-blue-50 border-blue-600">
+                            Logo SMP Labschool
+                        </button>
+                        <button type="button" onclick="setDrawerQrLogo('none')" id="qrLogo_none" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold text-slate-600 bg-white border-slate-200 hover:bg-slate-50">
+                            Tanpa Logo (Polos)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Download Actions -->
+                <div class="flex items-center gap-2 pt-1">
+                    <a id="drawerQrDownloadPng" href="#" download class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-center transition">
+                        Unduh PNG
+                    </a>
+                    <a id="drawerQrDownloadSvg" href="#" download class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-center transition">
+                        Unduh SVG
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tags Manager -->
+            <div class="space-y-2 pt-2 border-t border-slate-100">
+                <div class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Label & Kampanye (Tags)</div>
+                <div id="drawerTagsContainer" class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-slate-400">Tidak ada tag</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Drawer Footer (Edit & Delete Buttons) -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <button type="button" id="drawerEditBtn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition flex items-center gap-1.5">
+                <span class="material-symbols-rounded text-sm">edit</span>
+                <span>Edit Tautan</span>
+            </button>
+            <button type="button" id="drawerDeleteBtn" class="px-4 py-2 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs transition">
+                Hapus Tautan
+            </button>
+        </div>
+    </aside>
+
+    <!-- 4. MODALS (Create Single, Bulk Shorten, Edit, API Key) -->
+
+    <!-- Modal 4A: Buat Tautan Baru (Single) -->
+    <div id="createModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-2xl">add_link</span>
+                    <h3 class="text-base font-extrabold text-slate-900">Buat Tautan Pendek Baru</h3>
+                </div>
+                <button type="button" onclick="closeCreateModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+            </div>
+
+            <form id="formCreateModal" onsubmit="handleModalShorten(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tautan Tujuan Asli *</label>
+                    <input type="url" id="modalUrl" placeholder="https://contoh-link.com/dokumen..." required
+                        class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:border-blue-600 outline-none text-sm">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Judul Tautan (Opsional)</label>
+                    <input type="text" id="modalTitle" placeholder="Contoh: Brosur PPDB Labschool 2026"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-600 outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Custom Alias / Slug</label>
+                        <div class="flex items-center rounded-xl border border-slate-300 overflow-hidden bg-slate-50">
+                            <span class="px-2 text-slate-400 font-mono text-[10px]">s.labschool.xyz/</span>
+                            <input type="text" id="modalSlug" placeholder="ppdb26" class="w-full py-2 pr-2 font-bold bg-transparent outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Label / Tags (Pisahkan koma)</label>
+                        <input type="text" id="modalTags" placeholder="PPDB, Siswa, OSIS" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                </div>
+
+                <!-- Advanced Options Toggle -->
+                <div class="pt-2">
+                    <button type="button" onclick="toggleModalAdvanced()" class="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm">tune</span>
+                        <span>Opsi Lanjutan (Proteksi PIN, Jadwal, Deep Link)</span>
+                        <span id="modalAdvArrow">&darr;</span>
+                    </button>
+
+                    <div id="modalAdvancedSection" class="hidden mt-3 pt-3 border-t border-slate-100 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Proteksi Kata Sandi / PIN</label>
+                                <input type="password" id="modalPass" placeholder="Kosongkan jika publik" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Waktu Kadaluarsa</label>
+                                <input type="datetime-local" id="modalExp" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Deep Linking -->
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div class="font-bold text-slate-700 text-[11px]">Device-based Routing (Deep Link)</div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-0.5">Tujuan khusus iOS (iPhone / iPad):</label>
+                                <input type="url" id="modalIosUrl" placeholder="https://apps.apple.com/..." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white outline-none text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-0.5">Tujuan khusus Android:</label>
+                                <input type="url" id="modalAndroidUrl" placeholder="https://play.google.com/..." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white outline-none text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeCreateModal()" class="px-4 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-100">Batal</button>
+                    <button type="submit" id="btnSubmitModalCreate" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-md shadow-blue-500/20">
+                        Simpan & Terbitkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4B: Pemendek Tautan Massal (Bulk Shorten) -->
+    <div id="bulkModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-600 text-2xl">auto_awesome</span>
+                    <h3 class="text-base font-extrabold text-slate-900">Pemendek Tautan Massal (Bulk Shorten)</h3>
+                </div>
+                <button type="button" onclick="closeBulkModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+            </div>
+
+            <form id="formBulk" onsubmit="handleBulkSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tempel Daftar URL Panjang (Satu URL per baris, maks 50 tautan) *</label>
+                    <textarea id="bulkUrls" rows="6" required placeholder="https://link-pertama.com&#10;https://link-kedua.com&#10;https://link-ketiga.com"
+                        class="w-full p-3 rounded-xl border border-slate-300 font-mono text-xs outline-none focus:border-blue-600"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tag / Label Bersama (Opsional)</label>
+                    <input type="text" id="bulkTags" placeholder="Contoh: CBT2026, Ujian, SMP" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeBulkModal()" class="px-4 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-100">Batal</button>
+                    <button type="submit" id="btnSubmitBulk" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-md shadow-blue-500/20">
+                        Proses Massal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4C: Edit Tautan (Pro Features) -->
+    <div id="editModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-extrabold text-slate-900">Edit Tautan & Deep Link</h3>
+                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+            </div>
+
+            <form id="formEdit" onsubmit="handleEditSubmit(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="editId">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">URL Tujuan Asli *</label>
+                    <input type="url" id="editOriginalUrl" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Judul Tautan *</label>
+                    <input type="text" id="editTitle" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Custom Slug</label>
+                        <input type="text" id="editSlug" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tags (Pisahkan Koma)</label>
+                        <input type="text" id="editTags" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                </div>
+
+                <!-- Deep Linking Edit -->
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="font-bold text-slate-700 text-[11px]">📱 Deep Link Routing</div>
+                    <div>
+                        <label class="block text-[10px] text-slate-500 mb-0.5">Tujuan khusus iOS:</label>
+                        <input type="url" id="editIosUrl" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white outline-none text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-500 mb-0.5">Tujuan khusus Android:</label>
+                        <input type="url" id="editAndroidUrl" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white outline-none text-xs">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Ubah Kata Sandi Baru (Kosongkan jika tidak diubah)</label>
+                    <input type="password" id="editPassword" placeholder="PIN / Password baru..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    <label class="mt-1.5 flex items-center gap-1.5 text-slate-500 font-semibold">
+                        <input type="checkbox" id="editRemovePassword"> Hapus proteksi kata sandi
+                    </label>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-100">Batal</button>
+                    <button type="submit" id="btnSaveEdit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-500/20">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4D: API Key Reveal (Tampilkan Sekali) -->
+    <div id="apiKeyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center gap-3 text-emerald-600">
+                <div class="p-2.5 rounded-2xl bg-emerald-50">
+                    <span class="material-symbols-rounded text-2xl">verified_user</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 leading-tight">API Key Berhasil Diterbitkan!</h3>
+                    <p class="text-xs text-slate-500">Kunci rahasia integrasi REST API Anda</p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold leading-relaxed">
+                ⚠️ <strong>PENTING:</strong> Salin dan simpan kunci ini di tempat aman sekarang. Demi keamanan akun, kunci rahasia ini <strong>hanya ditampilkan sekali ini saja</strong> dan tidak akan dapat dilihat kembali setelah Anda menutup dialog ini!
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Your Secret API Key</label>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="revealedApiKey" readonly class="w-full px-3.5 py-3 rounded-xl bg-slate-100 font-mono font-bold text-xs text-slate-900 border border-slate-300 outline-none select-all">
+                    <button type="button" onclick="copyRevealedApiKey()" class="px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shrink-0">
+                        Salin
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="button" onclick="closeApiKeyModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition">
+                    Saya Sudah Menyalin Kunci & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: SELECT A TEMPLATE (Bitly-Style Flow)              -->
+    <!-- ======================================================== -->
+    <div id="modalSelectTemplate" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-rounded text-2xl">dashboard_customize</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-black text-slate-900">Select a template</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 uppercase">Interactive</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Pilih template awal atau mulai dari kanvas kosong untuk memulai merancang Page Anda. Anda dapat mengubah konten, warna, dan blok nanti.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSelectTemplateModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                    <span class="material-symbols-rounded text-xl">close</span>
+                </button>
+            </div>
+
+            <!-- Category Filter Tabs -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none" id="modalCategoryTabs">
                 <button type="button" onclick="filterModalTemplates('all', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
                     All templates
@@ -850,7 +1495,7 @@ foreach ($urls as $u) {
                 </button>
             </div>
 
-            <!-- Templates Grid (Dynamic Master Collection) -->
+            <!-- Templates Grid (Dynamic Master Collection: 20 Templates) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modalTemplateGrid">
                 <?php foreach ($templatePresets as $tKey => $tp): ?>
                     <?php if ($tKey === 'blank') continue; ?>
@@ -919,197 +1564,6 @@ foreach ($urls as $u) {
                         Start from Scratch
                     </a>
                 </div>
-            </div></div>
-        </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- MODAL: SELECT A TEMPLATE (Bitly-Style Flow)              -->
-    <!-- ======================================================== -->
-    <div id="modalSelectTemplate" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-slate-100 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-rounded text-2xl">dashboard_customize</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-lg font-black text-slate-900">Select a template</h3>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 uppercase">Interactive</span>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-0.5">Pilih template awal atau mulai dari kanvas kosong untuk memulai merancang Page Anda. Anda dapat mengubah konten, warna, dan blok nanti.</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeSelectTemplateModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
-                    <span class="material-symbols-rounded text-xl">close</span>
-                </button>
-            </div>
-
-            <!-- Category Filter Tabs -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-bold scrollbar-none" id="modalCategoryTabs">
-                <button type="button" onclick="filterModalTemplates('all', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-slate-900 text-white shadow-sm shrink-0">
-                    All templates
-                </button>
-                <button type="button" onclick="filterModalTemplates('link-in-bio', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
-                    Link-in-bio
-                </button>
-                <button type="button" onclick="filterModalTemplates('school-event', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
-                    School Event & Announcement
-                </button>
-                <button type="button" onclick="filterModalTemplates('digital-card', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
-                    Digital Business Card
-                </button>
-                <button type="button" onclick="filterModalTemplates('portfolio-showcase', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
-                    Portfolio & Showcase
-                </button>
-                <button type="button" onclick="filterModalTemplates('roadmap-course', this)" class="modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0">
-                    Alur & Roadmap
-                </button>
-            </div>
-
-            <!-- Templates Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modalTemplateGrid">
-                
-                <!-- 1. Official Link in Bio -->
-                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="link-in-bio">
-                    <div class="p-4 bg-gradient-to-b from-blue-900 to-blue-950 text-white space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/20 text-blue-200 border border-blue-400/30 uppercase">Link in Bio</span>
-                            <span class="material-symbols-rounded text-blue-300 text-lg">auto_awesome</span>
-                        </div>
-                        <div class="text-center pt-1">
-                            <div class="w-10 h-10 rounded-xl bg-white p-1 shadow-md mx-auto mb-1.5">
-                                <img src="/assets/img/logo-smp-labschool.png" alt="Logo" class="w-full h-full object-contain">
-                            </div>
-                            <h4 class="font-extrabold text-xs">SMP Labschool Jakarta</h4>
-                            <p class="text-[10px] text-blue-200">Official Portal & Multi-Links</p>
-                        </div>
-                        <div class="space-y-1 pt-1">
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Portal Resmi Sekolah</div>
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">LMS & Pembelajaran</div>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-slate-800">Labs Official Bio</span>
-                        <a href="/page_builder.php?template=link-in-bio" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
-                            Use template
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 2. School Event & Announcement -->
-                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="school-event">
-                    <div class="p-4 bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 text-white space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase">Event Countdown</span>
-                            <span class="material-symbols-rounded text-amber-300 text-lg">timer</span>
-                        </div>
-                        <div class="text-center pt-1">
-                            <h4 class="font-extrabold text-xs">Labs Open House 2026</h4>
-                            <div class="bg-white/10 rounded-xl p-2 mt-2 font-mono font-black text-xs text-amber-300">14 : 08 : 32 : 10</div>
-                        </div>
-                        <div class="space-y-1 pt-1">
-                            <div class="w-full py-1 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-[9px] font-black text-slate-950 text-center">Formulir Registrasi</div>
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Unduh Brosur PDF</div>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-slate-800">School Event</span>
-                        <a href="/page_builder.php?template=school-event" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
-                            Use template
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 3. Digital Business Card -->
-                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="digital-card">
-                    <div class="p-4 bg-gradient-to-b from-slate-900 to-slate-800 text-white space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-400/20 text-blue-300 border border-blue-400/30 uppercase">Digital Card</span>
-                            <span class="material-symbols-rounded text-blue-400 text-lg">badge</span>
-                        </div>
-                        <div class="text-center pt-1">
-                            <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center mx-auto mb-1.5">AF</div>
-                            <h4 class="font-extrabold text-xs">Profil Guru & Tenaga Pendidik</h4>
-                            <p class="text-[10px] text-slate-300">Guru Matematika & IT</p>
-                        </div>
-                        <div class="space-y-1 pt-1">
-                            <div class="w-full py-1 rounded-lg bg-blue-600 text-[9px] font-bold text-center">Simpan Kontak (vCard)</div>
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Chat WhatsApp</div>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-slate-800">Business Card</span>
-                        <a href="/page_builder.php?template=digital-card" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
-                            Use template
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 4. Portfolio & Showcase -->
-                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="portfolio-showcase">
-                    <div class="p-4 bg-gradient-to-b from-emerald-950 to-slate-900 text-white space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 uppercase">Showcase</span>
-                            <span class="material-symbols-rounded text-emerald-300 text-lg">workspace_premium</span>
-                        </div>
-                        <div class="text-center pt-1">
-                            <h4 class="font-extrabold text-xs">Karya Inovasi & Riset Siswa</h4>
-                            <p class="text-[10px] text-emerald-200">Juara 1 Lomba Sains Nasional</p>
-                        </div>
-                        <div class="space-y-1 pt-1">
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Video Presentasi Ilmiah</div>
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Unduh Paper PDF</div>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-slate-800">Portfolio Showcase</span>
-                        <a href="/page_builder.php?template=portfolio-showcase" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
-                            Use template
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 5. Alur & Roadmap Pendaftaran -->
-                <div class="modal-tmpl-item border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col justify-between" data-category="roadmap-course">
-                    <div class="p-4 bg-gradient-to-b from-blue-950 via-slate-900 to-slate-950 text-white space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 uppercase">Roadmap Alur</span>
-                            <span class="material-symbols-rounded text-cyan-300 text-lg">route</span>
-                        </div>
-                        <div class="text-center pt-1">
-                            <h4 class="font-extrabold text-xs">Alur Pendaftaran PSB Online</h4>
-                            <p class="text-[10px] text-slate-300">Tahap 1 s.d. Tahap 4</p>
-                        </div>
-                        <div class="space-y-1 pt-1">
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Langkah 1: Akun & Rapor</div>
-                            <div class="w-full py-1 rounded-lg bg-white/10 text-[9px] font-bold text-center">Langkah 2: Ujian CBT</div>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-slate-800">Alur & Roadmap</span>
-                        <a href="/page_builder.php?template=roadmap-course" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition">
-                            Use template
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 6. Start from Scratch -->
-                <div class="modal-tmpl-item border-2 border-dashed border-slate-300 rounded-2xl p-5 hover:border-blue-500 hover:bg-blue-50/30 transition flex flex-col justify-between text-center space-y-3" data-category="all">
-                    <div class="space-y-2 pt-3">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center mx-auto">
-                            <span class="material-symbols-rounded text-2xl">add_box</span>
-                        </div>
-                        <h4 class="font-extrabold text-sm text-slate-900">Mulai dari Kanvas Kosong</h4>
-                        <p class="text-[11px] text-slate-500">Rancang tata letak, tombol, tema warna, dan susunan blok sendiri dari awal.</p>
-                    </div>
-                    <a href="/page_builder.php?template=blank" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-sm transition">
-                        Start from Scratch
-                    </a>
-                </div>
-
             </div>
 
             <!-- Modal Footer -->
@@ -1125,7 +1579,67 @@ foreach ($urls as $u) {
         </div>
     </div>
 
-        <!-- Client-side Data Array for Lightning Performance -->
+        <!-- ======================================================== -->
+    <!-- MODAL: SHARE LINK (Social & Direct Share)                -->
+    <!-- ======================================================== -->
+    <div id="shareModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5">
+            <div class="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-rounded text-xl">share</span>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Bagikan Tautan</h3>
+                        <p class="text-xs text-slate-500" id="shareModalTitle">Sebarkan tautan resmi Labschool</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeShareModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                    <span class="material-symbols-rounded text-lg">close</span>
+                </button>
+            </div>
+
+            <!-- Short URL Box -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                <input type="text" id="shareModalUrlInput" readonly class="bg-transparent text-xs font-mono font-bold text-blue-600 w-full focus:outline-none select-all truncate">
+                <button type="button" id="btnShareModalCopy" onclick="copyShareModalLink()" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-sm transition shrink-0 flex items-center gap-1">
+                    <span class="material-symbols-rounded text-sm" id="shareModalCopyIcon">content_copy</span>
+                    <span id="shareModalCopyText">Salin</span>
+                </button>
+            </div>
+
+            <!-- Social Share Grid -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2">Bagikan Langsung ke Platform:</label>
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <a id="shareBtnWa" href="#" target="_blank" class="p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-[11px] flex flex-col items-center gap-1 transition">
+                        <span class="material-symbols-rounded text-xl">chat</span>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a id="shareBtnTelegram" href="#" target="_blank" class="p-3 rounded-2xl bg-sky-50 hover:bg-sky-100 text-sky-600 font-extrabold text-[11px] flex flex-col items-center gap-1 transition">
+                        <span class="material-symbols-rounded text-xl">send</span>
+                        <span>Telegram</span>
+                    </a>
+                    <a id="shareBtnTwitter" href="#" target="_blank" class="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-extrabold text-[11px] flex flex-col items-center gap-1 transition">
+                        <span class="material-symbols-rounded text-xl">tag</span>
+                        <span>X / Twitter</span>
+                    </a>
+                    <a id="shareBtnFb" href="#" target="_blank" class="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-[11px] flex flex-col items-center gap-1 transition">
+                        <span class="material-symbols-rounded text-xl">public</span>
+                        <span>Facebook</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="button" onclick="closeShareModal()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side Data Array for Lightning Performance -->
     <script>
         const CSRF_TOKEN = '<?= csrf_token() ?>';
         // Auto-attach X-CSRF-TOKEN to all internal fetch requests
@@ -1751,6 +2265,69 @@ foreach ($urls as $u) {
             });
         }
 
+        // Share Link Functionality
+        let currentShareUrl = '';
+        function shareLink(url, title) {
+            currentShareUrl = url;
+            const fullTitle = title || 'Tautan Resmi Labschool';
+            
+            // On mobile devices with native Web Share API
+            if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                navigator.share({
+                    title: fullTitle,
+                    text: fullTitle + ' - SMP Labschool Jakarta',
+                    url: url
+                }).catch(() => {});
+                return;
+            }
+
+            // Open custom Share Modal
+            const modal = document.getElementById('shareModal');
+            if (modal) {
+                document.getElementById('shareModalTitle').innerText = fullTitle;
+                document.getElementById('shareModalUrlInput').value = url;
+                
+                const encUrl = encodeURIComponent(url);
+                const encText = encodeURIComponent(fullTitle + ' - ' + url);
+                
+                document.getElementById('shareBtnWa').href = 'https://api.whatsapp.com/send?text=' + encText;
+                document.getElementById('shareBtnTelegram').href = 'https://t.me/share/url?url=' + encUrl + '&text=' + encodeURIComponent(fullTitle);
+                document.getElementById('shareBtnTwitter').href = 'https://twitter.com/intent/tweet?text=' + encText;
+                document.getElementById('shareBtnFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl;
+                
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Tautan disalin ke clipboard:\n' + url);
+                });
+            }
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('shareModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function copyShareModalLink() {
+            const input = document.getElementById('shareModalUrlInput');
+            if (input && input.value) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    const icon = document.getElementById('shareModalCopyIcon');
+                    const text = document.getElementById('shareModalCopyText');
+                    if (icon) icon.innerText = 'check';
+                    if (text) text.innerText = 'Tersalin!';
+                    setTimeout(() => {
+                        if (icon) icon.innerText = 'content_copy';
+                        if (text) text.innerText = 'Salin';
+                    }, 2000);
+                });
+            }
+        }
+
         function filterModalTemplates(cat, btn) {
             document.querySelectorAll('.modal-cat-btn').forEach(b => {
                 b.className = 'modal-cat-btn px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shrink-0';
@@ -1767,6 +2344,7 @@ foreach ($urls as $u) {
                 }
             });
         }
+
 
     </script>
 
