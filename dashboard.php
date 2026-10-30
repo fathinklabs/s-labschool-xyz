@@ -1680,6 +1680,7 @@ foreach ($urls as $u) {
         const allLinksData = <?= json_encode($clientUrls) ?>;
         let activeLink = null;
         let currentFrame = 'none';
+        let currentQrLogo = 'smp';
 
         // 1. Navigation & Dropdowns
         function toggleCreateDropdown() {
@@ -1705,7 +1706,8 @@ foreach ($urls as $u) {
             closeSidebarOnMobile();
             const sections = ['Links', 'Qr', 'Bios', 'Campaigns', 'Api'];
             sections.forEach(s => {
-                document.getElementById('section' + s).classList.add('hidden');
+                const sec = document.getElementById('section' + s);
+                if (sec) sec.classList.add('hidden');
                 const nav = document.getElementById('navLink' + s);
                 if (nav) {
                     nav.className = 'sidebar-nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition';
@@ -1725,7 +1727,8 @@ foreach ($urls as $u) {
                 campaigns: 'Tag & Kampanye Sekolah',
                 api: 'Developer REST API'
             };
-            document.getElementById('currentSectionTitle').innerText = titleMap[tab] || 'Dashboard';
+            const titleEl = document.getElementById('currentSectionTitle');
+            if (titleEl) titleEl.innerText = titleMap[tab] || 'Dashboard';
         }
 
         // 2. Sliding Drawer (Detail Panel)
@@ -1781,9 +1784,6 @@ foreach ($urls as $u) {
         function openDrawerWithQr(linkId) {
             openDrawer(linkId);
         }
-
-        let currentFrame = 'none';
-        let currentQrLogo = 'smp';
 
         function setDrawerQrFrame(frame) {
             currentFrame = frame;
