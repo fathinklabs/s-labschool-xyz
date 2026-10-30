@@ -117,7 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_
             elseif (in_array($k, ['rate_limit_per_minute', 'session_timeout_days'])) $cat = 'security';
             elseif (in_array($k, ['maintenance_mode', 'maintenance_message'])) $cat = 'system';
 
-            $updateStmt->execute([$k, $val, $cat, $adminUser['email']]);
+            $adminId = !empty($adminUser['id']) ? (int)$adminUser['id'] : null;
+            $updateStmt->execute([$k, $val, $cat, $adminId]);
             $currentSettings[$k] = $val;
         }
         $flashSuccess = 'Konfigurasi global platform berhasil diperbarui!';
