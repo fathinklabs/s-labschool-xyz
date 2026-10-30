@@ -331,3 +331,15 @@ function sanitize_safe_url(?string $url, string $fallback = '#'): string {
     
     return $url;
 }
+
+/**
+ * Format ukuran byte menjadi satuan yang mudah dibaca (B, KB, MB, GB, TB)
+ */
+function format_bytes(int|float $bytes, int $precision = 2): string {
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min((int)$pow, count($units) - 1);
+    $bytes /= (1 << (10 * $pow));
+    return round($bytes, $precision) . ' ' . $units[$pow];
+}

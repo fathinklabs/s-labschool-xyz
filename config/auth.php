@@ -225,6 +225,13 @@ function login_user(string $email, string $password): array {
 }
 
 /**
+ * Helper cetak input hidden token CSRF untuk formulir HTML
+ */
+function csrf_field(): string {
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+}
+
+/**
  * Dapatkan atau buat token CSRF untuk sesi saat ini
  */
 function csrf_token(): string {

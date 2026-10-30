@@ -72,6 +72,125 @@ $recentClicks = $pdo->query("
     ORDER BY c.clicked_at DESC
     LIMIT 30
 ")->fetchAll();
+
+// 7. Penanganan Form POST: Konfigurasi Global Platform
+$flashSuccess = '';
+$flashError = '';
+
+$defaultSettings = [
+    'site_name'                 => 's.labschool.xyz',
+    'site_title'                => 'Labschool URL Shortener, QR Code & Pages',
+    'default_domain'            => 's.labschool.xyz',
+    'fallback_url'              => 'https://labschool.xyz',
+    'allowed_email_domains'     => 'labschool.xyz, elabschool.sch.id',
+    'allow_public_registration' => '0',
+    'rate_limit_per_minute'     => '60',
+    'session_timeout_days'      => '7',
+    'maintenance_mode'          => '0',
+    'maintenance_message'       => 'Platform s.labschool.xyz sedang dalam pemeliharaan sistem berkala. Silakan kembali dalam beberapa saat.'
+];
+
+// Pastikan tabel global_settings siap digunakan
+try {
+    $settingsRows = $pdo->query("SELECT setting_key, setting_value FROM global_settings")->fetchAll(PDO::FETCH_KEY_PAIR);
+    $currentSettings = array_merge($defaultSettings, $settingsRows ?: []);
+} catch (Exception $e) {
+    $currentSettings = $defaultSettings;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_global_settings') {
+    require_csrf();
+    try {
+        $keys = array_keys($defaultSettings);
+        $updateStmt = $pdo->prepare("INSERT INTO global_settings (setting_key, setting_value, category, updated_at, updated_by) 
+            VALUES (?, ?, ?, NOW(), ?) 
+            ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW(), updated_by = VALUES(updated_by)");
+
+        foreach ($keys as $k) {
+            if ($k === 'allow_public_registration' || $k === 'maintenance_mode') {
+                $val = isset($_POST[$k]) && $_POST[$k] === '1' ? '1' : '0';
+            } else {
+                $val = trim((string)($_POST[$k] ?? $defaultSettings[$k]));
+            }
+            $cat = 'general';
+            if (in_array($k, ['allowed_email_domains', 'allow_public_registration'])) $cat = 'auth';
+            elseif (in_array($k, ['rate_limit_per_minute', 'session_timeout_days'])) $cat = 'security';
+            elseif (in_array($k, ['maintenance_mode', 'maintenance_message'])) $cat = 'system';
+
+            $updateStmt->execute([$k, $val, $cat, $adminUser['email']]);
+            $currentSettings[$k] = $val;
+        }
+        $flashSuccess = 'Konfigurasi global platform berhasil diperbarui!';
+    } catch (Exception $e) {
+        $flashError = 'Gagal menyimpan konfigurasi: ' . $e->getMessage();
+    }
+}
+
+// 8. Metrik Penggunaan Sistem & Penyimpanan (Tab 7)
+$totalDisk = @disk_total_space(__DIR__) ?: (100 * 1024 * 1024 * 1024);
+$freeDisk = @disk_free_space(__DIR__) ?: (50 * 1024 * 1024 * 1024);
+$usedDisk = max(0, $totalDisk - $freeDisk);
+$diskPercent = $totalDisk > 0 ? round(($usedDisk / $totalDisk) * 100, 1) : 0;
+
+$assetsSize = 0;
+$assetsDir = __DIR__ . '/assets/img';
+if (is_dir($assetsDir)) {
+    try {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($assetsDir, FilesystemIterator::SKIP_DOTS)) as $file) {
+            $assetsSize += $file->getSize();
+        }
+    } catch (Exception $e) {}
+}
+
+$dbTables = [];
+$totalDbSize = 0;
+try {
+    $tableStatsStmt = $pdo->query("
+        SELECT table_name, table_rows, data_length, (data_length + index_length) as total_size
+        FROM information_schema.TABLES
+        WHERE table_schema = DATABASE()
+        ORDER BY total_size DESC
+    ");
+    $dbTables = $tableStatsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $totalDbSize = array_sum(array_column($dbTables, 'total_size'));
+} catch (Exception $e) {}
+
+$clicksToday = 0;
+$clicks7Days = 0;
+try {
+    $clicksToday = (int)$pdo->query("SELECT COUNT(*) FROM click_logs WHERE DATE(clicked_at) = CURDATE()")->fetchColumn();
+    $clicks7Days = (int)$pdo->query("SELECT COUNT(*) FROM click_logs WHERE clicked_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn();
+} catch (Exception $e) {}
+
+$domainStats = [];
+try {
+    $domainStats = $pdo->query("
+        SELECT domain, COUNT(*) as count 
+        FROM users 
+        GROUP BY domain 
+        ORDER BY count DESC
+    ")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+$roleStats = [];
+try {
+    $roleStats = $pdo->query("
+        SELECT role, COUNT(*) as count 
+        FROM users 
+        GROUP BY role 
+        ORDER BY count DESC
+    ")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+$deviceStats = [];
+try {
+    $deviceStats = $pdo->query("
+        SELECT device_type, COUNT(*) as count 
+        FROM click_logs 
+        GROUP BY device_type 
+        ORDER BY count DESC
+    ")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -865,8 +984,10 @@ $recentClicks = $pdo->query("
         }
 
         // Render Grafik Tren Global
-        const ctx = document.getElementById('globalChart').getContext('2d');
-        new Chart(ctx, {
+        const chartCanvas = document.getElementById('globalChart');
+        if (chartCanvas && typeof Chart !== 'undefined') {
+            const ctx = chartCanvas.getContext('2d');
+            new Chart(ctx, {
             type: 'line',
             data: {
                 labels: <?= json_encode($dates) ?>,
@@ -892,6 +1013,7 @@ $recentClicks = $pdo->query("
                 plugins: { legend: { display: false } }
             }
         });
+        }
     </script>
 </body>
 </html>
