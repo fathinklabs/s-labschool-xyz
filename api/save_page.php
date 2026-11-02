@@ -2,6 +2,13 @@
 /**
  * API: Simpan / Perbarui Halaman Page (Labs Pages) Beserta Seluruh Blok Komponennya
  * Modern Replacement for api/save_microsite.php
+ * Mendukung Paritas Fitur Lengkap s.id:
+ * - Cover Banner Header
+ * - Custom Wallpaper / Background (Color/Gradient/Image, Blur, Dimming)
+ * - Custom Settings (Title Bold/Italic, Bio Font & Styling)
+ * - Blok Tautan Kaya (Custom Logo Image, Custom Button Colors, Alignment, Password Protect, Keep in Page)
+ * - Blok Image / Banner Promosi
+ * - SEO & Google Analytics (gtag_id)
  */
 
 header('Content-Type: application/json; charset=utf-8');
@@ -58,17 +65,31 @@ $slug = sanitize_slug($data['slug'] ?? '');
 $title = trim($data['title'] ?? '');
 $bio = trim($data['bio'] ?? '');
 $avatarUrl = sanitize_safe_url(trim($data['avatar_url'] ?? ''), '');
+$headerBgUrl = sanitize_safe_url(trim($data['header_bg_url'] ?? ''), '');
 $theme = trim($data['theme'] ?? 'labs-navy');
 $templateStyle = trim($data['template_style'] ?? 'genially-showcase');
 $countdownDate = !empty($data['countdown_date']) ? date('Y-m-d H:i:s', strtotime($data['countdown_date'])) : null;
 $countdownTitle = trim($data['countdown_title'] ?? '');
-$customBgType = trim($data['custom_bg_type'] ?? 'theme');
+
+$customBgType = in_array($data['custom_bg_type'] ?? '', ['theme', 'color', 'gradient', 'image'], true)
+    ? $data['custom_bg_type']
+    : 'theme';
 $customBgValue = trim($data['custom_bg_value'] ?? '');
+$bgBlur = max(0, min(50, (int)($data['bg_blur'] ?? 0)));
+$bgDark = max(0, min(100, (int)($data['bg_dark'] ?? 0)));
+
 $buttonStyle = trim($data['button_style'] ?? 'rounded-xl');
 $seoTitle = trim($data['seo_title'] ?? '');
 $seoDescription = trim($data['seo_description'] ?? '');
+$seoImage = sanitize_safe_url(trim($data['seo_image'] ?? ''), '');
+$gtagId = trim($data['gtag_id'] ?? '');
 $customFooter = trim($data['custom_footer'] ?? 'SMP Labschool Jakarta');
+
 $socialLinks = is_array($data['social_links'] ?? null) ? json_encode($data['social_links']) : null;
+$customSettings = is_array($data['custom_settings'] ?? null) 
+    ? json_encode($data['custom_settings']) 
+    : (!empty($data['custom_settings']) && is_string($data['custom_settings']) ? $data['custom_settings'] : null);
+
 $blocks = is_array($data['blocks'] ?? null) ? $data['blocks'] : [];
 
 if (empty($slug)) {
@@ -130,34 +151,48 @@ try {
 
         $stmt = $pdo->prepare("
             UPDATE microsites SET
-                slug = ?, title = ?, bio = ?, avatar_url = ?, theme = ?, template_style = ?,
-                countdown_date = ?, countdown_title = ?, custom_bg_type = ?, custom_bg_value = ?,
-                button_style = ?, seo_title = ?, seo_description = ?, custom_footer = ?,
-                social_links = ?
+                slug = ?, title = ?, bio = ?, avatar_url = ?, header_bg_url = ?,
+                theme = ?, template_style = ?,
+                countdown_date = ?, countdown_title = ?,
+                custom_bg_type = ?, custom_bg_value = ?, bg_blur = ?, bg_dark = ?,
+                button_style = ?, seo_title = ?, seo_description = ?, seo_image = ?, gtag_id = ?,
+                custom_footer = ?, social_links = ?, custom_settings = ?
             WHERE id = ?
         ");
         $stmt->execute([
-            $slug, $title, $bio, $avatarUrl, $theme, $templateStyle,
-            $countdownDate, $countdownTitle, $customBgType, $customBgValue,
-            $buttonStyle, $seoTitle, $seoDescription, $customFooter,
-            $socialLinks, $pageId
+            $slug, $title, $bio, $avatarUrl, $headerBgUrl,
+            $theme, $templateStyle,
+            $countdownDate, $countdownTitle,
+            $customBgType, $customBgValue, $bgBlur, $bgDark,
+            $buttonStyle, $seoTitle, $seoDescription, $seoImage, $gtagId,
+            $customFooter, $socialLinks, $customSettings,
+            $pageId
         ]);
     } else {
         $stmt = $pdo->prepare("
             INSERT INTO microsites (
-                user_id, slug, title, bio, avatar_url, theme, template_style,
-                countdown_date, countdown_title, custom_bg_type, custom_bg_value, button_style,
-                seo_title, seo_description, custom_footer, social_links
+                user_id, slug, title, bio, avatar_url, header_bg_url,
+                theme, template_style,
+                countdown_date, countdown_title,
+                custom_bg_type, custom_bg_value, bg_blur, bg_dark,
+                button_style, seo_title, seo_description, seo_image, gtag_id,
+                custom_footer, social_links, custom_settings
             ) VALUES (
-                ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?,
+                ?, ?,
+                ?, ?,
+                ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?, ?
+                ?, ?, ?
             )
         ");
         $stmt->execute([
-            $currentUser['id'], $slug, $title, $bio, $avatarUrl, $theme, $templateStyle,
-            $countdownDate, $countdownTitle, $customBgType, $customBgValue, $buttonStyle,
-            $seoTitle, $seoDescription, $customFooter, $socialLinks
+            $currentUser['id'], $slug, $title, $bio, $avatarUrl, $headerBgUrl,
+            $theme, $templateStyle,
+            $countdownDate, $countdownTitle,
+            $customBgType, $customBgValue, $bgBlur, $bgDark,
+            $buttonStyle, $seoTitle, $seoDescription, $seoImage, $gtagId,
+            $customFooter, $socialLinks, $customSettings
         ]);
         $pageId = (int)$pdo->lastInsertId();
     }
@@ -182,7 +217,38 @@ try {
         $bUrl = sanitize_safe_url(trim($b['target_url'] ?? ''), '');
         $bIcon = trim($b['icon'] ?? 'link');
         $bAnim = trim($b['animation'] ?? 'none');
-        $bMeta = is_array($b['metadata'] ?? null) ? json_encode($b['metadata']) : null;
+
+        // Metadata gabungan (mendukung fitur s.id: logo image, warna tombol kustom, password protection, keep in page)
+        $bMetaArr = is_array($b['metadata'] ?? null) ? $b['metadata'] : [];
+        if (!empty($b['image_icon'])) {
+            $bMetaArr['image_icon'] = sanitize_safe_url(trim($b['image_icon']), '');
+        }
+        if (!empty($b['button_color'])) {
+            $bMetaArr['button_color'] = trim($b['button_color']);
+        }
+        if (!empty($b['button_text_color'])) {
+            $bMetaArr['button_text_color'] = trim($b['button_text_color']);
+        }
+        if (!empty($b['button_border_color'])) {
+            $bMetaArr['button_border_color'] = trim($b['button_border_color']);
+        }
+        if (!empty($b['button_type'])) {
+            $bMetaArr['button_type'] = trim($b['button_type']);
+        }
+        if (!empty($b['text_position'])) {
+            $bMetaArr['text_position'] = trim($b['text_position']);
+        }
+        if (isset($b['password_active'])) {
+            $bMetaArr['password_active'] = (bool)$b['password_active'];
+        }
+        if (!empty($b['password'])) {
+            $bMetaArr['password'] = trim($b['password']);
+        }
+        if (isset($b['keep_in_page'])) {
+            $bMetaArr['keep_in_page'] = (bool)$b['keep_in_page'];
+        }
+
+        $bMeta = !empty($bMetaArr) ? json_encode($bMetaArr) : null;
 
         $insBlock->execute([
             $pageId, $bType, $bTitle, $bSub, $bUrl, $bIcon, $bAnim, $bMeta, $order++

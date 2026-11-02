@@ -202,10 +202,33 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none"><?= htmlspecialchars($site['bio'] ?? '') ?></textarea>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">URL Avatar / Logo Page (Opsional)</label>
-                    <input type="url" id="siteAvatar" value="<?= htmlspecialchars($site['avatar_url'] ?? '') ?>" placeholder="https://... (kosongkan untuk menggunakan logo Labschool resmi)"
-                        class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">URL Avatar / Logo Profil</label>
+                        <input type="url" id="siteAvatar" value="<?= htmlspecialchars($site['avatar_url'] ?? '') ?>" placeholder="https://... (kosongkan untuk logo Labschool)"
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">URL Gambar Sampul / Cover Banner (Fitur s.id)</label>
+                        <input type="url" id="siteHeaderBg" value="<?= htmlspecialchars($site['header_bg_url'] ?? '') ?>" placeholder="https://... (banner horizontal 3:1 di atas profil)"
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-1 flex-wrap text-xs text-slate-600 border-t border-slate-100">
+                    <label class="flex items-center gap-1.5 cursor-pointer font-bold select-none">
+                        <input type="checkbox" id="siteTitleBold" <?= $titleIsBold ? 'checked' : '' ?> class="rounded text-blue-600">
+                        <span>Tebalkan Judul (Bold)</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer font-bold select-none">
+                        <input type="checkbox" id="siteTitleItalic" <?= $titleIsItalic ? 'checked' : '' ?> class="rounded text-blue-600">
+                        <span>Miringkan Judul (Italic)</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer font-bold select-none">
+                        <input type="checkbox" id="siteBioItalic" <?= $bioIsItalic ? 'checked' : '' ?> class="rounded text-blue-600">
+                        <span>Miringkan Slogan (Italic)</span>
+                    </label>
+                    <span class="text-[11px] text-slate-400 italic">Mendukung format Markdown **tebal** dan *miring* di deskripsi dan judul tombol.</span>
                 </div>
             </div>
 
@@ -350,6 +373,45 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         </div>
                     </label>
                 </div>
+
+                <!-- Kustom Wallpaper & Latar Belakang (Fitur Lengkap s.id) -->
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-xs font-bold text-slate-700">Atau Gunakan Wallpaper & Latar Belakang Kustom</label>
+                        <span class="text-[11px] text-slate-400">Timpa tema dengan gambar atau warna sendiri</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs mb-3">
+                        <div>
+                            <label class="block font-semibold text-slate-500 mb-1">Tipe Latar</label>
+                            <select id="customBgType" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none bg-white font-bold text-xs">
+                                <option value="theme" <?= ($site['custom_bg_type'] ?? 'theme') === 'theme' ? 'selected' : '' ?>>Gunakan Tema Preset Di Atas</option>
+                                <option value="image" <?= ($site['custom_bg_type'] ?? '') === 'image' ? 'selected' : '' ?>>Gambar Wallpaper (URL)</option>
+                                <option value="color" <?= ($site['custom_bg_type'] ?? '') === 'color' ? 'selected' : '' ?>>Warna Solid (Hex)</option>
+                                <option value="gradient" <?= ($site['custom_bg_type'] ?? '') === 'gradient' ? 'selected' : '' ?>>Gradien CSS</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block font-semibold text-slate-500 mb-1">URL Wallpaper / Nilai Warna (Hex / CSS)</label>
+                            <input type="text" id="customBgValue" value="<?= htmlspecialchars($site['custom_bg_value'] ?? '') ?>" placeholder="https://... atau #D9D9D9" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none text-xs">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2 border-t border-slate-100">
+                        <div>
+                            <div class="flex justify-between font-semibold text-slate-600 mb-1">
+                                <span>Efek Blur Wallpaper</span>
+                                <span id="bgBlurVal"><?= (int)($site['bg_blur'] ?? 0) ?>px</span>
+                            </div>
+                            <input type="range" id="bgBlur" min="0" max="25" value="<?= (int)($site['bg_blur'] ?? 0) ?>" oninput="document.getElementById('bgBlurVal').innerText = this.value + 'px'" class="w-full accent-blue-600">
+                        </div>
+                        <div>
+                            <div class="flex justify-between font-semibold text-slate-600 mb-1">
+                                <span>Kegelapan Overlay (Dimming)</span>
+                                <span id="bgDarkVal"><?= (int)($site['bg_dark'] ?? 0) ?>%</span>
+                            </div>
+                            <input type="range" id="bgDark" min="0" max="90" value="<?= (int)($site['bg_dark'] ?? 0) ?>" oninput="document.getElementById('bgDarkVal').innerText = this.value + '%'" class="w-full accent-blue-600">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 5. Media Sosial & Kontak -->
@@ -378,6 +440,44 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         <label class="font-bold text-slate-600 block mb-1">Email Sekolah / Kontak</label>
                         <input type="email" id="socEmail" value="<?= htmlspecialchars($socials['email'] ?? '') ?>" placeholder="kontak@labschool.xyz" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none">
                     </div>
+                </div>
+            </div>
+
+                        <!-- 7. Pengaturan Lanjutan (SEO, Google Analytics & Footer) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <span class="p-1.5 rounded-xl bg-cyan-50 text-cyan-600">
+                        <span class="material-symbols-rounded text-lg">tune</span>
+                    </span>
+                    <span>7. Pengaturan Lanjutan (SEO, Google Analytics &amp; Footer)</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Judul SEO (Meta Title)</label>
+                        <input type="text" id="seoTitle" value="<?= htmlspecialchars($site['seo_title'] ?? '') ?>" placeholder="Judul saat dibagikan ke WhatsApp / Google..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Gambar Social Share (OG Image)</label>
+                        <input type="url" id="seoImage" value="<?= htmlspecialchars($site['seo_image'] ?? '') ?>" placeholder="https://... (thumbnail link preview WhatsApp)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Google Analytics / GTM Tracking ID</label>
+                        <input type="text" id="gtagId" value="<?= htmlspecialchars($site['gtag_id'] ?? '') ?>" placeholder="contoh: G-XXXXXXXXXX atau GTM-XXXXXXX" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none font-mono">
+                        <p class="text-[10px] text-slate-400 mt-1">Lacak statistik pengunjung dan performa klik langsung di dashboard Google Analytics Anda.</p>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Teks Footer Kustom</label>
+                        <input type="text" id="customFooter" value="<?= htmlspecialchars($site['custom_footer'] ?? 'SMP Labschool Jakarta') ?>" placeholder="SMP Labschool Jakarta" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 outline-none">
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <label class="block font-bold text-slate-600 mb-1">Deskripsi SEO (Meta Description)</label>
+                    <textarea id="seoDescription" rows="2" placeholder="Deskripsi ringkas yang tampil di pencarian Google atau kartu tautan media sosial..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 outline-none"><?= htmlspecialchars($site['seo_description'] ?? '') ?></textarea>
                 </div>
             </div>
 
@@ -592,14 +692,30 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
         const initialBlocks = <?= json_encode($blocks) ?>;
         const siteId = <?= (int)$siteId ?>;
 
-        let blocksData = initialBlocks.length ? initialBlocks.map(b => ({
-            block_type: b.block_type || 'link',
-            title: b.title || '',
-            subtitle: b.subtitle || '',
-            target_url: b.target_url || '',
-            animation: b.animation || 'none'
-        })) : [
-            { block_type: 'link', title: 'Portal Resmi SMP Labschool Jakarta', subtitle: 'smplabschooljakarta.sch.id', target_url: 'https://smplabschooljakarta.sch.id', animation: 'none' }
+        let blocksData = initialBlocks.length ? initialBlocks.map(b => {
+            let meta = {};
+            try {
+                meta = b.metadata ? (typeof b.metadata === 'string' ? JSON.parse(b.metadata) : b.metadata) : {};
+            } catch(e) {}
+            return {
+                block_type: b.block_type || 'link',
+                title: b.title || '',
+                subtitle: b.subtitle || '',
+                target_url: b.target_url || '',
+                icon: b.icon || 'link',
+                animation: b.animation || 'none',
+                image_icon: meta.image_icon || b.image_icon || '',
+                button_color: meta.button_color || b.button_color || '',
+                button_text_color: meta.button_text_color || b.button_text_color || '',
+                button_border_color: meta.button_border_color || b.button_border_color || '',
+                button_type: meta.button_type || b.button_type || 'default',
+                text_position: meta.text_position || b.text_position || 'left',
+                password_active: meta.password_active || b.password_active || false,
+                password: meta.password || b.password || '',
+                keep_in_page: meta.keep_in_page || b.keep_in_page || false
+            };
+        }) : [
+            { block_type: 'link', title: 'Portal Resmi SMP Labschool Jakarta', subtitle: 'smplabschooljakarta.sch.id', target_url: 'https://smplabschooljakarta.sch.id', animation: 'none', image_icon: '', button_color: '', button_text_color: '', button_type: 'default', text_position: 'left', password_active: false, password: '', keep_in_page: false }
         ];
 
         // Drawer Controls
@@ -635,11 +751,19 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
 
         // Template Picker Modal Controls
         function openTemplatePickerModal() {
-            document.getElementById('modalTemplatePicker').classList.remove('hidden');
+            const backdrop = document.getElementById('templateModalBackdrop');
+            const panel = document.getElementById('templateModalPanel');
+            backdrop.classList.add('active');
+            panel.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeTemplatePickerModal() {
-            document.getElementById('modalTemplatePicker').classList.add('hidden');
+            const backdrop = document.getElementById('templateModalBackdrop');
+            const panel = document.getElementById('templateModalPanel');
+            backdrop.classList.remove('active');
+            panel.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         function selectBlockFromDrawer(type) {
@@ -649,11 +773,8 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
             // Smooth scroll to the newest block
             setTimeout(() => {
                 const container = document.getElementById('blocksContainer');
-                const lastBlock = container.lastElementChild;
-                if (lastBlock) {
-                    lastBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    lastBlock.classList.add('highlight-new-block');
-                    setTimeout(() => lastBlock.classList.remove('highlight-new-block'), 2500);
+                if (container && container.lastElementChild) {
+                    container.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 100);
         }
@@ -670,7 +791,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                     <div class="py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
                         <span class="material-symbols-rounded text-3xl text-slate-400">widgets</span>
                         <p class="text-xs text-slate-500 font-bold mt-1">Belum ada blok komponen</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Buka drawer komponen untuk menambahkan tombol, video, atau pengumuman.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Buka drawer komponen untuk menambahkan tombol, video, atau banner promosi.</p>
                         <button type="button" onclick="openBlockDrawer()" class="mt-3 px-3.5 py-1.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs inline-flex items-center gap-1 shadow-sm">
                             <span class="material-symbols-rounded text-sm">add</span>
                             <span>Buka Drawer Komponen</span>
@@ -714,6 +835,11 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                     iconSymbol = 'quiz';
                     labelTitle = 'Pertanyaan (FAQ)';
                     labelTarget = 'Jawaban FAQ';
+                } else if (b.block_type === 'image') {
+                    badgeClass = 'bg-rose-100 text-rose-800';
+                    iconSymbol = 'image';
+                    labelTitle = 'Keterangan Banner (Opsional)';
+                    labelTarget = 'URL Target Klik (Opsional)';
                 }
 
                 el.innerHTML = `
@@ -735,6 +861,27 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                         </div>
                     </div>
 
+                    ${b.block_type === 'image' ? `
+                    <div class="space-y-2.5 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-600 mb-1">URL Gambar Banner *</label>
+                            <div class="flex items-center gap-2">
+                                <input type="url" value="${escapeHtml(b.subtitle || '')}" oninput="updateBlockData(${idx}, 'subtitle', this.value); updateBlockData(${idx}, 'target_url', b.target_url || this.value);" placeholder="https://... (URL file gambar poster/banner)" class="w-full px-3 py-2 rounded-xl border border-slate-300 outline-none focus:border-rose-500 bg-white">
+                                ${b.subtitle ? `<img src="${escapeHtml(b.subtitle)}" class="w-10 h-10 object-cover rounded-xl border border-slate-200 shrink-0">` : ''}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-semibold text-slate-500 mb-1">Judul / Caption (Opsional)</label>
+                                <input type="text" value="${escapeHtml(b.title || '')}" oninput="updateBlockData(${idx}, 'title', this.value)" placeholder="Keterangan singkat di bawah banner..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-500 mb-1">Alamat URL Target Saat Diklik (Opsional)</label>
+                                <input type="url" value="${escapeHtml(b.target_url && b.target_url !== b.subtitle ? b.target_url : '')}" oninput="updateBlockData(${idx}, 'target_url', this.value)" placeholder="https://..." class="w-full px-3 py-1.5 rounded-xl border border-slate-300 outline-none bg-white">
+                            </div>
+                        </div>
+                    </div>
+                    ` : `
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                         <div>
                             <label class="block font-bold text-slate-600 mb-1">${labelTitle} *</label>
@@ -749,6 +896,7 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                             `}
                         </div>
                     </div>
+                    `}
 
                     ${(b.block_type === 'link' || b.block_type === 'pdf') ? `
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs pt-1 border-t border-slate-200/60">
@@ -764,13 +912,88 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                             </select>
                         </div>
                     </div>` : ''}
+
+                    ${b.block_type === 'link' ? `
+                    <!-- Accordion Kustomisasi Lanjutan S.id -->
+                    <details class="text-xs pt-1 border-t border-slate-200/60 group/opt">
+                        <summary class="cursor-pointer font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 select-none py-1">
+                            <span class="material-symbols-rounded text-sm">tune</span>
+                            <span>Kustomisasi Desain &amp; Keamanan Lanjutan (Fitur Lengkap s.id)</span>
+                        </summary>
+                        <div class="mt-2.5 p-3 rounded-xl bg-white border border-slate-200/80 space-y-3">
+                            <!-- Logo Thumbnail Image -->
+                            <div>
+                                <label class="block font-bold text-slate-600 mb-1">URL Gambar Logo / Thumbnail Tombol (Opsional)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="url" value="${escapeHtml(b.image_icon || '')}" oninput="updateBlockData(${idx}, 'image_icon', this.value)" placeholder="https://... (contoh: logo Dapodik, E-Rapor, SIMUTU)" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 outline-none focus:border-blue-600 text-xs">
+                                    ${b.image_icon ? `<img src="${escapeHtml(b.image_icon)}" class="w-7 h-7 object-contain rounded-lg border border-slate-200 shrink-0">` : ''}
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Mendukung format PNG / WebP transparan untuk logo instansi atau sistem sekolah.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                <!-- Warna Latar Tombol -->
+                                <div>
+                                    <label class="block font-semibold text-slate-500 mb-1">Warna Tombol (Hex)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <input type="color" value="${b.button_color || '#c8d3d8'}" onchange="updateBlockData(${idx}, 'button_color', this.value)" class="w-7 h-7 rounded cursor-pointer border border-slate-300 p-0.5">
+                                        <input type="text" value="${escapeHtml(b.button_color || '')}" oninput="updateBlockData(${idx}, 'button_color', this.value)" placeholder="#c8d3d8" class="w-full px-2 py-1 rounded-lg border border-slate-300 text-xs font-mono">
+                                    </div>
+                                </div>
+                                <!-- Gaya Tombol -->
+                                <div>
+                                    <label class="block font-semibold text-slate-500 mb-1">Gaya Tombol</label>
+                                    <select onchange="updateBlockData(${idx}, 'button_type', this.value)" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs bg-white">
+                                        <option value="default" ${b.button_type === 'default' ? 'selected' : ''}>Bawaan Tema</option>
+                                        <option value="solid" ${b.button_type === 'solid' ? 'selected' : ''}>Solid Terisi</option>
+                                        <option value="outline" ${b.button_type === 'outline' ? 'selected' : ''}>Outline Transparan</option>
+                                    </select>
+                                </div>
+                                <!-- Posisi Teks -->
+                                <div>
+                                    <label class="block font-semibold text-slate-500 mb-1">Perataan Teks</label>
+                                    <select onchange="updateBlockData(${idx}, 'text_position', this.value)" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs bg-white">
+                                        <option value="left" ${b.text_position === 'left' ? 'selected' : ''}>Rata Kiri</option>
+                                        <option value="center" ${b.text_position === 'center' ? 'selected' : ''}>Rata Tengah (Center)</option>
+                                        <option value="right" ${b.text_position === 'right' ? 'selected' : ''}>Rata Kanan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- Proteksi Password / PIN -->
+                                <div class="p-2.5 rounded-xl border border-amber-200/70 bg-amber-50/50 space-y-1.5">
+                                    <label class="flex items-center gap-1.5 cursor-pointer font-bold text-amber-900 select-none">
+                                        <input type="checkbox" ${b.password_active ? 'checked' : ''} onchange="updateBlockData(${idx}, 'password_active', this.checked); renderBlocks();" class="rounded text-amber-600 focus:ring-amber-500">
+                                        <span>🔒 Kunci dengan Sandi / PIN</span>
+                                    </label>
+                                    ${b.password_active ? `
+                                        <input type="text" value="${escapeHtml(b.password || '')}" oninput="updateBlockData(${idx}, 'password', this.value)" placeholder="Ketik PIN / Sandi..." class="w-full px-2.5 py-1.5 rounded-lg border border-amber-300 bg-white text-xs font-bold outline-none">
+                                        <p class="text-[10px] text-amber-700">Pengunjung harus memasukkan PIN ini untuk membuka tautan.</p>
+                                    ` : `
+                                        <p class="text-[10px] text-amber-600/80">Cocok untuk berkas soal ujian atau sistem internal guru.</p>
+                                    `}
+                                </div>
+
+                                <!-- Keep in Page (Modal Iframe) -->
+                                <div class="p-2.5 rounded-xl border border-blue-200/70 bg-blue-50/50 space-y-1.5">
+                                    <label class="flex items-center gap-1.5 cursor-pointer font-bold text-blue-900 select-none">
+                                        <input type="checkbox" ${b.keep_in_page ? 'checked' : ''} onchange="updateBlockData(${idx}, 'keep_in_page', this.checked)" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <span>📱 Buka di Halaman (In-Page Modal)</span>
+                                    </label>
+                                    <p class="text-[10px] text-blue-600/80">Tautan akan dibuka dalam pop-up web view di dalam halaman tanpa berpindah tab.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>` : ''}
                 `;
                 container.appendChild(el);
             });
         }
 
         function escapeHtml(str) {
-            return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         function addBlock(type) {
@@ -781,34 +1004,36 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
             } else if (type === 'vcard') {
                 blocksData.push({ block_type: 'vcard', title: 'Simpan Kontak ke HP (vCard)', subtitle: 'Simpan nomor resmi ke kontak ponsel', target_url: '/vcard.php', animation: 'pulse' });
             } else if (type === 'pdf') {
-                blocksData.push({ block_type: 'pdf', title: 'Unduh Dokumen Panduan (PDF)', subtitle: 'Panduan-Resmi.pdf', target_url: 'https://s.labschool.xyz/panduan.pdf', animation: 'none' });
+                blocksData.push({ block_type: 'pdf', title: 'Edaran / Buku Panduan (PDF)', subtitle: 'Unduh dokumen resmi sekolah', target_url: 'https://smplabschooljakarta.sch.id/panduan.pdf', animation: 'none' });
             } else if (type === 'faq') {
-                blocksData.push({ block_type: 'faq', title: 'Bagaimana cara pendaftaran online?', subtitle: 'Silakan kunjungi portal PSB dan isi formulir biodata lengkap.', target_url: '', animation: 'none' });
+                blocksData.push({ block_type: 'faq', title: 'Berapa kuota penerimaan jalur PSB?', subtitle: 'Informasi kuota dan syarat pendaftaran dapat diakses melalui portal resmi Labschool.', target_url: '', animation: 'none' });
+            } else if (type === 'image') {
+                blocksData.push({ block_type: 'image', title: 'Banner Promosi Kegiatan', subtitle: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80', target_url: 'https://smplabschooljakarta.sch.id', animation: 'none' });
             } else {
-                blocksData.push({ block_type: 'link', title: 'Tautan Baru', subtitle: '', target_url: 'https://', animation: 'none' });
+                blocksData.push({ block_type: 'link', title: 'Tautan Baru', subtitle: '', target_url: 'https://', animation: 'none', image_icon: '', button_color: '', button_text_color: '', button_type: 'default', text_position: 'left', password_active: false, password: '', keep_in_page: false });
             }
             renderBlocks();
         }
 
-        function deleteBlock(idx) {
-            if (confirm('Hapus blok ini?')) {
-                blocksData.splice(idx, 1);
+        function deleteBlock(index) {
+            if (confirm('Hapus blok komponen ini?')) {
+                blocksData.splice(index, 1);
                 renderBlocks();
             }
         }
 
-        function moveBlock(idx, dir) {
-            const target = idx + dir;
-            if (target < 0 || target >= blocksData.length) return;
-            const temp = blocksData[idx];
-            blocksData[idx] = blocksData[target];
-            blocksData[target] = temp;
+        function moveBlock(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= blocksData.length) return;
+            const temp = blocksData[index];
+            blocksData[index] = blocksData[newIndex];
+            blocksData[newIndex] = temp;
             renderBlocks();
         }
 
-        function updateBlockData(idx, key, val) {
-            if (blocksData[idx]) {
-                blocksData[idx][key] = val;
+        function updateBlockData(index, field, value) {
+            if (blocksData[index]) {
+                blocksData[index][field] = value;
             }
         }
 
@@ -832,10 +1057,25 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
                 title: document.getElementById('siteTitle').value.trim(),
                 bio: document.getElementById('siteBio').value.trim(),
                 avatar_url: document.getElementById('siteAvatar').value.trim(),
+                header_bg_url: document.getElementById('siteHeaderBg').value.trim(),
                 template_style: document.querySelector('input[name="template_style"]:checked')?.value || 'genially-showcase',
                 countdown_title: document.getElementById('cdTitle').value.trim(),
                 countdown_date: document.getElementById('cdDate').value,
                 theme: document.querySelector('input[name="theme"]:checked')?.value || 'labs-navy',
+                custom_bg_type: document.getElementById('customBgType').value,
+                custom_bg_value: document.getElementById('customBgValue').value.trim(),
+                bg_blur: parseInt(document.getElementById('bgBlur').value) || 0,
+                bg_dark: parseInt(document.getElementById('bgDark').value) || 0,
+                custom_settings: {
+                    title_bold: document.getElementById('siteTitleBold').checked,
+                    title_italic: document.getElementById('siteTitleItalic').checked,
+                    bio_italic: document.getElementById('siteBioItalic').checked
+                },
+                seo_title: document.getElementById('seoTitle').value.trim(),
+                seo_description: document.getElementById('seoDescription').value.trim(),
+                seo_image: document.getElementById('seoImage').value.trim(),
+                gtag_id: document.getElementById('gtagId').value.trim(),
+                custom_footer: document.getElementById('customFooter').value.trim(),
                 social_links: {
                     whatsapp: document.getElementById('socWa').value.trim(),
                     instagram: document.getElementById('socIg').value.trim(),
@@ -889,7 +1129,6 @@ $activeTheme = $site['theme'] ?? 'labs-navy';
             }
         }
 
-        renderBlocks();
-    </script>
+        renderBlocks();</script>
 </body>
 </html>

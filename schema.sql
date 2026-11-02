@@ -81,17 +81,22 @@ CREATE TABLE IF NOT EXISTS `microsites` (
     `title` VARCHAR(150) NOT NULL,
     `bio` TEXT NULL,
     `avatar_url` VARCHAR(255) NULL,
+    `header_bg_url` VARCHAR(255) NULL,           -- S.id: Cover Banner Image
     `theme` VARCHAR(50) DEFAULT 'labs-navy',     -- Pro: Themes
     `template_style` VARCHAR(50) DEFAULT 'genially-showcase', -- Genially modern template presets ('standard', 'genially-showcase', 'genially-roadmap', 'genially-cards')
     `countdown_date` DATETIME NULL,              -- Genially Event Countdown
     `countdown_title` VARCHAR(150) NULL,
     `custom_bg_type` ENUM('theme', 'color', 'gradient', 'image') DEFAULT 'theme',
     `custom_bg_value` VARCHAR(255) NULL,
+    `bg_blur` INT DEFAULT 0,                     -- S.id: Background blur effect
+    `bg_dark` INT DEFAULT 0,                     -- S.id: Background dark overlay
     `button_style` VARCHAR(50) DEFAULT 'rounded-xl',
     `seo_title` VARCHAR(150) NULL,
     `seo_description` TEXT NULL,
     `seo_image` VARCHAR(255) NULL,
+    `gtag_id` VARCHAR(50) NULL,                  -- S.id: Google Analytics / GTM ID
     `social_links` JSON NULL,                    -- WhatsApp, IG, YT, X, dll
+    `custom_settings` JSON NULL,                 -- S.id: Custom typography & micro-settings
     `remove_branding` TINYINT(1) DEFAULT 1,
     `custom_footer` VARCHAR(255) DEFAULT 'SMP Labschool Jakarta',
     `is_active` TINYINT(1) DEFAULT 1,

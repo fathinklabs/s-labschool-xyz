@@ -7,6 +7,17 @@
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/helpers.php';
+if (!function_exists('parse_micro_markdown')) {
+    function parse_micro_markdown($text) {
+        if ($text === null || $text === '') return '';
+        $escaped = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+        $escaped = preg_replace('/\*\*(.*?)\*\*/s', '<strong>$1</strong>', $escaped);
+        $escaped = preg_replace('/\*([^\*]+)\*/s', '<em>$1</em>', $escaped);
+        $escaped = preg_replace('/__(.*?)__/s', '<u>$1</u>', $escaped);
+        return $escaped;
+    }
+}
+
 
 $slug = trim($_GET['slug'] ?? '');
 if (empty($slug)) {
@@ -31,6 +42,11 @@ $stmtBlocks->execute([$site['id']]);
 $blocks = $stmtBlocks->fetchAll();
 
 $socials = !empty($site['social_links']) ? json_decode($site['social_links'], true) : [];
+$customSettings = !empty($site['custom_settings']) ? (is_array($site['custom_settings']) ? $site['custom_settings'] : json_decode($site['custom_settings'], true)) : [];
+$titleIsBold = !isset($customSettings['title_bold']) || !empty($customSettings['title_bold']);
+$titleIsItalic = !empty($customSettings['title_italic']);
+$bioIsItalic = !empty($customSettings['bio_italic']);
+
 
 // Pengaturan Tema Genially
 $theme = $site['theme'] ?? 'labs-navy';
@@ -262,8 +278,37 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
         .font-gasoek { font-family: 'Gasoek One', cursive, sans-serif; }
         .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
+
+    <?php if (!empty($site['gtag_id'])): 
+        $gtagId = htmlspecialchars(trim($site['gtag_id']));
+    ?>
+    <!-- Global site tag (gtag.js) - Google Analytics / GTM -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= $gtagId ?>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<?= $gtagId ?>');
+    </script>
+    <?php endif; ?>
+
 </head>
-<body class="<?= $activeTheme['bg'] ?> <?= $activeTheme['font'] ?? 'font-sans' ?> min-h-screen py-10 px-4 flex flex-col items-center justify-between selection:bg-blue-600 selection:text-white transition-colors duration-500 relative overflow-x-hidden">
+<body class="<?= $activeTheme['bg'] ?>
+
+    <!-- Custom Wallpaper Background (Fitur Latar Belakang s.id) -->
+    <?php if (($site['custom_bg_type'] ?? 'theme') === 'image' && !empty($site['custom_bg_value'])): ?>
+        <div class="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat transition-all duration-700 pointer-events-none" 
+             style="background-image: url('<?= htmlspecialchars(sanitize_safe_url($site['custom_bg_value'])) ?>'); filter: blur(<?= (int)($site['bg_blur'] ?? 0) ?>px); transform: scale(1.05);">
+        </div>
+        <?php if (!empty($site['bg_dark'])): ?>
+            <div class="fixed inset-0 -z-20 pointer-events-none" style="background-color: rgba(0, 0, 0, <?= min(0.95, max(0, (int)$site['bg_dark'] / 100)) ?>);"></div>
+        <?php endif; ?>
+    <?php elseif (($site['custom_bg_type'] ?? 'theme') === 'color' && !empty($site['custom_bg_value'])): ?>
+        <div class="fixed inset-0 -z-30 pointer-events-none" style="background-color: <?= htmlspecialchars($site['custom_bg_value']) ?>;"></div>
+    <?php elseif (($site['custom_bg_type'] ?? 'theme') === 'gradient' && !empty($site['custom_bg_value'])): ?>
+        <div class="fixed inset-0 -z-30 pointer-events-none" style="background: <?= htmlspecialchars($site['custom_bg_value']) ?>;"></div>
+    <?php endif; ?>
+ <?= $activeTheme['font'] ?? 'font-sans' ?> min-h-screen py-10 px-4 flex flex-col items-center justify-between selection:bg-blue-600 selection:text-white transition-colors duration-500 relative overflow-x-hidden">
 
     <!-- Ambient Glowing Background Aura (Dinamis Sesuai Tema) -->
     <?php if ($theme === 'web-design-studio'): ?>
@@ -309,6 +354,17 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
             </div>
         <?php endif; ?>
 
+        
+        <!-- Cover Banner (S.id Header Background Image) -->
+        <?php if (!empty($site['header_bg_url'])): ?>
+            <div class="w-full max-w-xl mx-auto rounded-3xl overflow-hidden mb-[-3.5rem] shadow-xl relative z-0 aspect-[3/1] max-h-48 border border-white/10 group">
+                <img src="<?= htmlspecialchars(sanitize_safe_url($site['header_bg_url'])) ?>" 
+                     alt="Cover Banner" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+            </div>
+        <?php endif; ?>
+
         <!-- Avatar Profil with Theme-Specific Framing -->
         <div class="relative mb-5 group animate-float-soft">
             <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden <?= $theme === 'artist-doodle' ? 'border-3 border-slate-900 shadow-[6px_6px_0px_#0f0e0e] rotate-[-2deg] bg-white p-2' : ($theme === 'creative-agency' ? 'border-2 border-indigo-200 shadow-2xl bg-white p-2.5' : ($theme === 'web-design-studio' ? 'border-2 border-sky-400/50 shadow-2xl shadow-sky-500/20 bg-white/10 backdrop-blur-md p-2' : 'border-2 border-white/20 shadow-2xl bg-white/10 p-1.5')) ?> transition-transform duration-300 group-hover:scale-105">
@@ -323,7 +379,7 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
         </div>
 
         <!-- Nama & Gelar -->
-        <h1 class="text-2xl sm:text-3xl tracking-tight text-center mb-1.5 px-2 <?= $activeTheme['title_font'] ?? 'font-black' ?> <?= $theme === 'artist-doodle' ? 'text-slate-950 drop-shadow-sm rotate-[-0.5deg]' : ($theme === 'creative-agency' ? 'text-slate-900' : 'text-white') ?>">
+        <h1 class="text-2xl sm:text-3xl tracking-tight text-center mb-1.5 px-2 <?= $titleIsBold ? ($activeTheme['title_font'] ?? 'font-black') : 'font-medium' ?> <?= $titleIsItalic ? 'italic' : '' ?> <?= $theme === 'artist-doodle' ? 'text-slate-950 drop-shadow-sm rotate-[-0.5deg]' : ($theme === 'creative-agency' ? 'text-slate-900' : 'text-white') ?>">
             <?= htmlspecialchars($site['title']) ?>
         </h1>
         <div class="inline-flex items-center gap-1.5 text-xs font-bold mb-3 <?= $activeTheme['accent'] ?>">
@@ -334,8 +390,8 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
 
         <!-- Bio / Deskripsi -->
         <?php if (!empty($site['bio'])): ?>
-            <p class="text-xs sm:text-sm text-center max-w-md mb-4 leading-relaxed px-4 <?= $theme === 'artist-doodle' ? 'text-slate-900 font-semibold' : ($theme === 'creative-agency' ? 'text-slate-600 font-normal' : 'text-white/85') ?>">
-                <?= nl2br(htmlspecialchars($site['bio'])) ?>
+            <p class="text-xs sm:text-sm text-center max-w-md mb-4 leading-relaxed px-4 <?= $bioIsItalic ? 'italic' : '' ?> <?= $theme === 'artist-doodle' ? 'text-slate-900 font-semibold' : ($theme === 'creative-agency' ? 'text-slate-600 font-normal' : 'text-white/85') ?>">
+                <?= nl2br(parse_micro_markdown($site['bio'])) ?>
             </p>
         <?php endif; ?>
 
@@ -434,19 +490,36 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                         </div>
 
                         <!-- Card Konten -->
+                        <?php
+                            $isProtected = !empty($meta['password_active']) && !empty($meta['password']);
+                            $isKeepInPage = !empty($meta['keep_in_page']);
+                            if ($isProtected) {
+                                $encUrl = base64_encode(sanitize_safe_url($block['target_url']));
+                                $encPass = base64_encode($meta['password']);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $kip = $isKeepInPage ? 'true' : 'false';
+                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                            } elseif ($isKeepInPage) {
+                                $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                            } else {
+                                $clickAction = 'target="_blank"';
+                            }
+                        ?>
                         <div class="flex-1 p-5 rounded-3xl border <?= $activeTheme['card'] ?> space-y-2 <?= $animClass ?>">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-extrabold text-base tracking-tight"><?= htmlspecialchars($block['title']) ?></h3>
+                                <h3 class="font-extrabold text-base tracking-tight"><?= parse_micro_markdown($block['title']) ?></h3>
                                 <span class="material-symbols-rounded text-lg opacity-60">arrow_forward</span>
                             </div>
                             <?php if (!empty($block['subtitle'])): ?>
-                                <p class="text-xs opacity-75 leading-relaxed"><?= htmlspecialchars($block['subtitle']) ?></p>
+                                <p class="text-xs opacity-75 leading-relaxed"><?= parse_micro_markdown($block['subtitle']) ?></p>
                             <?php endif; ?>
                             <?php if (!empty($block['target_url'])): ?>
-                                <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
+                                <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" <?= $clickAction ?>
                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold <?= $activeTheme['btn_prim'] ?> transition mt-2">
                                     <span>Buka Tautan</span>
-                                    <span class="material-symbols-rounded text-sm">open_in_new</span>
+                                    <span class="material-symbols-rounded text-sm"><?= $isProtected ? 'lock' : ($isKeepInPage ? 'open_in_browser' : 'open_in_new') ?></span>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -461,22 +534,86 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                     <?php
                         $animClass = ($block['animation'] === 'pulse') ? 'animate-pulse-custom' : '';
                     ?>
+                    <?php
+                        $meta = !empty($block['metadata']) ? (is_array($block['metadata']) ? $block['metadata'] : json_decode($block['metadata'], true)) : [];
+                    ?>
                     <?php if ($block['block_type'] === 'link'): ?>
-                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
-                           class="p-5 rounded-3xl border <?= $activeTheme['card'] ?> flex flex-col justify-between space-y-4 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl <?= $animClass ?>">
+                        <?php
+                            $imageIcon = !empty($meta['image_icon']) ? sanitize_safe_url($meta['image_icon']) : '';
+                            $btnColor = !empty($meta['button_color']) ? htmlspecialchars($meta['button_color']) : '';
+                            $btnTextColor = !empty($meta['button_text_color']) ? htmlspecialchars($meta['button_text_color']) : '';
+                            $btnBorderColor = !empty($meta['button_border_color']) ? htmlspecialchars($meta['button_border_color']) : '';
+                            $btnType = $meta['button_type'] ?? 'default';
+                            $isProtected = !empty($meta['password_active']) && !empty($meta['password']);
+                            $isKeepInPage = !empty($meta['keep_in_page']);
+
+                            $customBtnStyle = '';
+                            if (!empty($btnColor)) $customBtnStyle .= "background-color: {$btnColor} !important; ";
+                            if (!empty($btnTextColor)) $customBtnStyle .= "color: {$btnTextColor} !important; ";
+                            if (!empty($btnBorderColor)) $customBtnStyle .= "border-color: {$btnBorderColor} !important; ";
+
+                            $btnTypeClass = ($btnType === 'outline') ? 'bg-transparent border-2' : '';
+
+                            if ($isProtected) {
+                                $encUrl = base64_encode(sanitize_safe_url($block['target_url']));
+                                $encPass = base64_encode($meta['password']);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $kip = $isKeepInPage ? 'true' : 'false';
+                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                            } elseif ($isKeepInPage) {
+                                $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                            } else {
+                                $clickAction = 'target="_blank"';
+                            }
+                        ?>
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" <?= $clickAction ?>
+                           style="<?= $customBtnStyle ?>"
+                           class="p-5 rounded-3xl border <?= $activeTheme['card'] ?> <?= $btnTypeClass ?> flex flex-col justify-between space-y-4 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl <?= $animClass ?>">
                             <div class="flex items-center justify-between">
-                                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-blue-400">
-                                    <span class="material-symbols-rounded text-xl">link</span>
-                                </div>
-                                <span class="material-symbols-rounded text-lg opacity-40">north_east</span>
+                                <?php if (!empty($imageIcon)): ?>
+                                    <div class="w-10 h-10 rounded-2xl bg-white p-1 flex items-center justify-center shrink-0 shadow-sm border border-slate-200/50">
+                                        <img src="<?= htmlspecialchars($imageIcon) ?>" alt="" class="w-full h-full object-contain rounded-xl">
+                                    </div>
+                                <?php else: ?>
+                                    <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-blue-400">
+                                        <span class="material-symbols-rounded text-xl"><?= !empty($block['icon']) && $block['icon'] !== 'link' ? htmlspecialchars($block['icon']) : 'link' ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($isProtected): ?>
+                                    <span class="material-symbols-rounded text-lg text-amber-400">lock</span>
+                                <?php elseif ($isKeepInPage): ?>
+                                    <span class="material-symbols-rounded text-lg text-blue-400">open_in_browser</span>
+                                <?php else: ?>
+                                    <span class="material-symbols-rounded text-lg opacity-40">north_east</span>
+                                <?php endif; ?>
                             </div>
                             <div>
-                                <h3 class="font-extrabold text-sm tracking-tight mb-1"><?= htmlspecialchars($block['title']) ?></h3>
+                                <h3 class="font-extrabold text-sm tracking-tight mb-1"><?= parse_micro_markdown($block['title']) ?></h3>
                                 <?php if (!empty($block['subtitle'])): ?>
-                                    <p class="text-[11px] opacity-70 line-clamp-2"><?= htmlspecialchars($block['subtitle']) ?></p>
+                                    <p class="text-[11px] opacity-70 line-clamp-2"><?= parse_micro_markdown($block['subtitle']) ?></p>
                                 <?php endif; ?>
                             </div>
                         </a>
+
+                    <?php elseif ($block['block_type'] === 'image'): ?>
+                        <!-- Blok Image / Banner Promosi (Fitur s.id) -->
+                        <div class="col-span-full rounded-3xl overflow-hidden border border-white/10 shadow-lg <?= $animClass ?> bg-slate-900/40">
+                            <?php $imgSrc = !empty($block['subtitle']) ? $block['subtitle'] : $block['target_url']; ?>
+                            <?php if (!empty($block['target_url']) && $block['target_url'] !== $imgSrc): ?>
+                                <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank" class="block group overflow-hidden">
+                                    <img src="<?= htmlspecialchars(sanitize_safe_url($imgSrc)) ?>" alt="<?= htmlspecialchars($block['title']) ?>" class="w-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </a>
+                            <?php else: ?>
+                                <img src="<?= htmlspecialchars(sanitize_safe_url($imgSrc)) ?>" alt="<?= htmlspecialchars($block['title']) ?>" class="w-full object-cover">
+                            <?php endif; ?>
+                            <?php if (!empty($block['title']) && $block['title'] !== 'Banner'): ?>
+                                <div class="p-3 bg-black/50 text-center text-xs font-bold text-white/90 backdrop-blur-sm">
+                                    <?= parse_micro_markdown($block['title']) ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     <?php elseif ($block['block_type'] === 'text'): ?>
                         <div class="col-span-full p-5 rounded-3xl border <?= $activeTheme['card'] ?> space-y-1">
                             <div class="text-[10px] font-extrabold uppercase tracking-widest <?= $activeTheme['accent'] ?>">Pengumuman</div>
@@ -547,22 +684,85 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                     ?>
 
                     <?php if ($block['block_type'] === 'link'): ?>
-                        <!-- Blok Link Tombol Interaktif dengan Efek Glow Hover -->
-                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank"
-                           class="w-full p-4 sm:p-5 rounded-3xl border flex items-center justify-between <?= $activeTheme['card'] ?> transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl <?= $animClass ?> group">
-                            <div class="flex items-center gap-3.5 min-w-0">
-                                <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center <?= $activeTheme['accent'] ?> shrink-0 group-hover:scale-110 transition-transform">
-                                    <span class="material-symbols-rounded text-2xl">arrow_outward</span>
-                                </div>
-                                <div class="text-left truncate">
-                                    <div class="font-extrabold text-sm sm:text-base tracking-tight truncate"><?= htmlspecialchars($block['title']) ?></div>
+                        <!-- Blok Link Tombol Interaktif dengan Efek Glow Hover & Fitur Kaya s.id -->
+                        <?php
+                            $imageIcon = !empty($meta['image_icon']) ? sanitize_safe_url($meta['image_icon']) : '';
+                            $btnColor = !empty($meta['button_color']) ? htmlspecialchars($meta['button_color']) : '';
+                            $btnTextColor = !empty($meta['button_text_color']) ? htmlspecialchars($meta['button_text_color']) : '';
+                            $btnBorderColor = !empty($meta['button_border_color']) ? htmlspecialchars($meta['button_border_color']) : '';
+                            $btnType = $meta['button_type'] ?? 'default';
+                            $textPos = $meta['text_position'] ?? 'left';
+                            $isProtected = !empty($meta['password_active']) && !empty($meta['password']);
+                            $isKeepInPage = !empty($meta['keep_in_page']);
+
+                            $customBtnStyle = '';
+                            if (!empty($btnColor)) $customBtnStyle .= "background-color: {$btnColor} !important; ";
+                            if (!empty($btnTextColor)) $customBtnStyle .= "color: {$btnTextColor} !important; ";
+                            if (!empty($btnBorderColor)) $customBtnStyle .= "border-color: {$btnBorderColor} !important; ";
+
+                            $btnTypeClass = ($btnType === 'outline') ? 'bg-transparent border-2' : '';
+                            $alignClass = ($textPos === 'center') ? 'text-center mx-auto' : (($textPos === 'right') ? 'text-right' : 'text-left');
+
+                            if ($isProtected) {
+                                $encUrl = base64_encode(sanitize_safe_url($block['target_url']));
+                                $encPass = base64_encode($meta['password']);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $kip = $isKeepInPage ? 'true' : 'false';
+                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                            } elseif ($isKeepInPage) {
+                                $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
+                                $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
+                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                            } else {
+                                $clickAction = 'target="_blank"';
+                            }
+                        ?>
+                        <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" <?= $clickAction ?>
+                           style="<?= $customBtnStyle ?>"
+                           class="w-full p-4 sm:p-5 rounded-3xl border flex items-center justify-between <?= $activeTheme['card'] ?> <?= $btnTypeClass ?> transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl <?= $animClass ?> group">
+                            <div class="flex items-center gap-3.5 min-w-0 flex-1 <?= ($textPos === 'center') ? 'justify-center' : '' ?>">
+                                <?php if (!empty($imageIcon)): ?>
+                                    <div class="w-11 h-11 rounded-2xl bg-white p-1 flex items-center justify-center shrink-0 shadow-sm border border-slate-200/50 group-hover:scale-110 transition-transform">
+                                        <img src="<?= htmlspecialchars($imageIcon) ?>" alt="" class="w-full h-full object-contain rounded-xl">
+                                    </div>
+                                <?php else: ?>
+                                    <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center <?= $activeTheme['accent'] ?> shrink-0 group-hover:scale-110 transition-transform">
+                                        <span class="material-symbols-rounded text-2xl"><?= !empty($block['icon']) && $block['icon'] !== 'link' ? htmlspecialchars($block['icon']) : 'arrow_outward' ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="<?= $alignClass ?> min-w-0 flex-1 truncate">
+                                    <div class="font-extrabold text-sm sm:text-base tracking-tight truncate"><?= parse_micro_markdown($block['title']) ?></div>
                                     <?php if (!empty($block['subtitle'])): ?>
-                                        <div class="text-xs opacity-70 truncate"><?= htmlspecialchars($block['subtitle']) ?></div>
+                                        <div class="text-xs opacity-70 truncate"><?= parse_micro_markdown($block['subtitle']) ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <span class="material-symbols-rounded text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all">chevron_right</span>
+                            <?php if ($isProtected): ?>
+                                <span class="material-symbols-rounded text-lg text-amber-400 opacity-80 group-hover:opacity-100 transition-all shrink-0 ml-2" title="Tautan Dilindungi PIN">lock</span>
+                            <?php elseif ($isKeepInPage): ?>
+                                <span class="material-symbols-rounded text-lg text-blue-400 opacity-80 group-hover:opacity-100 transition-all shrink-0 ml-2" title="Buka di Dalam Halaman">open_in_browser</span>
+                            <?php else: ?>
+                                <span class="material-symbols-rounded text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 ml-2">chevron_right</span>
+                            <?php endif; ?>
                         </a>
+
+                    <?php elseif ($block['block_type'] === 'image'): ?>
+                        <!-- Blok Image / Banner Promosi (Fitur s.id) -->
+                        <div class="w-full rounded-3xl overflow-hidden border border-white/10 shadow-lg <?= $animClass ?> bg-slate-900/40">
+                            <?php $imgSrc = !empty($block['subtitle']) ? $block['subtitle'] : $block['target_url']; ?>
+                            <?php if (!empty($block['target_url']) && $block['target_url'] !== $imgSrc): ?>
+                                <a href="<?= htmlspecialchars(sanitize_safe_url($block['target_url'])) ?>" target="_blank" class="block group overflow-hidden">
+                                    <img src="<?= htmlspecialchars(sanitize_safe_url($imgSrc)) ?>" alt="<?= htmlspecialchars($block['title']) ?>" class="w-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </a>
+                            <?php else: ?>
+                                <img src="<?= htmlspecialchars(sanitize_safe_url($imgSrc)) ?>" alt="<?= htmlspecialchars($block['title']) ?>" class="w-full object-cover">
+                            <?php endif; ?>
+                            <?php if (!empty($block['title']) && $block['title'] !== 'Banner'): ?>
+                                <div class="p-3 bg-black/50 text-center text-xs font-bold text-white/90 backdrop-blur-sm">
+                                    <?= parse_micro_markdown($block['title']) ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
                     <?php elseif ($block['block_type'] === 'youtube'): ?>
                         <!-- Blok YouTube Embed -->
@@ -683,5 +883,120 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
             setInterval(updateCountdown, 1000);
         }
     </script>
+
+    <!-- ======================================================== -->
+    <!-- INTERACTIVE MODALS: PIN PASSWORD & IN-PAGE WEBVIEW      -->
+    <!-- ======================================================== -->
+
+    <!-- 1. Password / PIN Prompt Modal -->
+    <div id="pinModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-800 text-white p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div class="text-center">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center mb-3">
+                    <span class="material-symbols-rounded text-3xl">lock</span>
+                </div>
+                <h3 class="text-base font-black tracking-tight" id="pinModalTitle">Tautan Dilindungi PIN</h3>
+                <p class="text-xs text-slate-400 mt-1">Masukkan kata sandi atau PIN untuk mengakses tautan ini.</p>
+            </div>
+            <div>
+                <input type="password" id="pinInput" placeholder="Masukkan PIN / Sandi..." 
+                       class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-center text-sm font-bold tracking-widest outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20">
+                <div id="pinError" class="text-xs text-red-400 font-bold text-center mt-2 hidden">PIN atau kata sandi tidak cocok!</div>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" onclick="closePinModal()" class="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-bold transition">Batal</button>
+                <button type="button" onclick="verifyProtectedLink()" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 transition">Buka Tautan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. In-Page Modal (Keep in Page Webview) -->
+    <div id="inPageModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4">
+        <div class="w-full max-w-4xl h-[88vh] rounded-3xl bg-slate-900 border border-slate-800 text-white shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="material-symbols-rounded text-blue-400">web</span>
+                    <span id="inPageTitle" class="text-xs sm:text-sm font-bold truncate">Pratinjau Halaman</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="inPageNewTab" href="#" target="_blank" class="p-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1 transition" title="Buka di Tab Baru">
+                        <span class="material-symbols-rounded text-sm">open_in_new</span>
+                        <span class="hidden sm:inline">Tab Baru</span>
+                    </a>
+                    <button type="button" onclick="closeInPageModal()" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                        <span class="material-symbols-rounded text-base">close</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 bg-white relative">
+                <iframe id="inPageIframe" src="" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTargetUrl = '';
+        let currentExpectedPass = '';
+        let currentKeepInPage = false;
+
+        function promptProtectedLink(encUrl, encPass, title, keepInPage) {
+            currentTargetUrl = atob(encUrl);
+            currentExpectedPass = atob(encPass);
+            currentKeepInPage = keepInPage;
+            document.getElementById('pinModalTitle').innerText = title || 'Tautan Dilindungi PIN';
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+            const modal = document.getElementById('pinModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('pinInput').focus(), 100);
+        }
+
+        function closePinModal() {
+            const modal = document.getElementById('pinModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            currentTargetUrl = '';
+            currentExpectedPass = '';
+        }
+
+        function verifyProtectedLink() {
+            const entered = document.getElementById('pinInput').value;
+            if (entered === currentExpectedPass) {
+                const url = currentTargetUrl;
+                const kip = currentKeepInPage;
+                const title = document.getElementById('pinModalTitle').innerText;
+                closePinModal();
+                if (kip) {
+                    openInPageModal(url, title);
+                } else {
+                    window.open(url, '_blank');
+                }
+            } else {
+                document.getElementById('pinError').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('pinInput')?.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') verifyProtectedLink();
+        });
+
+        function openInPageModal(url, title) {
+            document.getElementById('inPageTitle').innerText = title || 'Pratinjau Halaman';
+            document.getElementById('inPageNewTab').href = url;
+            document.getElementById('inPageIframe').src = url;
+            const modal = document.getElementById('inPageModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeInPageModal() {
+            const modal = document.getElementById('inPageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('inPageIframe').src = '';
+        }
+    </script>
+
 </body>
 </html>
