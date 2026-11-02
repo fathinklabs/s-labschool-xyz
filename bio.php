@@ -498,11 +498,11 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                                 $encPass = base64_encode($meta['password']);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
                                 $kip = $isKeepInPage ? 'true' : 'false';
-                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                                $clickAction = 'onclick="event.preventDefault(); promptProtectedLink(\'' . $encUrl . '\', \'' . $encPass . '\', \'' . $safeTitle . '\', ' . $kip . ');"';
                             } elseif ($isKeepInPage) {
                                 $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
-                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                                $clickAction = 'onclick="event.preventDefault(); openInPageModal(\'' . $safeUrl . '\', \'' . $safeTitle . '\');"';
                             } else {
                                 $clickAction = 'target="_blank"';
                             }
@@ -559,11 +559,11 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                                 $encPass = base64_encode($meta['password']);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
                                 $kip = $isKeepInPage ? 'true' : 'false';
-                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                                $clickAction = 'onclick="event.preventDefault(); promptProtectedLink(\'' . $encUrl . '\', \'' . $encPass . '\', \'' . $safeTitle . '\', ' . $kip . ');"';
                             } elseif ($isKeepInPage) {
                                 $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
-                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                                $clickAction = 'onclick="event.preventDefault(); openInPageModal(\'' . $safeUrl . '\', \'' . $safeTitle . '\');"';
                             } else {
                                 $clickAction = 'target="_blank"';
                             }
@@ -708,11 +708,11 @@ $seoDesc  = !empty($site['seo_description']) ? $site['seo_description'] : ($site
                                 $encPass = base64_encode($meta['password']);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
                                 $kip = $isKeepInPage ? 'true' : 'false';
-                                $clickAction = "onclick="event.preventDefault(); promptProtectedLink('{$encUrl}', '{$encPass}', '{$safeTitle}', {$kip});"";
+                                $clickAction = 'onclick="event.preventDefault(); promptProtectedLink(\'' . $encUrl . '\', \'' . $encPass . '\', \'' . $safeTitle . '\', ' . $kip . ');"';
                             } elseif ($isKeepInPage) {
                                 $safeUrl = htmlspecialchars(sanitize_safe_url($block['target_url']), ENT_QUOTES);
                                 $safeTitle = htmlspecialchars(addslashes($block['title']), ENT_QUOTES);
-                                $clickAction = "onclick="event.preventDefault(); openInPageModal('{$safeUrl}', '{$safeTitle}');"";
+                                $clickAction = 'onclick="event.preventDefault(); openInPageModal(\'' . $safeUrl . '\', \'' . $safeTitle . '\');"';
                             } else {
                                 $clickAction = 'target="_blank"';
                             }
